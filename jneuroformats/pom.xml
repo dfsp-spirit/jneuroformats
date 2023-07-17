@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-     Copyright 2021 The original authors
+     Copyright 2023 Tim Schäfer
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <groupId>org.rcmd.jneuroformats</groupId>
   <artifactId>jneuroformats</artifactId>
   <version>1.0-SNAPSHOT</version>
-  
+
   <properties>
     <java.version>17</java.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -31,10 +31,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
-  <name>My OSS Project</name>
-  <description>My Latest OSS Project</description>
-  <inceptionYear>2021</inceptionYear>
-  <url>tbd.</url>
+  <name>jneuroformats</name>
+  <description>Read and write structural neuroimaging file formats.</description>
+  <inceptionYear>2023</inceptionYear>
+  <url>https://github.com/dfsp-spirit/jneuroformats</url>
 
   <licenses>
     <license>

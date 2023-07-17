@@ -1,5 +1,5 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 Tim Schäfer
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,18 @@
  */
 package org.rcmd.jneuroformats;
 
-public class App {
+import org.junit.jupiter.api.Test;
 
-    public String hello(String name) {
-        return "Hello, " + name;
+import static org.junit.Assert;
+
+public class FsSurfaceTest {
+
+    @Test
+    public void oneCanGenerateCube() {
+
+        FsSurface cube = FsSurface.generateCube();
+        Assert.assertEquals(cube.getNumberOfVertices(), 12);
+
+
     }
 }
