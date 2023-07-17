@@ -7,5 +7,5 @@ This is work-in-progress, nothing to see here atm.
 
 ## Development
 
-Development information can be found [here](./jneuroformats/README.md).
+Development information can be found [here](./jneuroformats/README_dev.md).
 
