@@ -21,6 +21,7 @@ Now clone the repo:
 cd ~/projects/    # or where ever you want to put it
 git clone https://github.com/dfsp-spirit/jneuroformats
 cd jneuroformats/     # you are now in a directory we will refer to as <repo>.
+code .                # start editing the source code with VS Code.
 ```
 
 
