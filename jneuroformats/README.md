@@ -5,10 +5,10 @@ Note: This is developer information, please refer to [github.com/dfsp-spirit/jne
 
 ### Setting up the dev environment
 
-I suggest to install [SDKMan](https://sdkman.io/) and use it to make sure you havea suitable JDK (JDK 17 LTS is what I have installed at the time of writing) and maven:
+I suggest to install [SDKMan](https://sdkman.io/) and use it to make sure you have a suitable JDK (JDK 17 LTS is what I have installed at the time of writing) and maven:
 
 ```shell
-sdk install java
+sdk install java    # install latest LTS by default, which is fine.
 sdk install maven
 ```
 
