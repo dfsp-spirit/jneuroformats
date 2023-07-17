@@ -1,7 +1,9 @@
 # jneuroformats Development Information
 
-An open-source project bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype.
 
+Note: This is developer information, please refer to [github.com/dfsp-spirit/jneuroformats](https://github.com/dfsp-spirit/jneuroformats) for the main README file.
+
+## Building with maven
 
 Run the following command to build this project:
 
@@ -20,3 +22,7 @@ Run the following command to format the source code and organize the imports as 
 ```
 mvn process-sources
 ```
+
+## Credits
+
+This project was bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype.
