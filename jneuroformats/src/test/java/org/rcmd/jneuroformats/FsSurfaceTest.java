@@ -17,7 +17,7 @@ package org.rcmd.jneuroformats;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert;
+import static org.assertj.core.api.Assertions.*;
 
 public class FsSurfaceTest {
 
@@ -25,8 +25,8 @@ public class FsSurfaceTest {
     public void oneCanGenerateCube() {
 
         FsSurface cube = FsSurface.generateCube();
-        Assert.assertEquals(cube.getNumberOfVertices(), 12);
 
-
+        assertThat(cube.getNumberOfVertices()).isEqualTo(8);
+        assertThat(cube.getNumberOfFaces()).isEqualTo(12);
     }
 }
