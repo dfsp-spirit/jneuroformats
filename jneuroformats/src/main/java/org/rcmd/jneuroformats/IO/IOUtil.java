@@ -1,9 +1,7 @@
 
 package org.rcmd.jneuroformats.IO;
 
-
 import java.nio.ByteBuffer;
-
 
 public class IOUtil {
 
@@ -16,6 +14,5 @@ public class IOUtil {
         }
         return builder.toString();
     }
-
 
 }

@@ -16,13 +16,12 @@
 package org.rcmd.jneuroformats;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.nio.ByteBuffer;
 
 import org.rcmd.jneuroformats.IO.IOUtil;
-
 
 /**
  * Represents a FreeSurfer surface, i.e. a triangular mesh
@@ -97,28 +96,28 @@ public class FsSurface {
     public static FsSurface generateCube() {
         FsSurface cube = new FsSurface();
         float[][] vertices = {
-            {0, 0, 0},
-            {1, 0, 0},
-            {1, 1, 0},
-            {0, 1, 0},
-            {0, 0, 1},
-            {1, 0, 1},
-            {1, 1, 1},
-            {0, 1, 1}
+                { 0, 0, 0 },
+                { 1, 0, 0 },
+                { 1, 1, 0 },
+                { 0, 1, 0 },
+                { 0, 0, 1 },
+                { 1, 0, 1 },
+                { 1, 1, 1 },
+                { 0, 1, 1 }
         };
         int[][] faces = {
-            {0, 1, 2},
-            {0, 2, 3},
-            {0, 1, 4},
-            {1, 4, 5},
-            {1, 2, 5},
-            {2, 5, 6},
-            {2, 3, 6},
-            {3, 6, 7},
-            {3, 0, 7},
-            {0, 4, 7},
-            {4, 5, 6},
-            {4, 6, 7}
+                { 0, 1, 2 },
+                { 0, 2, 3 },
+                { 0, 1, 4 },
+                { 1, 4, 5 },
+                { 1, 2, 5 },
+                { 2, 5, 6 },
+                { 2, 3, 6 },
+                { 3, 6, 7 },
+                { 3, 0, 7 },
+                { 0, 4, 7 },
+                { 4, 5, 6 },
+                { 4, 6, 7 }
         };
         for (float[] vertex : vertices) {
             cube.addVertex(vertex);
@@ -158,7 +157,6 @@ public class FsSurface {
         @SuppressWarnings("unused")
         String unusedCommentLine = IOUtil.readNewlineTerminatedString(buffer);
 
-
         int numberOfVertices = buffer.getInt();
         int numberOfFaces = buffer.getInt();
 
@@ -180,7 +178,5 @@ public class FsSurface {
 
         return surface;
     }
-
-
 
 }
