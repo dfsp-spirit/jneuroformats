@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.rcmd.jneuroformats.IO.IOUtil;
@@ -142,12 +143,13 @@ public class FsSurface {
         ByteBuffer buffer = ByteBuffer.wrap(data);
 
         // Read the header
-        int magicNumberPart1 = buffer.getChar();
-        int magicNumberPart2 = buffer.getChar();
-        int magicNumberPart3 = buffer.getChar();
+        int magicNumberPart1 = IOUtil.getUint8(buffer);
+        int magicNumberPart2 = IOUtil.getUint8(buffer);
+        int magicNumberPart3 = IOUtil.getUint8(buffer);
 
         if (magicNumberPart1 != 255 || magicNumberPart2 != 255 || magicNumberPart3 != 254) {
-            throw new IOException("Invalid magic number in FreeSurfer surface file, file invalid.");
+            throw new IOException(MessageFormat.format("Invalid magic number in FreeSurfer surface file: magic codes {0} {1} {2}, expected 255 255 254. File invalid.",
+                    magicNumberPart1, magicNumberPart2, magicNumberPart3));
         }
 
         // We do not use these, but we defnitely need to read them.
@@ -159,6 +161,10 @@ public class FsSurface {
 
         int numberOfVertices = buffer.getInt();
         int numberOfFaces = buffer.getInt();
+
+        System.out.println(MessageFormat.format("CreatedLine is: {0}", unusedCreatedLine));
+        System.out.println(MessageFormat.format("CommentLine is: {0}", unusedCommentLine));
+        System.out.println(MessageFormat.format("Reading surface with {0} vertices and {1} faces.", numberOfVertices, numberOfFaces));
 
         for (int i = 0; i < numberOfVertices; i++) {
             float[] vertex = new float[3];
