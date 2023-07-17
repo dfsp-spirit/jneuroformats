@@ -27,7 +27,7 @@ code .                # start editing the source code with VS Code.
 
 ### Tests
 
-To run the unit tests:
+To run the unit tests, use the `Testing` button in VS Code, or on the command line:
 
 ```shell
 cd <repo>/jneuroformats/    # important: change into the sub directory!
