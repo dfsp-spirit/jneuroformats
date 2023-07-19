@@ -36,6 +36,8 @@ public class FsSurface {
 
     public ArrayList<float[]> vertices;
     public ArrayList<int[]> faces;
+    public String commentLine = "";
+    public String createdLine = "";
 
     public FsSurface() {
         vertices = new ArrayList<float[]>();
@@ -152,19 +154,15 @@ public class FsSurface {
                     magicNumberPart1, magicNumberPart2, magicNumberPart3));
         }
 
-        // We do not use these, but we defnitely need to read them.
-        @SuppressWarnings("unused")
-        String unusedCreatedLine = IOUtil.readNewlineTerminatedString(buffer);
-
-        @SuppressWarnings("unused")
-        String unusedCommentLine = IOUtil.readNewlineTerminatedString(buffer);
+        surface.createdLine = IOUtil.readNewlineTerminatedString(buffer);
+        surface.commentLine = IOUtil.readNewlineTerminatedString(buffer);
 
         int numberOfVertices = buffer.getInt();
         int numberOfFaces = buffer.getInt();
 
-        System.out.println(MessageFormat.format("CreatedLine is: {0}", unusedCreatedLine));
-        System.out.println(MessageFormat.format("CommentLine is: {0}", unusedCommentLine));
-        System.out.println(MessageFormat.format("Reading surface with {0} vertices and {1} faces.", numberOfVertices, numberOfFaces));
+        //System.out.println(MessageFormat.format("CreatedLine is: {0}", unusedCreatedLine));
+        //System.out.println(MessageFormat.format("CommentLine is: {0}", unusedCommentLine));
+        //System.out.println(MessageFormat.format("Reading surface with {0} vertices and {1} faces.", numberOfVertices, numberOfFaces));
 
         for (int i = 0; i < numberOfVertices; i++) {
             float[] vertex = new float[3];
@@ -183,6 +181,65 @@ public class FsSurface {
         }
 
         return surface;
+    }
+
+    /**
+     * Generate string representation of this mesh in PLY format.
+     * @return the PLY format string
+     */
+    public String toPlyFormat() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ply\n");
+        builder.append("format ascii 1.0\n");
+        builder.append("comment Created by jneuroformats\n");
+        builder.append("element vertex " + getNumberOfVertices() + "\n");
+        builder.append("property float x\n");
+        builder.append("property float y\n");
+        builder.append("property float z\n");
+        builder.append("element face " + getNumberOfFaces() + "\n");
+        builder.append("property list uchar int vertex_indices\n");
+        builder.append("end_header\n");
+        for (float[] vertex : vertices) {
+            builder.append(vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
+        }
+        for (int[] face : faces) {
+            builder.append("3 " + face[0] + " " + face[1] + " " + face[2] + "\n");
+        }
+        return builder.toString();
+    }
+
+
+    /**
+     * Generate string representation of this mesh in Wavefront Object (OBJ) format.
+     * @return the OBJ format string
+     */
+    public String toObjFormat() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("o mesh\n");
+        for (float[] vertex : vertices) {
+            builder.append("v " + vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
+        }
+        for (int[] face : faces) {
+            builder.append("f " + face[0] + " " + face[1] + " " + face[2] + "\n");
+        }
+        return builder.toString();
+    }
+
+
+    /**
+     * Write this mesh to a file in PLY or OBJ format.
+     * @param filePath the path to the file to write to
+     * @param format the format to write to, either "ply" or "obj"
+     * @throws IOException
+     */
+    public void writeToFile(Path filePath, String format) throws IOException {
+        if (format.equals("ply")) {
+            Files.write(filePath, toPlyFormat().getBytes());
+        } else if (format.equals("obj")) {
+            Files.write(filePath, toObjFormat().getBytes());
+        } else {
+            throw new IOException(MessageFormat.format("Unknown mesh export format {0}.", format));
+        }
     }
 
 }
