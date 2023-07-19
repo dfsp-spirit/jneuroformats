@@ -17,8 +17,11 @@ package org.rcmd.jneuroformats;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -143,6 +146,7 @@ public class FsSurface {
 
         byte[] data = Files.readAllBytes(filePath);
         ByteBuffer buffer = ByteBuffer.wrap(data);
+        buffer.order(ByteOrder.BIG_ENDIAN);
 
         // Read the header
         int magicNumberPart1 = IOUtil.getUint8(buffer);
@@ -227,16 +231,80 @@ public class FsSurface {
 
 
     /**
+     * Write this mesh to a file in FreeSurfer surface format.
+     * @param filePath the path to the file to write to
+     * @throws IOException
+     */
+    private void writeSurface(Path filePath) throws IOException {
+        ByteBuffer buf = writeSurfaceToByteBuffer();
+        WritableByteChannel channel = Files.newByteChannel(filePath, StandardOpenOption.WRITE);
+        channel.write(buf);
+        channel.close();
+    }
+
+    /**
+     * Write this mesh to a ByteBuffer in FreeSurfer surface format.
+     * @note This method is used internally by writeSurface(Path filePath).
+     * @throws IOException
+     */
+    private ByteBuffer writeSurfaceToByteBuffer() throws IOException {
+
+        ByteBuffer buf = ByteBuffer.allocate(8192);
+
+        // write magic bytes
+        buf.put((byte)255);
+        buf.put((byte)255);
+        buf.put((byte)254);
+
+        // write created line
+        buf.put(createdLine.getBytes());
+        buf.putChar((char)10);
+
+        // write comment line
+        buf.put(commentLine.getBytes());
+        buf.putChar((char)10);
+
+        // write number of vertices
+        buf.putInt(getNumberOfVertices());
+
+        // write number of faces
+        buf.putInt(getNumberOfFaces());
+
+        // write vertices
+        for (float[] vertex : vertices) {
+            buf.putFloat(vertex[0]);
+            buf.putFloat(vertex[1]);
+            buf.putFloat(vertex[2]);
+        }
+
+        // write faces
+        for (int[] face : faces) {
+            buf.putInt(face[0]);
+            buf.putInt(face[1]);
+            buf.putInt(face[2]);
+        }
+
+        buf.flip();
+        buf.order(ByteOrder.BIG_ENDIAN);
+
+        return buf;
+    }
+
+
+    /**
      * Write this mesh to a file in PLY or OBJ format.
      * @param filePath the path to the file to write to
-     * @param format the format to write to, either "ply" or "obj"
+     * @param format the format to write to, either "ply", "obj", or "surf".
      * @throws IOException
      */
     public void writeToFile(Path filePath, String format) throws IOException {
+        format = format.toLowerCase();
         if (format.equals("ply")) {
             Files.write(filePath, toPlyFormat().getBytes());
         } else if (format.equals("obj")) {
             Files.write(filePath, toObjFormat().getBytes());
+        } else if (format.equals("surf")) {
+            this.writeSurface(filePath);
         } else {
             throw new IOException(MessageFormat.format("Unknown mesh export format {0}.", format));
         }
