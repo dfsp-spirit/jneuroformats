@@ -1,6 +1,7 @@
 package org.rcmd.jneuroformats;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,7 +18,7 @@ import org.rcmd.jneuroformats.IO.IOUtil;
 public class FsCurv {
 
     // The per-vertex data.
-    public ArrayList<Float> data;
+    public List<Float> data;
 
     /**
      * Metadata, The number of faces in the surface this data belongs to. Typically not relevant, set to 0 if unknown.

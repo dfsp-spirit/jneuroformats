@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.rcmd.jneuroformats.IO.IOUtil;
 
@@ -37,8 +38,8 @@ import org.rcmd.jneuroformats.IO.IOUtil;
  */
 public class FsSurface {
 
-    public ArrayList<float[]> vertices;
-    public ArrayList<int[]> faces;
+    public List<float[]> vertices;
+    public List<int[]> faces;
     public String commentLine = "";
     public String createdLine = "";
 
@@ -105,7 +106,7 @@ public class FsSurface {
      * Set the vertices of the mesh. Does not change the faces, you have to ensure consistency yourself.
      * @param vertices the new vertices.
      */
-    public void setVertices(ArrayList<float[]> vertices) {
+    public void setVertices(List<float[]> vertices) {
         this.vertices = vertices;
     }
 
@@ -113,7 +114,7 @@ public class FsSurface {
      * Set the faces of the mesh. Does not change the vertices, you have to ensure consistency yourself.
      * @param faces the new faces.
      */
-    public void setFaces(ArrayList<int[]> faces) {
+    public void setFaces(List<int[]> faces) {
         this.faces = faces;
     }
 
@@ -121,7 +122,7 @@ public class FsSurface {
      * Get all vertices of the mesh.
      * @return the vertices of the mesh.
      */
-    public ArrayList<float[]> getVertices() {
+    public List<float[]> getVertices() {
         return this.vertices;
     }
 
@@ -129,7 +130,7 @@ public class FsSurface {
      * Get all faces of the mesh.
      * @return the faces of the mesh.
      */
-    public ArrayList<int[]> getFaces() {
+    public List<int[]> getFaces() {
         return this.faces;
     }
 
