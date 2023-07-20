@@ -42,24 +42,45 @@ public class FsSurface {
     public String commentLine = "";
     public String createdLine = "";
 
+    /**
+     * Constructor.
+     */
     public FsSurface() {
-        vertices = new ArrayList<float[]>();
-        faces = new ArrayList<int[]>();
+        vertices = new ArrayList<>();
+        faces = new ArrayList<>();
     }
 
+    /**
+     * Constructor that takes a list of vertices and a list of faces.
+     * @param vertices the mesh vertices, as x,y,z coordinates.
+     * @param faces the mesh faces, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     public FsSurface(ArrayList<float[]> vertices, ArrayList<int[]> faces) {
         this.vertices = vertices;
         this.faces = faces;
     }
 
+    /**
+     * Add a vertex to the mesh.
+     * @param vertex the vertex to add, as x,y,z coordinates.
+     */
     public void addVertex(float[] vertex) {
         vertices.add(vertex);
     }
 
+    /**
+     * Add a face to the mesh.
+     * @param face the face to add, as indices into the vertex list. The face is assumed to be triangular.
+     */
     public void addFace(int[] face) {
         faces.add(face);
     }
 
+    /**
+     * Get a vertex from the mesh.
+     * @param index the index of the vertex to get.
+     * @return the vertex, as x,y,z coordinates.
+     */
     public float[] getVertex(int index) {
         return vertices.get(index);
     }
@@ -72,24 +93,44 @@ public class FsSurface {
         return vertices.size();
     }
 
+    /**
+     * Get the number of faces in the mesh.
+     * @return the number of faces in the mesh.
+     */
     public int getNumberOfFaces() {
         return faces.size();
     }
 
+    /**
+     * Set the vertices of the mesh. Does not change the faces, you have to ensure consistency yourself.
+     * @param vertices the new vertices.
+     */
     public void setVertices(ArrayList<float[]> vertices) {
         this.vertices = vertices;
     }
 
+    /**
+     * Set the faces of the mesh. Does not change the vertices, you have to ensure consistency yourself.
+     * @param faces the new faces.
+     */
     public void setFaces(ArrayList<int[]> faces) {
         this.faces = faces;
     }
 
+    /**
+     * Get all vertices of the mesh.
+     * @return the vertices of the mesh.
+     */
     public ArrayList<float[]> getVertices() {
-        return vertices;
+        return this.vertices;
     }
 
+    /**
+     * Get all faces of the mesh.
+     * @return the faces of the mesh.
+     */
     public ArrayList<int[]> getFaces() {
-        return faces;
+        return this.faces;
     }
 
     /**
@@ -203,10 +244,10 @@ public class FsSurface {
         builder.append("element face " + getNumberOfFaces() + "\n");
         builder.append("property list uchar int vertex_indices\n");
         builder.append("end_header\n");
-        for (float[] vertex : vertices) {
+        for (float[] vertex : this.vertices) {
             builder.append(vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
         }
-        for (int[] face : faces) {
+        for (int[] face : this.faces) {
             builder.append("3 " + face[0] + " " + face[1] + " " + face[2] + "\n");
         }
         return builder.toString();
@@ -220,10 +261,10 @@ public class FsSurface {
     public String toObjFormat() {
         StringBuilder builder = new StringBuilder();
         builder.append("o mesh\n");
-        for (float[] vertex : vertices) {
+        for (float[] vertex : this.vertices) {
             builder.append("v " + vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
         }
-        for (int[] face : faces) {
+        for (int[] face : this.faces) {
             builder.append("f " + face[0] + " " + face[1] + " " + face[2] + "\n");
         }
         return builder.toString();
@@ -258,7 +299,7 @@ public class FsSurface {
 
         // write created line
         buf.put(createdLine.getBytes());
-        buf.putChar((char)10);
+        buf.putChar((char)10);  // newline
 
         // write comment line
         buf.put(commentLine.getBytes());
