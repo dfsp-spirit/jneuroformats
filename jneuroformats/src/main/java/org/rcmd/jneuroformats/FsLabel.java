@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.nio.file.Path;
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -126,6 +127,58 @@ public class FsLabel {
         }
 
         return label;
+    }
+
+    /**
+     * Generate string representation of this FsLabel in CSV format.
+     * @param with_header whether to include a header row at the top of the CSV.
+     * @return the CSV format string
+     */
+    public String toCsvFormat(Boolean with_header) {
+        StringBuilder builder = new StringBuilder();
+        if(with_header) {
+            builder.append("index,coordx,coordy,coordz,value\n");
+        }
+
+        for (int i=0; i < this.size(); i++) {
+                builder.append(this.elementIndex.get(i)+ "," + this.coordX.get(i) + "," + this.coordY.get(i) + "," + this.coordZ.get(i) + "," + this.value.get(i) +"\n");
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Generate string representation of this FsLabel in FsLabel format.
+     * @return the FsLabel format string
+     */
+    public String toFsLabelFormat() {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("#!ascii label  , from subject  vox2ras=TkReg\n");
+        builder.append(this.size() + "\n");
+
+        for (int i=0; i < this.size(); i++) {
+                builder.append(this.elementIndex.get(i)+ "  " + this.coordX.get(i) + "  " + this.coordY.get(i) + "  " + this.coordZ.get(i) + " " + this.value.get(i) +"\n");
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Write this label to a file in CSV or FsLabel format.
+     * @param filePath the path to the file to write to
+     * @param format the format to write in, either "csv" or "fslabel".
+     * @throws IOException
+     */
+    public void writeToFile(Path filePath, String format) throws IOException {
+        format = format.toLowerCase();
+        if (format.equals("csv")) {
+            Files.write(filePath, toCsvFormat(Boolean.TRUE).getBytes());
+        } else if (format.equals("fslabel")) {
+            Files.write(filePath, toFsLabelFormat().getBytes());
+        } else {
+            throw new IOException(MessageFormat.format("Unknown FsLabel export format {0}.", format));
+        }
     }
 
 }
