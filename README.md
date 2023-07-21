@@ -8,7 +8,17 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
 
 ## Features
 
-* Read brain meshes in FreeSurfer binary mesh format (like `subject/surf/lh.white`): `FsSurface.fromFsSurfaceFile()`
+* Meshes:
+  - Read brain meshes in FreeSurfer binary mesh format (like recon_all output file `<SUBJECTS_DIR>/<subject>/surf/lh.white`): use function `FsSurface.fromFsSurfaceFile()`
+  - Write in PLY, OBJ, and FreeSurfer binary mesh formats: `FsSurface.writeToFile()`
+* Labels (FreeSurfer volume and surface labels, like `<subject>/label/lh.cortex.label`):
+  - Read from FreeSurfer label format:  `FsLabel.fromFsLabelFile()`
+  - Write in FreeSurfer label format and to CSV format: `FsLabel.writeToFile()`
+* Annots or mesh parcellations (like Desikan atlas parcellation in recon_all output file `<SUBJECTS_DIR>/<subject>/label/lh.aparc.annot`):
+  - Read from FreeSurfer annot format: `FsAnnot.fromFsAnnotFile()`
+  - Write to FreeSurfer annot format and to CSV (including the color table):  `FsAnnot.writeToFile()`
+* Brain volumnes (3D or 4D MRI scans)
+  - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
 
 ## Usage and Installation
 
