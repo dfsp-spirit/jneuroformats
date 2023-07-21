@@ -38,18 +38,18 @@ public class FsLabel {
         return this.elementIndex.size();
     }
 
-    public void validate() throws Exception {
+    public void validate() throws IOException {
         if(this.elementIndex.size() != this.coordX.size()) {
-            throw new Exception("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordX list.");
+            throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordX list.");
         }
         if(this.elementIndex.size() != this.coordY.size()) {
-            throw new Exception("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordY list.");
+            throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordY list.");
         }
         if(this.elementIndex.size() != this.coordZ.size()) {
-            throw new Exception("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordZ list.");
+            throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordZ list.");
         }
         if(this.elementIndex.size() != this.value.size()) {
-            throw new Exception("The number of elements in the FsLabel elementIndex list does not match the number of elements in the value list.");
+            throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the value list.");
         }
     }
 
@@ -126,6 +126,7 @@ public class FsLabel {
             throw new IOException(MessageFormat.format("The number of elements in the header ({0}) does not match the number of elements in the label ({1}). Label invalid.", num_elements_hdr, label.size()));
         }
 
+        label.validate();
         return label;
     }
 

@@ -29,7 +29,7 @@ public class FsCurv {
     private Integer numberOfValuesPerVertex = 1;
 
     // Constructor
-    public FsCurv(ArrayList<Float> data) {
+    public FsCurv(List<Float> data) {
         this.data = data;
     }
 
@@ -39,7 +39,7 @@ public class FsCurv {
     }
 
     /**
-     * Read a file in FreeSurfer curv format and return a FsSurface object.
+     * Read a file in FreeSurfer curv format and return an FsCurv object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
      * @return an FsCurv object.
      * @throws IOException if IO error occurs.
