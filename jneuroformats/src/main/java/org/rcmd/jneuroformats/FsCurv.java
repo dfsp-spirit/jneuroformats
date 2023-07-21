@@ -58,8 +58,8 @@ public class FsCurv {
         int magicNumberPart3 = IOUtil.getUint8(buffer);
 
         if (magicNumberPart1 != 255 || magicNumberPart2 != 255 || magicNumberPart3 != 255) {
-            throw new IOException(MessageFormat.format("Invalid magic number in FreeSurfer curv file: magic codes {0} {1} {2}, expected 255 255 255. File invalid.",
-                    magicNumberPart1, magicNumberPart2, magicNumberPart3));
+            throw new IOException(MessageFormat.format("Invalid magic number in FreeSurfer curv file: magic codes {0} {1} {2}, expected 255 255 255. File '{3}' invalid.",
+                    magicNumberPart1, magicNumberPart2, magicNumberPart3, filePath.toString()));
         }
 
         int numberOfVertices = buffer.getInt();
@@ -68,8 +68,8 @@ public class FsCurv {
 
         curv.numberOfValuesPerVertex = buffer.getInt();
         if(curv.numberOfValuesPerVertex != 1) {
-            throw new IOException(MessageFormat.format("Invalid number of values per vertex in FreeSurfer curv file: {0}, expected 1. File invalid.",
-                    curv.numberOfValuesPerVertex));
+            throw new IOException(MessageFormat.format("Invalid number of values per vertex in FreeSurfer curv file: {0}, expected 1. File '{1}' invalid.",
+                    curv.numberOfValuesPerVertex, filePath.toString()));
         }
 
         curv.data = new ArrayList<Float>(numberOfVertices);

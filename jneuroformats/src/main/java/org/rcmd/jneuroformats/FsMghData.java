@@ -3,16 +3,8 @@
 package org.rcmd.jneuroformats;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.nio.file.Path;
-import java.io.File;
-import java.nio.file.Files;
-
+import java.nio.ByteBuffer;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -69,4 +61,59 @@ public class FsMghData {
         }
 
     }
+
+    /**
+     * Read an FsMghHeader instance from a Buffer in FreeSurfer MGH format. Reads the header and advances the buffer to the data part of the file.
+     * @param buf the buffer to read from.
+     * @return an FsMghHeader instance.
+     * @throws IOException if IO error occurs, or if the file is not in valid MGH format.
+     */
+    public static FsMghData fromByteBuffer(ByteBuffer buf, FsMghHeader header) throws IOException {
+        FsMghData data = new FsMghData(header);
+
+        if(header.mri_datatype == FsMgh.MRI_FLOAT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            data.data_mri_float[i][j][k][l] = buf.getFloat();
+                        }
+                    }
+                }
+            }
+        } else if(header.mri_datatype == FsMgh.MRI_INT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            data.data_mri_int[i][j][k][l] = buf.getInt();
+                        }
+                    }
+                }
+            }
+        } else if(header.mri_datatype == FsMgh.MRI_SHORT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            data.data_mri_short[i][j][k][l] = buf.getShort();
+                        }
+                    }
+                }
+            }
+        } else if(header.mri_datatype == FsMgh.MRI_UCHAR) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            data.data_mri_uchar[i][j][k][l] = buf.get();
+                        }
+                    }
+                }
+            }
+        }
+
+        return data;
+    }
+
 }

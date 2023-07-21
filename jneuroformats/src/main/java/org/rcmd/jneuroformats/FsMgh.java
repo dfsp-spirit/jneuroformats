@@ -3,15 +3,13 @@
 package org.rcmd.jneuroformats;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.nio.file.Path;
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -55,9 +53,19 @@ public class FsMgh {
      * @throws FileNotFoundException if the file does not exist.
      */
     public static FsMgh fromFsMghFile(Path filePath) throws IOException, FileNotFoundException {
+
         FsMgh mgh = new FsMgh();
-        System.err.println("fromFsMghFile: Not implemented yet.");
+
+        byte[] data = Files.readAllBytes(filePath);
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+
+        // Read the header
+        mgh.header = FsMghHeader.fromByteBuffer(buffer);
+        mgh.data = FsMghData.fromByteBuffer(buffer, mgh.header);
+
         return mgh;
+
     }
 
     /**
