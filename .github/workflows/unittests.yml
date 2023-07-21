@@ -19,16 +19,16 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Change into project directory
-        run: cd $GITHUB_WORKSPACE/jneuroformats
-
       - name: Build
+        working-directory: ./jneuroformats
         run: mvn --batch-mode -DskipTests package
 
       - name: Test
+        working-directory: ./jneuroformats
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
 
       - name: Report
+        working-directory: ./jneuroformats
         uses: dorny/test-reporter@v1
         if: always()
         with:
