@@ -25,13 +25,4 @@ jobs:
 
       - name: Test
         working-directory: ./jneuroformats
-        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
-
-      - name: Report Test Coverage
-        uses: dorny/test-reporter@v1
-        if: always()
-        with:
-          name: Maven Tests
-          path: neuroformats/target/surefire-reports/*.xml
-          reporter: java-junit
-          fail-on-error: true
+        run: mvn --batch-mode test
