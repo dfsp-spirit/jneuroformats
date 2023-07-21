@@ -14,10 +14,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up JDK 1.11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
+
+      - name: Change into project directory
+        run: cd $GITHUB_WORKSPACE/jneuroformats
 
       - name: Build
         run: mvn --batch-mode -DskipTests package
