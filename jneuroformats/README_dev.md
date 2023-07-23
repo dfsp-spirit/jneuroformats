@@ -56,9 +56,13 @@ Run the following command to format the source code and organize the imports as 
 mvn process-sources
 ```
 
+### Publishing to Maven central
+
+This is easiest via sontype OSSRH, see [docs here](https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-maven).
+
 
 ### Credits
 
 
 * Thanks to all the authors of the dependencies (and their dependencies), as well as our toolchain.
-* This project was bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype.
+* This project was bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype. At the time when I used it (July 2023), it required some manual updates to package versions though, it was a bit outdated.
