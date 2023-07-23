@@ -21,7 +21,7 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
 * Annots or mesh parcellations (like Desikan atlas parcellation in recon_all output file `<SUBJECTS_DIR>/<subject>/label/lh.aparc.annot`):
   - Read from FreeSurfer annot format: `FsAnnot.fromFsAnnotFile()`
   - Write to FreeSurfer annot format and to CSV (including the color table):  `FsAnnot.writeToFile()`
-* Brain volumnes (3D or 4D MRI scans)
+* Brain volumes (3D or 4D MRI scans)
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
 
