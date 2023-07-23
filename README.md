@@ -1,6 +1,8 @@
 # jneuroformats
 Reading and writing structural neuroimaging file formats for Java.
 
+[![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+
 ## About
 
 File format readers and writers for file formats used in structural neuroimaging research, with a focus on the
