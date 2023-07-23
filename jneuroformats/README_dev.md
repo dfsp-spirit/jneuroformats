@@ -60,6 +60,8 @@ mvn process-sources
 
 This is easiest via sontype OSSRH, see [docs here](https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-maven).
 
+This may also be relevant: [Publishing to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md).
+
 
 ### Credits
 
