@@ -10,6 +10,9 @@ File format readers and writers for file formats used in structural neuroimaging
 surface-based workflow used in [FreeSurfer](https://freesurfer.net).
 
 
+![Vis](./img/rgl_brain_aparc.jpg?raw=true "An aparc brain atlas visualization.")
+
+
 ## Features
 
 * Meshes:
