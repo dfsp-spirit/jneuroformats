@@ -35,7 +35,7 @@ This is work-in-progress, not yet.
 
 ## Documentation
 
-The API documentation can be generated from the Java doc strings in the source code. It will also be published to a central repository once the package is officially released.
+The API documentation will be published to a central repository once the package is officially released. See the development information if you want to generate it yourself.
 
 We will also provide a full example app soon.
 

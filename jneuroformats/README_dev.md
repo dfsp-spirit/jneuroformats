@@ -40,21 +40,28 @@ mvn test
 
 Make sure you are in the `<repo>/jneuroformats/` directory. Then run the following command to build this project:
 
-```
+```shell
 mvn clean verify
 ```
 
 Pass the `-Dquick` option to skip all non-essential plug-ins and create the output artifact as quickly as possible:
 
-```
+```shell
 mvn clean verify -Dquick
 ```
 
 Run the following command to format the source code and organize the imports as per the project's conventions:
 
-```
+```shell
 mvn process-sources
 ```
+
+#### Building the docs
+
+```shell
+mvn javadoc:javadoc
+```
+
 
 ### Publishing to Maven central
 
