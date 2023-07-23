@@ -10,6 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -66,6 +72,36 @@ public class FsMgh {
 
         return mgh;
 
+    }
+
+    private static byte[] convertBytes(List<Byte> integers) {
+        byte[] ret = new byte[integers.size()];
+        for (int i=0; i < ret.length; i++)
+        {
+            ret[i] = integers.get(i).byteValue();
+        }
+        return ret;
+    }
+
+    public static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
+      FileInputStream fis = new FileInputStream(filePath.toFile());
+      GZIPInputStream gzis = new GZIPInputStream(fis);
+      ArrayList<Byte> allBytes = new ArrayList<Byte>();
+      byte[] buffer = new byte[65536];
+      int numRead;
+      while ((numRead = gzis.read(buffer)) != -1) {
+        for(int i = 0; i < numRead; i++) {
+            allBytes.add(buffer[i]);
+        }
+      }
+
+      byte[] ab = convertBytes(allBytes);
+      ByteBuffer bbuffer = ByteBuffer.wrap(ab);
+
+      FsMgh mgh = new FsMgh();
+      mgh.header = FsMghHeader.fromByteBuffer(bbuffer);
+      mgh.data = FsMghData.fromByteBuffer(bbuffer, mgh.header);
+      return mgh;
     }
 
     /**

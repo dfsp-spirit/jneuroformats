@@ -21,6 +21,7 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
   - Write to FreeSurfer annot format and to CSV (including the color table):  `FsAnnot.writeToFile()`
 * Brain volumnes (3D or 4D MRI scans)
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
+  - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
 
 ## Usage and Installation
 
