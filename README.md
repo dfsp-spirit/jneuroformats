@@ -25,7 +25,7 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
 
-Many of the provided classes provide utility methods which are typically needed in strucural neuroimaging, so check the API documentation before re-inventing the wheel.
+Many of the provided classes provide utility methods which are typically needed in structural neuroimaging, so check the API documentation before re-inventing the wheel.
 
 
 ## Usage and Installation
