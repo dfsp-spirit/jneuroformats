@@ -33,6 +33,15 @@ Many of the provided classes provide utility methods which are typically needed 
 This is work-in-progress, not yet.
 
 
+## Documentation
+
+The API documentation can be generated from the Java doc strings in the source code. It will also be published to a central repository once the package is officially released.
+
+We will also provide a full example app soon.
+
+The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.
+
+
 ## Development
 
 Development information can be found [here](./jneuroformats/README_dev.md).
