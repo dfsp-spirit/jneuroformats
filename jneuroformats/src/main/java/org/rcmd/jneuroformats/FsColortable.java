@@ -35,28 +35,38 @@ public class FsColortable {
         label = new ArrayList<>();    // the region code, as used in the annotation file.
     }
 
+    public FsColortable(List<Integer> structureId, List<Integer> red, List<Integer> green, List<Integer> blue, List<Integer> transparency, List<String> structureName, List<Integer> label) {
+        this.structureId = structureId;
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.transparency = transparency;
+        this.structureName = structureName;
+        this.label = label;
+    }
+
     public int numRegions() {
         return structureId.size();
     }
 
-    public void validate() throws Exception {
+    public void validate() throws IOException {
         if(this.structureId.size() != this.red.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the red list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the red list.");
         }
         if(this.structureId.size() != this.green.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the green list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the green list.");
         }
         if(this.structureId.size() != this.blue.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the blue list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the blue list.");
         }
         if(this.structureId.size() != this.transparency.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the transparency list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the transparency list.");
         }
         if(this.structureId.size() != this.structureName.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the structureName list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the structureName list.");
         }
         if(this.structureId.size() != this.label.size()) {
-            throw new Exception("The number of entries in the FsColortable structureID list does not match the number of elements in the label list.");
+            throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the label list.");
         }
     }
 
@@ -94,7 +104,25 @@ public class FsColortable {
         return colors;
     }
 
-    public static FsColortable fromByteBuffer(ByteBuffer buf, int colortableNumEntries) throws IOException {
+    /**
+     * Read the colortable part of an annot file into an FsColortable object.
+     * @param filePath the path to the annot file.
+     * @return an FsColortable object.
+     * @throws IOException if IO error occurs.
+     */
+    public static FsColortable fromFsAnnotFile(Path filePath) throws IOException {
+        FsAnnot annot = FsAnnot.fromFsAnnotFile(filePath);
+        return annot.colortable;
+    }
+
+    /**
+     * Read the colortable part of an annot file into an FsColortable object. The colortable is read from the ByteBuffer, starting at the current position in the buffer.
+     * @param buf the ByteBuffer to read from.
+     * @param colortableNumEntries the number of entries in the colortable. This is the number of entries in the colortable, as specified in the colortable header. Set to -1 if you do not know the number of entries.
+     * @return an FsColortable object.
+     * @throws IOException if IO error occurs.
+     */
+    protected static FsColortable fromByteBuffer(ByteBuffer buf, int colortableNumEntries) throws IOException {
         FsColortable colortable = new FsColortable();
 
         int numCharsOrigFilename = buf.getInt();
@@ -103,9 +131,11 @@ public class FsColortable {
         String unusedOrigFilename = IOUtil.readFixedLengthString(buf, numCharsOrigFilename);
 
         int colortableNumEntriesDuplicated = buf.getInt();
-        if(colortableNumEntries != colortableNumEntriesDuplicated) {
+        if(colortableNumEntries >= 0 && colortableNumEntries != colortableNumEntriesDuplicated) {
             System.err.println(MessageFormat.format("Warning: the two number of entries fields in the colortable do not match: {0} versus {1}. Use with care.", colortableNumEntries, colortableNumEntriesDuplicated));
         }
+
+        colortableNumEntries = colortableNumEntriesDuplicated;
 
         int entryNumChars;
         for(int i = 0; i < colortableNumEntries; i++) {
