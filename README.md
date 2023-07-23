@@ -3,10 +3,12 @@ Reading and writing structural neuroimaging file formats for Java.
 
 [![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
 
+
 ## About
 
 File format readers and writers for file formats used in structural neuroimaging research, with a focus on the
 surface-based workflow used in [FreeSurfer](https://freesurfer.net).
+
 
 ## Features
 
@@ -22,6 +24,9 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
 * Brain volumnes (3D or 4D MRI scans)
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
+
+Many of the provided classes provide utility functions which are typically needed in strucural neuroimaging, so check the API documentation before re-inventing the wheel.
+
 
 ## Usage and Installation
 
