@@ -16,22 +16,23 @@
 
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class FsLabelTest {
 
-   @Test
-   public void oneCanConstructEmptyFsLabel() {
-       FsLabel label = new FsLabel();
-       assertThat(label.size()).isEqualTo(0);
-   }
+    @Test
+    public void oneCanConstructEmptyFsLabel() {
+        FsLabel label = new FsLabel();
+        assertThat(label.size()).isEqualTo(0);
+    }
 
-   @Test
+    @Test
     public void oneCanReadOurDemoLabelFile() {
 
         Path labelFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.cortex.label");
@@ -62,7 +63,8 @@ public class FsLabelTest {
             cortex.writeToFile(temp, "fslabel");
             FsLabel cortex2 = FsLabel.fromFsLabelFile(temp);
             assertThat(cortex2.size()).isEqualTo(cortex.size());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -16,9 +16,9 @@
 
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +61,8 @@ public class FsSurfaceTest {
             FsSurface cube2 = FsSurface.fromFsSurfaceFile(temp);
             assertThat(cube2.getNumberOfVertices()).isEqualTo(cube.getNumberOfVertices());
             assertThat(cube2.getNumberOfFaces()).isEqualTo(cube.getNumberOfFaces());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

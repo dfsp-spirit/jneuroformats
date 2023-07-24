@@ -14,18 +14,16 @@
  *    limitations under the License.
  */
 
-
 package org.rcmd.jneuroformats;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.nio.file.Path;
-import java.nio.file.Files;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -55,7 +53,6 @@ public class FsMghHeader {
         Pxyz_c = new ArrayList<>();
     }
 
-
     /**
      * Read an FsMghHeader instance from a Buffer in FreeSurfer MGH format. Reads the header and advances the buffer to the data part of the file.
      * @param buf the buffer to read from.
@@ -66,7 +63,7 @@ public class FsMghHeader {
         FsMghHeader header = new FsMghHeader();
 
         int mghVersion = buf.getInt();
-        if(mghVersion != 1) {
+        if (mghVersion != 1) {
             throw new IOException(MessageFormat.format("Invalid MGH format version in MGH file: expected 1, got {0}. File invalid.", mghVersion));
         }
 
@@ -80,17 +77,17 @@ public class FsMghHeader {
 
         header.rasGoodFlag = buf.getShort();
 
-        int unusedHeaderSpaceSizeLeft = 254;   // in bytes
+        int unusedHeaderSpaceSizeLeft = 254; // in bytes
 
-        if(header.rasGoodFlag == 1) {
-            header.sizeX =  buf.getFloat();
-            header.sizeY =  buf.getFloat();
-            header.sizeZ =  buf.getFloat();
+        if (header.rasGoodFlag == 1) {
+            header.sizeX = buf.getFloat();
+            header.sizeY = buf.getFloat();
+            header.sizeZ = buf.getFloat();
 
-            for(int i=0; i<9; i++) {
+            for (int i = 0; i < 9; i++) {
                 header.Mdc.add(buf.getFloat());
             }
-            for(int i=0; i<3; i++) {
+            for (int i = 0; i < 3; i++) {
                 header.Pxyz_c.add(buf.getFloat());
             }
             unusedHeaderSpaceSizeLeft -= 60;
@@ -100,7 +97,7 @@ public class FsMghHeader {
         // We do not seek (via buf.position()) because we want to be able to use this function also for gzip streams later.
         @SuppressWarnings("unused")
         byte unusedByte;
-        while(unusedHeaderSpaceSizeLeft > 0) {
+        while (unusedHeaderSpaceSizeLeft > 0) {
             unusedByte = buf.get();
             unusedHeaderSpaceSizeLeft--;
         }

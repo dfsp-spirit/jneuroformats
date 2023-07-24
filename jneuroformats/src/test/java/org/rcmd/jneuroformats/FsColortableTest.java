@@ -20,13 +20,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 public class FsColortableTest {
 
-   @Test
-   public void oneCanConstructEmptyFsColortable() {
-       FsColortable ct = new FsColortable();
-       assertThat(ct.numRegions()).isEqualTo(0);
-   }
+    @Test
+    public void oneCanConstructEmptyFsColortable() {
+        FsColortable ct = new FsColortable();
+        assertThat(ct.numRegions()).isEqualTo(0);
+    }
 
 }

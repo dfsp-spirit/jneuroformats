@@ -14,19 +14,16 @@
  *    limitations under the License.
  */
 
-
 package org.rcmd.jneuroformats;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import org.rcmd.jneuroformats.IO.IOUtil;
-
 
 public class FsColortable {
 
@@ -39,16 +36,17 @@ public class FsColortable {
     public List<Integer> label;
 
     public FsColortable() {
-        structureId = new ArrayList<>();    // the structure ID, seems unused. This is NOT the region code from the annotation file. See the label field for that.
-        red = new ArrayList<>();    // RGBA color red channel value, 0 - 255.
+        structureId = new ArrayList<>(); // the structure ID, seems unused. This is NOT the region code from the annotation file. See the label field for that.
+        red = new ArrayList<>(); // RGBA color red channel value, 0 - 255.
         green = new ArrayList<>();
         blue = new ArrayList<>();
         transparency = new ArrayList<>();
         structureName = new ArrayList<>();
-        label = new ArrayList<>();    // the region code, as used in the annotation file.
+        label = new ArrayList<>(); // the region code, as used in the annotation file.
     }
 
-    public FsColortable(List<Integer> structureId, List<Integer> red, List<Integer> green, List<Integer> blue, List<Integer> transparency, List<String> structureName, List<Integer> label) {
+    public FsColortable(List<Integer> structureId, List<Integer> red, List<Integer> green, List<Integer> blue, List<Integer> transparency, List<String> structureName,
+                        List<Integer> label) {
         this.structureId = structureId;
         this.red = red;
         this.green = green;
@@ -63,22 +61,22 @@ public class FsColortable {
     }
 
     public void validate() throws IOException {
-        if(this.structureId.size() != this.red.size()) {
+        if (this.structureId.size() != this.red.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the red list.");
         }
-        if(this.structureId.size() != this.green.size()) {
+        if (this.structureId.size() != this.green.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the green list.");
         }
-        if(this.structureId.size() != this.blue.size()) {
+        if (this.structureId.size() != this.blue.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the blue list.");
         }
-        if(this.structureId.size() != this.transparency.size()) {
+        if (this.structureId.size() != this.transparency.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the transparency list.");
         }
-        if(this.structureId.size() != this.structureName.size()) {
+        if (this.structureId.size() != this.structureName.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the structureName list.");
         }
-        if(this.structureId.size() != this.label.size()) {
+        if (this.structureId.size() != this.label.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the label list.");
         }
     }
@@ -89,7 +87,7 @@ public class FsColortable {
      */
     public List<Integer> getColorsRgb() {
         List<Integer> colors = new ArrayList<>();
-        for(int i = 0; i < this.structureId.size(); i++) {
+        for (int i = 0; i < this.structureId.size(); i++) {
             colors.add(this.red.get(i));
             colors.add(this.green.get(i));
             colors.add(this.blue.get(i));
@@ -104,13 +102,14 @@ public class FsColortable {
      */
     public List<Integer> getColorsRgba(Boolean as_transparency) {
         List<Integer> colors = new ArrayList<>();
-        for(int i = 0; i < this.structureId.size(); i++) {
+        for (int i = 0; i < this.structureId.size(); i++) {
             colors.add(this.red.get(i));
             colors.add(this.green.get(i));
             colors.add(this.blue.get(i));
-            if(as_transparency) {
+            if (as_transparency) {
                 colors.add(this.transparency.get(i)); // transparency is 0 - 255, 255 is fully transparent, 0 is fully opaque.
-            } else {
+            }
+            else {
                 colors.add(255 - this.transparency.get(i)); // alpha is 0 - 255, 0 is fully opaque, 255 is fully transparent.
             }
         }
@@ -144,14 +143,15 @@ public class FsColortable {
         String unusedOrigFilename = IOUtil.readFixedLengthString(buf, numCharsOrigFilename);
 
         int colortableNumEntriesDuplicated = buf.getInt();
-        if(colortableNumEntries >= 0 && colortableNumEntries != colortableNumEntriesDuplicated) {
-            System.err.println(MessageFormat.format("Warning: the two number of entries fields in the colortable do not match: {0} versus {1}. Use with care.", colortableNumEntries, colortableNumEntriesDuplicated));
+        if (colortableNumEntries >= 0 && colortableNumEntries != colortableNumEntriesDuplicated) {
+            System.err.println(MessageFormat.format("Warning: the two number of entries fields in the colortable do not match: {0} versus {1}. Use with care.",
+                    colortableNumEntries, colortableNumEntriesDuplicated));
         }
 
         colortableNumEntries = colortableNumEntriesDuplicated;
 
         int entryNumChars;
-        for(int i = 0; i < colortableNumEntries; i++) {
+        for (int i = 0; i < colortableNumEntries; i++) {
             colortable.structureId.add(buf.getInt());
 
             entryNumChars = buf.getInt();
@@ -161,7 +161,7 @@ public class FsColortable {
             colortable.green.add(buf.getInt());
             colortable.blue.add(buf.getInt());
             colortable.transparency.add(buf.getInt());
-            colortable.label.add(colortable.red.get(i) + colortable.green.get(i)*256 + colortable.blue.get(i)*65536 + colortable.transparency.get(i)*16777216);
+            colortable.label.add(colortable.red.get(i) + colortable.green.get(i) * 256 + colortable.blue.get(i) * 65536 + colortable.transparency.get(i) * 16777216);
         }
 
         return colortable;
@@ -174,7 +174,7 @@ public class FsColortable {
      * @throws IOException if IO error occurs.
      */
     protected ByteBuffer writeFsColortableToByteBuffer(ByteBuffer buf) throws IOException {
-        if(buf == null) {
+        if (buf == null) {
             buf = ByteBuffer.allocate(8182 * this.numRegions());
         }
 
@@ -184,7 +184,7 @@ public class FsColortable {
         buf.put(origFilename.getBytes());
         buf.putInt(this.numRegions());
 
-        for(int i = 0; i < this.numRegions(); i++) {
+        for (int i = 0; i < this.numRegions(); i++) {
             buf.putInt(this.structureId.get(i));
 
             buf.putInt(this.structureName.get(i).length());
@@ -198,8 +198,5 @@ public class FsColortable {
 
         return buf;
     }
-
-
-
 
 }

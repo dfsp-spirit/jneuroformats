@@ -16,20 +16,18 @@
 
 package org.rcmd.jneuroformats;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
-import java.nio.channels.WritableByteChannel;
 import java.nio.file.StandardOpenOption;
-
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.rcmd.jneuroformats.IO.IOUtil;
-
 
 public class FsCurv {
 
@@ -81,9 +79,8 @@ public class FsCurv {
         int numberOfVertices = buffer.getInt();
         curv.numberOfFaces = buffer.getInt();
 
-
         curv.numberOfValuesPerVertex = buffer.getInt();
-        if(curv.numberOfValuesPerVertex != 1) {
+        if (curv.numberOfValuesPerVertex != 1) {
             throw new IOException(MessageFormat.format("Invalid number of values per vertex in FreeSurfer curv file: {0}, expected 1. File '{1}' invalid.",
                     curv.numberOfValuesPerVertex, filePath.toString()));
         }
@@ -105,21 +102,23 @@ public class FsCurv {
      */
     public String toCsvFormat(Boolean with_header, Boolean with_index) {
         StringBuilder builder = new StringBuilder();
-        if(with_header) {
-            if(with_index) {
+        if (with_header) {
+            if (with_index) {
                 builder.append("vertindex,value\n");
-            } else {
+            }
+            else {
                 builder.append("value\n");
             }
         }
 
-        if(with_index) {
+        if (with_index) {
             int vidx = 0;
             for (float value : this.data) {
                 builder.append(vidx + "," + value + "\n");
                 vidx++;
             }
-        } else {
+        }
+        else {
             for (float value : this.data) {
                 builder.append(value + "\n");
             }
@@ -149,9 +148,9 @@ public class FsCurv {
         ByteBuffer buf = ByteBuffer.allocate(8192);
 
         // write magic bytes
-        buf.put((byte)255);
-        buf.put((byte)255);
-        buf.put((byte)255);
+        buf.put((byte) 255);
+        buf.put((byte) 255);
+        buf.put((byte) 255);
 
         // write number of vertices
         buf.putInt(this.data.size());
@@ -169,7 +168,6 @@ public class FsCurv {
         return buf;
     }
 
-
     /**
      * Write this FsCurv to a file in curv or CSV format.
      * @param filePath the path to the file to write to
@@ -180,9 +178,11 @@ public class FsCurv {
         format = format.toLowerCase();
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.TRUE, Boolean.TRUE).getBytes());
-        } else if (format.equals("curv")) {
+        }
+        else if (format.equals("curv")) {
             this.writeCurv(filePath);
-        } else {
+        }
+        else {
             throw new IOException(MessageFormat.format("Unknown FsCurv export format {0}.", format));
         }
     }

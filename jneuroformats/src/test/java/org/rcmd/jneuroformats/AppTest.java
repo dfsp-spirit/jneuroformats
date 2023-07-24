@@ -23,8 +23,8 @@ import static org.assertj.core.api.Assertions.*;
 public class AppTest {
 
     @Test
-    public void helloShouldReturnName() {
-        App app = new App();
-        assertThat(app.hello("Bob")).isEqualTo("Hello, Bob");
+    public static void helloShouldReturnName() {
+        String[] params = new String[]{"", "subject1"};
+        App.main(params);
     }
 }

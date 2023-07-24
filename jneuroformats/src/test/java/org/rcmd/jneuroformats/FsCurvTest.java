@@ -16,11 +16,11 @@
 
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +66,8 @@ public class FsCurvTest {
             curv.writeToFile(temp, "curv");
             FsCurv curv2 = FsCurv.fromFsCurvFile(temp);
             assertThat(curv2.data.size()).isEqualTo(curv.data.size());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

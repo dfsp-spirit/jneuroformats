@@ -16,22 +16,23 @@
 
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
+
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class FsAnnotTest {
 
-   @Test
-   public void oneCanConstructEmptyFsAnnot() {
-       FsAnnot annot = new FsAnnot();
-       assertThat(annot.numRegions()).isEqualTo(0);
-   }
+    @Test
+    public void oneCanConstructEmptyFsAnnot() {
+        FsAnnot annot = new FsAnnot();
+        assertThat(annot.numRegions()).isEqualTo(0);
+    }
 
-   @Test
+    @Test
     public void oneCanReadOurDemoAnnotFile() {
 
         Path annotFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.aparc.annot");
@@ -65,7 +66,8 @@ public class FsAnnotTest {
             assertThat(desikan.numRegions()).isEqualTo(desikan2.numRegions());
             assertThat(desikan.numVertices()).isEqualTo(desikan2.numVertices());
             assertThat(desikan.colortable.numRegions()).isEqualTo(desikan2.colortable.numRegions());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

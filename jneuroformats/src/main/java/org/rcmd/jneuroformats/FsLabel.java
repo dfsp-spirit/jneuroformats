@@ -16,16 +16,15 @@
 
 package org.rcmd.jneuroformats;
 
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.nio.file.Path;
-import java.io.File;
-import java.nio.file.Files;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -53,16 +52,16 @@ public class FsLabel {
     }
 
     public void validate() throws IOException {
-        if(this.elementIndex.size() != this.coordX.size()) {
+        if (this.elementIndex.size() != this.coordX.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordX list.");
         }
-        if(this.elementIndex.size() != this.coordY.size()) {
+        if (this.elementIndex.size() != this.coordY.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordY list.");
         }
-        if(this.elementIndex.size() != this.coordZ.size()) {
+        if (this.elementIndex.size() != this.coordZ.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordZ list.");
         }
-        if(this.elementIndex.size() != this.value.size()) {
+        if (this.elementIndex.size() != this.value.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the value list.");
         }
     }
@@ -73,8 +72,10 @@ public class FsLabel {
      * @return a Boolean list, containing at position i whether vertex (or voxel) with index i is part of this label.
      */
     public List<Boolean> elementIndexIsPartOfLabel(int numberOfElements) {
-        if(numberOfElements < this.size()) {
-            throw new IllegalArgumentException(MessageFormat.format("The number of vertices ({0}) given as parameter 'numberOfVertices' is smaller than the number of elements in the label ({1}). Label invalid for given element count.", numberOfElements, this.size()));
+        if (numberOfElements < this.size()) {
+            throw new IllegalArgumentException(MessageFormat.format(
+                    "The number of vertices ({0}) given as parameter 'numberOfVertices' is smaller than the number of elements in the label ({1}). Label invalid for given element count.",
+                    numberOfElements, this.size()));
         }
         List<Boolean> result = new ArrayList<>(numberOfElements);
         for (int i = 0; i < numberOfElements; i++) {
@@ -107,12 +108,12 @@ public class FsLabel {
         while (lineScanner.hasNextLine()) {
             line = lineScanner.nextLine();
 
-            if(line_idx == 0) {  //Skip the first line, it is a comment string.
+            if (line_idx == 0) { // Skip the first line, it is a comment string.
                 line_idx++;
                 continue;
             }
 
-            if(line_idx == 1) {  // The second line contains the number of elements in the label (vertices or voxels).
+            if (line_idx == 1) { // The second line contains the number of elements in the label (vertices or voxels).
                 rowScanner = new Scanner(line);
                 num_elements_hdr = rowScanner.nextInt();
                 rowScanner.close();
@@ -120,10 +121,10 @@ public class FsLabel {
                 continue;
             }
 
-
-            //Scan lines >= 3 for tokens
+            // Scan lines >= 3 for tokens
             // Note: the current Scanner approach is rather slow.
-            line_preproc = line.trim().replaceAll(" +", ",");  // The lines do not contain consistent field separators. Some fields are separated by 2 spaces "  ", some by a single space " ". We replace all spaces by commas, and then use a comma as field separator.
+            line_preproc = line.trim().replaceAll(" +", ","); // The lines do not contain consistent field separators. Some fields are separated by 2 spaces " ", some by a single space " ". We replace all spaces by commas, and then use a comma as field
+                                                              // separator.
             rowScanner = new Scanner(line_preproc);
             rowScanner.useDelimiter(",");
             label.elementIndex.add(rowScanner.nextInt());
@@ -131,13 +132,15 @@ public class FsLabel {
             label.coordY.add(rowScanner.nextFloat());
             label.coordZ.add(rowScanner.nextFloat());
             label.value.add(rowScanner.nextFloat());
-            assert ! rowScanner.hasNext() : MessageFormat.format("The label file contains more than 5 columns in line {0}. Invalid label file.", line_idx);
+            assert !rowScanner.hasNext() : MessageFormat.format("The label file contains more than 5 columns in line {0}. Invalid label file.", line_idx);
             rowScanner.close();
             line_idx++;
         }
 
-        if(num_elements_hdr != label.size()) {
-            throw new IOException(MessageFormat.format("The number of elements in the header ({0}) does not match the number of elements in the label ({1}). Label invalid.", num_elements_hdr, label.size()));
+        if (num_elements_hdr != label.size()) {
+            throw new IOException(
+                    MessageFormat.format("The number of elements in the header ({0}) does not match the number of elements in the label ({1}). Label invalid.",
+                            num_elements_hdr, label.size()));
         }
 
         label.validate();
@@ -151,12 +154,12 @@ public class FsLabel {
      */
     public String toCsvFormat(Boolean with_header) {
         StringBuilder builder = new StringBuilder();
-        if(with_header) {
+        if (with_header) {
             builder.append("index,coordx,coordy,coordz,value\n");
         }
 
-        for (int i=0; i < this.size(); i++) {
-                builder.append(this.elementIndex.get(i)+ "," + this.coordX.get(i) + "," + this.coordY.get(i) + "," + this.coordZ.get(i) + "," + this.value.get(i) +"\n");
+        for (int i = 0; i < this.size(); i++) {
+            builder.append(this.elementIndex.get(i) + "," + this.coordX.get(i) + "," + this.coordY.get(i) + "," + this.coordZ.get(i) + "," + this.value.get(i) + "\n");
         }
 
         return builder.toString();
@@ -172,8 +175,8 @@ public class FsLabel {
         builder.append("#!ascii label  , from subject  vox2ras=TkReg\n");
         builder.append(this.size() + "\n");
 
-        for (int i=0; i < this.size(); i++) {
-                builder.append(this.elementIndex.get(i)+ "  " + this.coordX.get(i) + "  " + this.coordY.get(i) + "  " + this.coordZ.get(i) + " " + this.value.get(i) +"\n");
+        for (int i = 0; i < this.size(); i++) {
+            builder.append(this.elementIndex.get(i) + "  " + this.coordX.get(i) + "  " + this.coordY.get(i) + "  " + this.coordZ.get(i) + " " + this.value.get(i) + "\n");
         }
 
         return builder.toString();
@@ -189,12 +192,13 @@ public class FsLabel {
         format = format.toLowerCase();
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.TRUE).getBytes());
-        } else if (format.equals("fslabel")) {
+        }
+        else if (format.equals("fslabel")) {
             Files.write(filePath, toFsLabelFormat().getBytes());
-        } else {
+        }
+        else {
             throw new IOException(MessageFormat.format("Unknown FsLabel export format {0}.", format));
         }
     }
 
 }
-
