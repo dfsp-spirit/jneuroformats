@@ -84,7 +84,7 @@ public class FsColortable {
     }
 
     /**
-     * Get the RGB colors for all vertices in the surface, as a list of integers. The list contains the red, green, and blue channel values for each vertex, in that order (v0r, v0g, v0b, v1r, v1g, v1b, ...). Color values are in range 0 - 255.
+     * Get the RGB colors for all regions, as a list of integers. The list contains the red, green, and blue channel values for each vertex, in that order (v0r, v0g, v0b, v1r, v1g, v1b, ...). Color values are in range 0 - 255.
      * @return a list of integers, representing RBG vertex colors.
      */
     public List<Integer> getColorsRgb() {
@@ -98,8 +98,9 @@ public class FsColortable {
     }
 
     /**
-     * Get the RGBA colors for all vertices in the surface, as a list of integers. The list contains the red, green, blue and transparency channel values for each vertex, in that order (v0r, v0g, v0b, v0t, v1r, v1g, v1b, v1t, ...). Color values are in range 0 - 255.
-     * @param as_transparency whether to use transparency or alpha channel. Transparency is 0 - 255, 255 is fully transparent, 0 is fully opaque. Alpha is 0 - 255, 255 is fully opaque, 0 is fully transparent. Note that the FreeSurfer files store transparency, but most graphics libraries use alpha, so set this to Boolean.FALSE if in doubt.
+     * Get the RGBA colors for all regions, as a list of integers. The list contains the red, green, blue and transparency channel values for each vertex, in that order (v0r, v0g, v0b, v0t, v1r, v1g, v1b, v1t, ...). Color values are in range 0 - 255.
+     * See function `FsAnnot.getVertexColorsRgb()` if you need to get the colors for a specific vertex or all vertices.
+     * @param as_transparency whether to use transparency or alpha as the last channel. Transparency is 0 - 255, 255 is fully transparent, 0 is fully opaque. Alpha is 0 - 255, 255 is fully opaque, 0 is fully transparent. Note that the FreeSurfer files store transparency, but most graphics libraries use alpha, so set this to `Boolean.FALSE` if in doubt.
      * @return a list of integers, representing RBGA (or RGBT, depending on the setting of the `as_transparency` parameter) vertex colors.
      */
     public List<Integer> getColorsRgba(Boolean as_transparency) {
@@ -161,10 +162,40 @@ public class FsColortable {
             colortable.green.add(buf.getInt());
             colortable.blue.add(buf.getInt());
             colortable.transparency.add(buf.getInt());
-            colortable.label.add(colortable.red.get(i) + colortable.green.get(i)*256 + colortable.blue.get(i)*65536 + colortable.transparency.get(i)*16777216);
+            colortable.label.add(FsColortable.computeLabelFromRgb(colortable.red.get(i), colortable.green.get(i), colortable.blue.get(i)));
         }
 
         return colortable;
+    }
+
+    public static int computeLabelFromRgb(int red, int green, int blue) {
+        return red + green*256 + blue*65536;
+    }
+
+    public static int[] computeRgbFromLabel(int label) {
+        int[] rgbt = new int[3];
+        rgbt[0] = label % 256;
+        rgbt[1] = (label / 256) % 256;
+        rgbt[2] = (label / 65536) % 256;
+        return rgbt;
+    }
+
+    /**
+     * Get the RGB color for a given label. Returns null if the label is not found.
+     * @param label the label to get the color for. Typically the vertex label stored in the annotation file.
+     * @return an array of three integers, representing the red, green, and blue channel values, in that order. Values are in range 0 - 255.
+     */
+    public int[] getRgbForLabel(int label) {
+        int[] rgb = new int[3];
+        for(int i = 0; i < this.label.size(); i++) {
+            if(this.label.get(i) == label) {
+                rgb[0] = this.red.get(i);
+                rgb[1] = this.green.get(i);
+                rgb[2] = this.blue.get(i);
+                return rgb;
+            }
+        }
+        return null;
     }
 
     /**

@@ -182,6 +182,14 @@ public class FsAnnot {
         channel.close();
     }
 
+    public List<int[]> getVertexColorsRgb() {
+        List<int[]> colors = new ArrayList<>(this.numVertices());
+        for(int i = 0; i < this.vertexLabels.size(); i++) {
+            colors.add(this.colortable.getRgbForLabel(this.vertexLabels.get(i)));
+        }
+        return colors;
+    }
+
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
      * @note This method is used internally by writeSurface(Path filePath).

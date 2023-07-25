@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -68,5 +69,22 @@ public class FsAnnotTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void oneCanComputeVertexColorsFromFsAnnot() {
+
+        Path annotFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.aparc.annot");
+        FsAnnot desikan;
+        try {
+            desikan = FsAnnot.fromFsAnnotFile(annotFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        List<int[]> colors = desikan.getVertexColorsRgb();
+        assertThat(colors.size()).isEqualTo(desikan.numVertices());
+        assertThat(colors.get(0).length).isEqualTo(3); // R, G, B
     }
 }
