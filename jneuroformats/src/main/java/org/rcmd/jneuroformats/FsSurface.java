@@ -29,7 +29,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rcmd.jneuroformats.IO.IOUtil;
+import org.rcmd.jneuroformats.Util.IO;
 
 /**
  * Represents a FreeSurfer surface, i.e. a triangular mesh
@@ -194,17 +194,17 @@ public class FsSurface {
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         // Read the header
-        int magicNumberPart1 = IOUtil.getUint8(buffer);
-        int magicNumberPart2 = IOUtil.getUint8(buffer);
-        int magicNumberPart3 = IOUtil.getUint8(buffer);
+        int magicNumberPart1 = IO.getUint8(buffer);
+        int magicNumberPart2 = IO.getUint8(buffer);
+        int magicNumberPart3 = IO.getUint8(buffer);
 
         if (magicNumberPart1 != 255 || magicNumberPart2 != 255 || magicNumberPart3 != 254) {
             throw new IOException(MessageFormat.format("Invalid magic number in FreeSurfer surface file: magic codes {0} {1} {2}, expected 255 255 254. File invalid.",
                     magicNumberPart1, magicNumberPart2, magicNumberPart3));
         }
 
-        surface.createdLine = IOUtil.readNewlineTerminatedString(buffer);
-        surface.commentLine = IOUtil.readNewlineTerminatedString(buffer);
+        surface.createdLine = IO.readNewlineTerminatedString(buffer);
+        surface.commentLine = IO.readNewlineTerminatedString(buffer);
 
         int numberOfVertices = buffer.getInt();
         int numberOfFaces = buffer.getInt();

@@ -16,7 +16,6 @@
 
 package org.rcmd.jneuroformats;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +23,6 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.

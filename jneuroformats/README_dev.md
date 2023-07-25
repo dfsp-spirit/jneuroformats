@@ -9,7 +9,7 @@ I suggest to install [SDKMan](https://sdkman.io/) and use it to make sure you ha
 
 ```shell
 curl -s "https://get.sdkman.io" | bash         # install SDKMan
-sdk install java    # installs latest LTS version of JDK by default, which is fine. Should be 17.x
+sdk install java    # installs latest LTS version of JDK by default, which is fine. Should be 17.x as of 2023.
 sdk install maven
 ```
 
@@ -38,7 +38,7 @@ mvn test
 
 ### Building with maven
 
-Make sure you are in the `<repo>/jneuroformats/` directory. Then run the following command to build this project:
+Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo. Then run the following command to build this project:
 
 ```shell
 mvn clean verify
@@ -58,12 +58,15 @@ mvn process-sources
 
 #### Building the docs
 
+Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo.
+
 ```shell
 mvn javadoc:javadoc
 ```
 
 ### Running the demo App
 
+Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo.
 
 ```shell
 mvn package    # to build the jar file.

@@ -24,7 +24,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rcmd.jneuroformats.IO.IOUtil;
+import org.rcmd.jneuroformats.Util.IO;
 
 public class FsColortable {
 
@@ -144,7 +144,7 @@ public class FsColortable {
         int numCharsOrigFilename = buf.getInt();
 
         @SuppressWarnings("unused")
-        String unusedOrigFilename = IOUtil.readFixedLengthString(buf, numCharsOrigFilename);
+        String unusedOrigFilename = IO.readFixedLengthString(buf, numCharsOrigFilename);
 
         int colortableNumEntriesDuplicated = buf.getInt();
         if (colortableNumEntries >= 0 && colortableNumEntries != colortableNumEntriesDuplicated) {
@@ -159,7 +159,7 @@ public class FsColortable {
             colortable.structureId.add(buf.getInt());
 
             entryNumChars = buf.getInt();
-            colortable.structureName.add(IOUtil.readFixedLengthString(buf, entryNumChars));
+            colortable.structureName.add(IO.readFixedLengthString(buf, entryNumChars));
 
             colortable.red.add(buf.getInt());
             colortable.green.add(buf.getInt());

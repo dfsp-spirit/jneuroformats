@@ -27,7 +27,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rcmd.jneuroformats.IO.IOUtil;
+import org.rcmd.jneuroformats.Util.IO;
 
 public class FsCurv {
 
@@ -67,9 +67,9 @@ public class FsCurv {
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         // Read the header
-        int magicNumberPart1 = IOUtil.getUint8(buffer);
-        int magicNumberPart2 = IOUtil.getUint8(buffer);
-        int magicNumberPart3 = IOUtil.getUint8(buffer);
+        int magicNumberPart1 = IO.getUint8(buffer);
+        int magicNumberPart2 = IO.getUint8(buffer);
+        int magicNumberPart3 = IO.getUint8(buffer);
 
         if (magicNumberPart1 != 255 || magicNumberPart2 != 255 || magicNumberPart3 != 255) {
             throw new IOException(MessageFormat.format("Invalid magic number in FreeSurfer curv file: magic codes {0} {1} {2}, expected 255 255 255. File '{3}' invalid.",

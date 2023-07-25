@@ -14,11 +14,11 @@
  *    limitations under the License.
  */
 
-package org.rcmd.jneuroformats.IO;
+package org.rcmd.jneuroformats.Util;
 
 import java.nio.ByteBuffer;
 
-public class IOUtil {
+public class IO {
 
     public static String readNewlineTerminatedString(ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder();
