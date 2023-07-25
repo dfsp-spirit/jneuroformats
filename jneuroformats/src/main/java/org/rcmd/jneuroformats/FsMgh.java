@@ -16,18 +16,17 @@
 
 package org.rcmd.jneuroformats;
 
-
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.nio.file.Path;
-import java.nio.file.Files;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.io.FileInputStream;
-import java.util.zip.GZIPInputStream;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Models a FreeSurfer label, can be a surface label or a volume label.
@@ -54,14 +53,11 @@ public class FsMgh {
         this.data = data;
     }
 
-
     public static void validateMriDataType(int mriDataType) throws IOException {
-        if(!(mriDataType == MRI_FLOAT || mriDataType == MRI_INT || mriDataType == MRI_SHORT || mriDataType == MRI_UCHAR)) {
+        if (!(mriDataType == MRI_FLOAT || mriDataType == MRI_INT || mriDataType == MRI_SHORT || mriDataType == MRI_UCHAR)) {
             throw new IOException("Invalid MRI data type.");
         }
     }
-
-
 
     /**
      * Read a file in FreeSurfer mgh format and return a FsMgh object.
@@ -88,32 +84,31 @@ public class FsMgh {
 
     private static byte[] convertBytes(List<Byte> integers) {
         byte[] ret = new byte[integers.size()];
-        for (int i=0; i < ret.length; i++)
-        {
+        for (int i = 0; i < ret.length; i++) {
             ret[i] = integers.get(i).byteValue();
         }
         return ret;
     }
 
     public static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
-      FileInputStream fis = new FileInputStream(filePath.toFile());
-      GZIPInputStream gzis = new GZIPInputStream(fis);
-      ArrayList<Byte> allBytes = new ArrayList<Byte>();
-      byte[] buffer = new byte[65536];
-      int numRead;
-      while ((numRead = gzis.read(buffer)) != -1) {
-        for(int i = 0; i < numRead; i++) {
-            allBytes.add(buffer[i]);
+        FileInputStream fis = new FileInputStream(filePath.toFile());
+        GZIPInputStream gzis = new GZIPInputStream(fis);
+        ArrayList<Byte> allBytes = new ArrayList<Byte>();
+        byte[] buffer = new byte[65536];
+        int numRead;
+        while ((numRead = gzis.read(buffer)) != -1) {
+            for (int i = 0; i < numRead; i++) {
+                allBytes.add(buffer[i]);
+            }
         }
-      }
 
-      byte[] ab = convertBytes(allBytes);
-      ByteBuffer bbuffer = ByteBuffer.wrap(ab);
+        byte[] ab = convertBytes(allBytes);
+        ByteBuffer bbuffer = ByteBuffer.wrap(ab);
 
-      FsMgh mgh = new FsMgh();
-      mgh.header = FsMghHeader.fromByteBuffer(bbuffer);
-      mgh.data = FsMghData.fromByteBuffer(bbuffer, mgh.header);
-      return mgh;
+        FsMgh mgh = new FsMgh();
+        mgh.header = FsMghHeader.fromByteBuffer(bbuffer);
+        mgh.data = FsMghData.fromByteBuffer(bbuffer, mgh.header);
+        return mgh;
     }
 
     /**
@@ -126,10 +121,10 @@ public class FsMgh {
         format = format.toLowerCase();
         if (format.equals("mgh")) {
             System.err.println("FsMgh.writeToFile: Not implemented yet.");
-        } else {
+        }
+        else {
             throw new IOException(MessageFormat.format("Unknown FsMgh export format {0}.", format));
         }
     }
 
 }
-

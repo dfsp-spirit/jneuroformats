@@ -62,6 +62,13 @@ mvn process-sources
 mvn javadoc:javadoc
 ```
 
+### Running the demo App
+
+
+```shell
+mvn package    # to build the jar file.
+java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App src/test/resources/subjects_dir subject1
+```
 
 ### Publishing to Maven central
 

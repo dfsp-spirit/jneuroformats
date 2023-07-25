@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-
 package org.rcmd.jneuroformats;
 
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.WritableByteChannel;
@@ -208,9 +208,9 @@ public class FsSurface {
         int numberOfVertices = buffer.getInt();
         int numberOfFaces = buffer.getInt();
 
-        //System.out.println(MessageFormat.format("CreatedLine is: {0}", unusedCreatedLine));
-        //System.out.println(MessageFormat.format("CommentLine is: {0}", unusedCommentLine));
-        //System.out.println(MessageFormat.format("Reading surface with {0} vertices and {1} faces.", numberOfVertices, numberOfFaces));
+        // System.out.println(MessageFormat.format("CreatedLine is: {0}", unusedCreatedLine));
+        // System.out.println(MessageFormat.format("CommentLine is: {0}", unusedCommentLine));
+        // System.out.println(MessageFormat.format("Reading surface with {0} vertices and {1} faces.", numberOfVertices, numberOfFaces));
 
         for (int i = 0; i < numberOfVertices; i++) {
             float[] vertex = new float[3];
@@ -236,6 +236,17 @@ public class FsSurface {
      * @return the PLY format string
      */
     public String toPlyFormat() {
+        List<int[]> vertexColors = null;
+        return toPlyFormat(vertexColors);
+    }
+
+    /**
+     * Generate string representation of this mesh in PLY format.
+     * @param vertexColors the vertex colors to use, as a list of int arrays of length 3, with values in the range 0-255. The first 3 values must be the r, g and b value for the first vertex.
+     * @return the PLY format string
+     */
+    public String toPlyFormat(List<int[]> vertexColors) {
+        Boolean useVertexColors = vertexColors != null;
         StringBuilder builder = new StringBuilder();
         builder.append("ply\n");
         builder.append("format ascii 1.0\n");
@@ -244,18 +255,33 @@ public class FsSurface {
         builder.append("property float x\n");
         builder.append("property float y\n");
         builder.append("property float z\n");
+        if (useVertexColors) {
+            if (vertexColors.size() != this.vertices.size()) {
+                throw new IllegalArgumentException(
+                        MessageFormat.format("Number of vertex coordinates and vertex colors must match when writing PLY file, but got {0} and {1} respectively.",
+                                this.vertices.size(), vertexColors.size()));
+            }
+            builder.append("property uchar red\nproperty uchar green\nproperty uchar blue\n");
+        }
         builder.append("element face " + getNumberOfFaces() + "\n");
         builder.append("property list uchar int vertex_indices\n");
         builder.append("end_header\n");
-        for (float[] vertex : this.vertices) {
-            builder.append(vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
+        float[] vertex;
+        int[] vertexColor;
+        for (int i = 0; i < this.vertices.size(); i++) {
+            vertex = this.vertices.get(i);
+            builder.append(vertex[0] + " " + vertex[1] + " " + vertex[2]);
+            if (useVertexColors) {
+                vertexColor = vertexColors.get(i);
+                builder.append(" " + vertexColor[0] + " " + vertexColor[1] + " " + vertexColor[2]);
+            }
+            builder.append("\n");
         }
         for (int[] face : this.faces) {
             builder.append("3 " + face[0] + " " + face[1] + " " + face[2] + "\n");
         }
         return builder.toString();
     }
-
 
     /**
      * Generate string representation of this mesh in Wavefront Object (OBJ) format.
@@ -272,7 +298,6 @@ public class FsSurface {
         }
         return builder.toString();
     }
-
 
     /**
      * Write this mesh to a file in FreeSurfer surface format.
@@ -296,17 +321,17 @@ public class FsSurface {
         ByteBuffer buf = ByteBuffer.allocate(8192);
 
         // write magic bytes
-        buf.put((byte)255);
-        buf.put((byte)255);
-        buf.put((byte)254);
+        buf.put((byte) 255);
+        buf.put((byte) 255);
+        buf.put((byte) 254);
 
         // write created line
         buf.put(createdLine.getBytes());
-        buf.putChar((char)10);  // newline
+        buf.putChar((char) 10); // newline
 
         // write comment line
         buf.put(commentLine.getBytes());
-        buf.putChar((char)10);
+        buf.putChar((char) 10);
 
         // write number of vertices
         buf.putInt(getNumberOfVertices());
@@ -334,7 +359,6 @@ public class FsSurface {
         return buf;
     }
 
-
     /**
      * Write this mesh to a file in PLY or OBJ format.
      * @param filePath the path to the file to write to
@@ -345,11 +369,14 @@ public class FsSurface {
         format = format.toLowerCase();
         if (format.equals("ply")) {
             Files.write(filePath, toPlyFormat().getBytes());
-        } else if (format.equals("obj")) {
+        }
+        else if (format.equals("obj")) {
             Files.write(filePath, toObjFormat().getBytes());
-        } else if (format.equals("surf")) {
+        }
+        else if (format.equals("surf")) {
             this.writeSurface(filePath);
-        } else {
+        }
+        else {
             throw new IOException(MessageFormat.format("Unknown mesh export format {0}.", format));
         }
     }

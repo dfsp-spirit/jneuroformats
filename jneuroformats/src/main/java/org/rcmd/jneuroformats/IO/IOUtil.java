@@ -32,7 +32,7 @@ public class IOUtil {
 
     public static String readFixedLengthString(ByteBuffer buffer, int length) {
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             builder.append((char) getUint8(buffer));
         }
         return builder.toString();

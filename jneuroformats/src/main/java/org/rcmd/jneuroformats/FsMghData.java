@@ -16,7 +16,6 @@
 
 package org.rcmd.jneuroformats;
 
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -36,7 +35,7 @@ public class FsMghData {
 
     public FsMghData(int mri_datatype, int dim1size, int dim2size, int dim3size, int dim4size) {
         this.mri_datatype = mri_datatype;
-        switch(mri_datatype) {
+        switch (mri_datatype) {
             case FsMgh.MRI_FLOAT:
                 data_mri_float = new float[dim1size][dim2size][dim3size][dim4size];
                 break;
@@ -59,7 +58,7 @@ public class FsMghData {
 
     public FsMghData(FsMghHeader header) {
         this.mri_datatype = header.mri_datatype;
-        switch(mri_datatype) {
+        switch (mri_datatype) {
             case FsMgh.MRI_FLOAT:
                 data_mri_float = new float[header.dim1size][header.dim2size][header.dim3size][header.dim4size];
                 break;
@@ -85,41 +84,44 @@ public class FsMghData {
     public static FsMghData fromByteBuffer(ByteBuffer buf, FsMghHeader header) throws IOException {
         FsMghData data = new FsMghData(header);
 
-        if(header.mri_datatype == FsMgh.MRI_FLOAT) {
-            for(int i = 0; i < header.dim1size; i++) {
-                for(int j = 0; j < header.dim2size; j++) {
-                    for(int k = 0; k < header.dim3size; k++) {
-                        for(int l = 0; l < header.dim4size; l++) {
+        if (header.mri_datatype == FsMgh.MRI_FLOAT) {
+            for (int i = 0; i < header.dim1size; i++) {
+                for (int j = 0; j < header.dim2size; j++) {
+                    for (int k = 0; k < header.dim3size; k++) {
+                        for (int l = 0; l < header.dim4size; l++) {
                             data.data_mri_float[i][j][k][l] = buf.getFloat();
                         }
                     }
                 }
             }
-        } else if(header.mri_datatype == FsMgh.MRI_INT) {
-            for(int i = 0; i < header.dim1size; i++) {
-                for(int j = 0; j < header.dim2size; j++) {
-                    for(int k = 0; k < header.dim3size; k++) {
-                        for(int l = 0; l < header.dim4size; l++) {
+        }
+        else if (header.mri_datatype == FsMgh.MRI_INT) {
+            for (int i = 0; i < header.dim1size; i++) {
+                for (int j = 0; j < header.dim2size; j++) {
+                    for (int k = 0; k < header.dim3size; k++) {
+                        for (int l = 0; l < header.dim4size; l++) {
                             data.data_mri_int[i][j][k][l] = buf.getInt();
                         }
                     }
                 }
             }
-        } else if(header.mri_datatype == FsMgh.MRI_SHORT) {
-            for(int i = 0; i < header.dim1size; i++) {
-                for(int j = 0; j < header.dim2size; j++) {
-                    for(int k = 0; k < header.dim3size; k++) {
-                        for(int l = 0; l < header.dim4size; l++) {
+        }
+        else if (header.mri_datatype == FsMgh.MRI_SHORT) {
+            for (int i = 0; i < header.dim1size; i++) {
+                for (int j = 0; j < header.dim2size; j++) {
+                    for (int k = 0; k < header.dim3size; k++) {
+                        for (int l = 0; l < header.dim4size; l++) {
                             data.data_mri_short[i][j][k][l] = buf.getShort();
                         }
                     }
                 }
             }
-        } else if(header.mri_datatype == FsMgh.MRI_UCHAR) {
-            for(int i = 0; i < header.dim1size; i++) {
-                for(int j = 0; j < header.dim2size; j++) {
-                    for(int k = 0; k < header.dim3size; k++) {
-                        for(int l = 0; l < header.dim4size; l++) {
+        }
+        else if (header.mri_datatype == FsMgh.MRI_UCHAR) {
+            for (int i = 0; i < header.dim1size; i++) {
+                for (int j = 0; j < header.dim2size; j++) {
+                    for (int k = 0; k < header.dim3size; k++) {
+                        for (int l = 0; l < header.dim4size; l++) {
                             data.data_mri_uchar[i][j][k][l] = buf.get();
                         }
                     }
