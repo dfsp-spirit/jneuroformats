@@ -16,12 +16,24 @@
 
 package org.rcmd.jneuroformats;
 
+import java.awt.Color;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+
+import org.rcmd.jneuroformats.Util.Viridis;
+
+import static org.rcmd.jneuroformats.Utilities.getAllColormapColors;
+import static org.rcmd.jneuroformats.Utilities.scaleToZeroOne;
 
 public class App {
 
     private static void usage() {
-        System.out.println("USAGE: java -jar jneuroformatsdemo.jar <subjects_dir> <subject_id>");
+        System.out.println("=== jneuroformats Demo App: load some data from a FreeSurfer subject directory ===");
+        System.out.println("USAGE: java -jar app.jar <subjects_dir> <subject_id>");
+        System.out.println("Parameters details:");
+        System.out.println(" <subjects_dir> : string, path to the subjects directory created by FreeSurfer's recon-all program for all subjects.");
+        System.out.println(" <subject_id>   : string, subject identifier, e.g. 'bert'. A sub directory with this name must exist under <subjects_dir>.");
     }
 
     public static void main(String[] args) {
@@ -86,28 +98,28 @@ public class App {
         }
         System.out.println("Read " + lhSulc.data.size() + " per-vertex values from the sulc file.");
 
-        /*
-         *
-         * // Now export a vertex-colored mesh in PLY format from the per-vertex sulc data.
-         * Path plyFile = java.nio.file.Paths.get(subjectDir.toString(), "surf", "lh.white.sulc.ply");
-         * try {
-         * List<int[]> vertexColorsRgb = Colormaps.viridis(lhSulc.data);
-         * Files.write(plyFile, lhSurface.toPlyFormat(vertexColorsRgb).getBytes());
-         * }
-         * catch (Exception e) {
-         * throw new RuntimeException(e);
-         * }
-         *
-         * // Now export a vertex-colored mesh in PLY format from the annotation.
-         * Path plyFile = java.nio.file.Paths.get(subjectDir.toString(), "label", "lh.aparc.annot.ply");
-         * try {
-         * Files.write(plyFile, lhSurface.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
-         * }
-         * catch (Exception e) {
-         * throw new RuntimeException(e);
-         * }
-         *
-         */
+        // Now export a vertex-colored mesh in PLY format from the per-vertex sulc data.
+        Path plyFileSulc = java.nio.file.Paths.get(subjectDir.toString(), "surf", "lh.white.sulc.ply");
+        try {
+            Colormap viridis = new Viridis();
+            List<Color> vertexColorsRgb = getAllColormapColors(viridis, scaleToZeroOne(lhSulc.data));
+            Files.write(plyFileSulc, lhSurface.toPlyFormat(vertexColorsRgb).getBytes());
+            System.out.println("Wrote mesh vertex-colored by per-vertex sulcal depth to file: " + plyFileSulc.toString());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // Now export a vertex-colored mesh in PLY format from the annotation.
+        Path plyFileAnnot = java.nio.file.Paths.get(subjectDir.toString(), "label", "lh.aparc.annot.ply");
+        try {
+            Files.write(plyFileAnnot, lhSurface.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
+            System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + plyFileAnnot.toString());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

@@ -16,6 +16,7 @@
 
 package org.rcmd.jneuroformats;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
@@ -59,6 +60,8 @@ public class FsColortable {
     public int numRegions() {
         return structureId.size();
     }
+
+    private Boolean didPrintFullDuringWarning = Boolean.FALSE;
 
     public void validate() throws IOException {
         if (this.structureId.size() != this.red.size()) {
@@ -162,21 +165,23 @@ public class FsColortable {
             colortable.green.add(buf.getInt());
             colortable.blue.add(buf.getInt());
             colortable.transparency.add(buf.getInt());
-            colortable.label.add(FsColortable.computeLabelFromRgb(colortable.red.get(i), colortable.green.get(i), colortable.blue.get(i)));
+            colortable.label
+                    .add(FsColortable.computeLabelFromRgb(colortable.red.get(i), colortable.green.get(i), colortable.blue.get(i), colortable.transparency.get(i)));
         }
 
         return colortable;
     }
 
-    public static int computeLabelFromRgb(int red, int green, int blue) {
-        return red + green*256 + blue*65536;
+    public static int computeLabelFromRgb(int red, int green, int blue, int alpha) {
+        return red + green * 256 + blue * 65536 + alpha * 16777216;
     }
 
     public static int[] computeRgbFromLabel(int label) {
-        int[] rgbt = new int[3];
+        int[] rgbt = new int[4];
         rgbt[0] = label % 256;
         rgbt[1] = (label / 256) % 256;
         rgbt[2] = (label / 65536) % 256;
+        rgbt[3] = (label / 16777216) % 256;
         return rgbt;
     }
 
@@ -185,17 +190,33 @@ public class FsColortable {
      * @param label the label to get the color for. Typically the vertex label stored in the annotation file.
      * @return an array of three integers, representing the red, green, and blue channel values, in that order. Values are in range 0 - 255.
      */
-    public int[] getRgbForLabel(int label) {
-        int[] rgb = new int[3];
-        for(int i = 0; i < this.label.size(); i++) {
-            if(this.label.get(i) == label) {
-                rgb[0] = this.red.get(i);
-                rgb[1] = this.green.get(i);
-                rgb[2] = this.blue.get(i);
-                return rgb;
+    public Color getRgbForLabel(Integer label) {
+        if (label.equals(0)) {
+            return new Color(0, 0, 0); // Black for unknown region.
+        }
+        for (int i = 0; i < this.label.size(); i++) {
+            if (this.label.get(i).equals(label)) {
+                return new Color(this.red.get(i), this.green.get(i), this.blue.get(i));
             }
         }
-        return null;
+        if (!didPrintFullDuringWarning) {
+            System.err.println(MessageFormat.format("Warning: label {0} not found in colortable with {1} entries. Returning Color.WHITE.", label, this.label.size()));
+            System.err.println(this.toString());
+            this.didPrintFullDuringWarning = Boolean.TRUE;
+        }
+        return new Color(255, 255, 255);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("FsColortable:\n");
+        sb.append(MessageFormat.format("  numRegions: {0}\n", this.numRegions()));
+        for (int i = 0; i < this.structureName.size(); i++) {
+            sb.append(MessageFormat.format("  {0}: {1} ({2}, {3}, {4}, {5}, {6})\n", i, this.structureName.get(i), this.red.get(i), this.green.get(i), this.blue.get(i),
+                    this.transparency.get(i), this.label.get(i)));
+        }
+        return sb.toString();
     }
 
     /**

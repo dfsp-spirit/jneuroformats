@@ -16,12 +16,13 @@
 
 package org.rcmd.jneuroformats;
 
+import java.awt.Color;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -85,8 +86,7 @@ public class FsAnnotTest {
             throw new RuntimeException(e);
         }
 
-        List<int[]> colors = desikan.getVertexColorsRgb();
+        List<Color> colors = desikan.getVertexColorsRgb();
         assertThat(colors.size()).isEqualTo(desikan.numVertices());
-        assertThat(colors.get(0).length).isEqualTo(3); // R, G, B
     }
 }

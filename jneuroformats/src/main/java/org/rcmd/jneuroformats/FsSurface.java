@@ -16,6 +16,7 @@
 
 package org.rcmd.jneuroformats;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.lang.IllegalArgumentException;
 import java.nio.ByteBuffer;
@@ -236,7 +237,7 @@ public class FsSurface {
      * @return the PLY format string
      */
     public String toPlyFormat() {
-        List<int[]> vertexColors = null;
+        List<Color> vertexColors = null;
         return toPlyFormat(vertexColors);
     }
 
@@ -245,7 +246,7 @@ public class FsSurface {
      * @param vertexColors the vertex colors to use, as a list of int arrays of length 3, with values in the range 0-255. The first 3 values must be the r, g and b value for the first vertex.
      * @return the PLY format string
      */
-    public String toPlyFormat(List<int[]> vertexColors) {
+    public String toPlyFormat(List<Color> vertexColors) {
         Boolean useVertexColors = vertexColors != null;
         StringBuilder builder = new StringBuilder();
         builder.append("ply\n");
@@ -267,13 +268,13 @@ public class FsSurface {
         builder.append("property list uchar int vertex_indices\n");
         builder.append("end_header\n");
         float[] vertex;
-        int[] vertexColor;
+        Color vertexColor;
         for (int i = 0; i < this.vertices.size(); i++) {
             vertex = this.vertices.get(i);
             builder.append(vertex[0] + " " + vertex[1] + " " + vertex[2]);
             if (useVertexColors) {
                 vertexColor = vertexColors.get(i);
-                builder.append(" " + vertexColor[0] + " " + vertexColor[1] + " " + vertexColor[2]);
+                builder.append(" " + vertexColor.getRed() + " " + vertexColor.getGreen() + " " + vertexColor.getBlue());
             }
             builder.append("\n");
         }

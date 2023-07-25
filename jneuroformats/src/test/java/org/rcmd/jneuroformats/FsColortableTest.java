@@ -28,18 +28,20 @@ public class FsColortableTest {
         assertThat(ct.numRegions()).isEqualTo(0);
     }
 
-   @Test
-   public void computingLabelFromColorAndReverseWorks() {
+    @Test
+    public void computingLabelFromColorAndReverseWorks() {
         int r = 255;
         int g = 0;
         int b = 0;
+        int a = 0;
 
-        int label = FsColortable.computeLabelFromRgb(r, g, b);
+        int label = FsColortable.computeLabelFromRgb(r, g, b, a);
         int[] col = FsColortable.computeRgbFromLabel(label);
-        assertThat(col.length).isEqualTo(3);
+        assertThat(col.length).isEqualTo(4);
         assertThat(col[0]).isEqualTo(r);
         assertThat(col[1]).isEqualTo(g);
         assertThat(col[2]).isEqualTo(b);
-   }
+        assertThat(col[3]).isEqualTo(a);
+    }
 
 }
