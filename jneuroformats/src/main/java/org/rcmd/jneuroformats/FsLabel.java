@@ -97,53 +97,24 @@ public class FsLabel {
     public static FsLabel fromFsLabelFile(Path filePath) throws IOException, FileNotFoundException {
 
         FsLabel label = new FsLabel();
+        List<String> lines = Files.readAllLines(filePath);
 
-        Scanner lineScanner = new Scanner(new File(filePath.toString()));
-
-        int num_elements_hdr = 0;
-
-        String line, line_preproc;
-        Scanner rowScanner;
-        int line_idx = 0;
-        while (lineScanner.hasNextLine()) {
-            line = lineScanner.nextLine();
-
-            if (line_idx == 0) { // Skip the first line, it is a comment string.
-                line_idx++;
-                continue;
-            }
-
-            if (line_idx == 1) { // The second line contains the number of elements in the label (vertices or voxels).
-                rowScanner = new Scanner(line);
-                num_elements_hdr = rowScanner.nextInt();
-                rowScanner.close();
-                line_idx++;
-                continue;
-            }
-
-            // Scan lines >= 3 for tokens
-            // Note: the current Scanner approach is rather slow.
-            line_preproc = line.trim().replaceAll(" +", ","); // The lines do not contain consistent field separators. Some fields are separated by 2 spaces " ", some by a single space " ". We replace all spaces by commas, and then use a comma as field
-                                                              // separator.
-            rowScanner = new Scanner(line_preproc);
-            rowScanner.useDelimiter(",");
-            label.elementIndex.add(rowScanner.nextInt());
-            label.coordX.add(rowScanner.nextFloat());
-            label.coordY.add(rowScanner.nextFloat());
-            label.coordZ.add(rowScanner.nextFloat());
-            label.value.add(rowScanner.nextFloat());
-            assert !rowScanner.hasNext() : MessageFormat.format("The label file contains more than 5 columns in line {0}. Invalid label file.", line_idx);
-            rowScanner.close();
-            line_idx++;
+        if (lines.size() < 2) {
+            throw new IOException("The label file contains less than 2 lines. Invalid label file.");
         }
 
-        if (num_elements_hdr != label.size()) {
-            throw new IOException(
-                    MessageFormat.format("The number of elements in the header ({0}) does not match the number of elements in the label ({1}). Label invalid.",
-                            num_elements_hdr, label.size()));
+        for (int i = 2; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] tokens = line.trim().split("\\s+");
+            if (tokens.length != 5) {
+                throw new IOException(MessageFormat.format("The label file contains more than 5 columns in line {0}. Invalid label file.", i));
+            }
+            label.elementIndex.add(Integer.parseInt(tokens[0]));
+            label.coordX.add(Float.parseFloat(tokens[1]));
+            label.coordY.add(Float.parseFloat(tokens[2]));
+            label.coordZ.add(Float.parseFloat(tokens[3]));
+            label.value.add(Float.parseFloat(tokens[4]));
         }
-
-        label.validate();
         return label;
     }
 
