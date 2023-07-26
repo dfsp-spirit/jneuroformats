@@ -30,7 +30,6 @@ import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 
 /**
  * Represents a FreeSurfer surface, i.e. a triangular mesh
@@ -247,7 +246,7 @@ public class FsSurface implements Mesh {
     }
 
     /**
-     * Read a file in PLY format and return a FsSurface object. Skips vertex colors and normals, if any.
+     * Read a file in ASCII PLY format and return a FsSurface object. Skips vertex colors and normals, if any.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.ply")`.
      * @return an FsSurface object.
      * @throws IOException if IO error occurs.
@@ -288,6 +287,13 @@ public class FsSurface implements Mesh {
         return surface;
     }
 
+    /**
+     * Parse information from the header lines of a PLY file, ASCII version.
+     * @param plyLines the lines of the PLY file, as a list of strings.
+     * @param filePath the path to the PLY file, as a Path object. Only used in error messages, as we already have the plyLines.
+     * @return a PlyHeaderInfo object containing the parsed information.
+     * @throws IOException if IO error occurs.
+     */
     protected static PlyHeaderInfo parsePlyHeader(List<String> plyLines, Path filePath) throws IOException {
 
         if(plyLines.size() < 9) {
@@ -340,6 +346,12 @@ public class FsSurface implements Mesh {
 
     }
 
+    /**
+     * Utility function to find index of line starting with a given prefix in a list of strings.
+     * @param lines the list of strings to search in.
+     * @param prefix the prefix to search for.
+     * @return the index of the first line starting with the given prefix, or -1 if no such line exists.
+     */
     protected static int getListIndexStringStartingWith(List<String> lines, String prefix) {
         for(int i = 0; i < lines.size(); i++) {
             if(lines.get(i).startsWith(prefix)) {
@@ -499,6 +511,9 @@ public class FsSurface implements Mesh {
         }
     }
 
+    /**
+     * Models the header information from an ASCII PLY file.
+     */
     protected static class PlyHeaderInfo {
 
         public int headerEndLineIndex;

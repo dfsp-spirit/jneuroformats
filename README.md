@@ -17,8 +17,9 @@ surface-based workflow used in [FreeSurfer](https://freesurfer.net).
 
 * Meshes:
   - Read brain meshes in FreeSurfer binary mesh format (like recon_all output file `<SUBJECTS_DIR>/<subject>/surf/lh.white`): use function `FsSurface.fromFsSurfaceFile()`
-  - Read brain meshes from MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
+  - Read meshes from MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
   - Write in PLY, OBJ, and FreeSurfer binary mesh formats: `FsSurface.writeToFile()`
+  - Read meshes from PLY format files (ASCII type)
 * Labels (FreeSurfer volume and surface labels, like `<subject>/label/lh.cortex.label`):
   - Read from FreeSurfer label format:  `FsLabel.fromFsLabelFile()`
   - Write in FreeSurfer label format and to CSV format: `FsLabel.writeToFile()`
