@@ -14,14 +14,12 @@
  *    limitations under the License.
  */
 
-package org.rcmd.jneuroformats.Util;
+package org.rcmd.jneuroformats;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.rcmd.jneuroformats.Colormap;
 
 /**
  * A sequential colormap using the colors from the Viridis colormap from matplotlib.

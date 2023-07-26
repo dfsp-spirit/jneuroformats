@@ -24,8 +24,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rcmd.jneuroformats.Util.IO;
-
 public class FsColortable {
 
     public List<Integer> structureId;

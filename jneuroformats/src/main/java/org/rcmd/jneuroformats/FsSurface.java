@@ -17,8 +17,10 @@
 package org.rcmd.jneuroformats;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.IllegalArgumentException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.WritableByteChannel;
@@ -29,8 +31,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.rcmd.jneuroformats.Util.IO;
-
 /**
  * Represents a FreeSurfer surface, i.e. a triangular mesh
  * consisting of a set of vertices and a set of faces.
@@ -39,7 +39,7 @@ import org.rcmd.jneuroformats.Util.IO;
  * to store brain surface reconstructions, e.g., the cortical
  * surface reconstructed from a T1-weighted MRI scan.
  */
-public class FsSurface {
+public class FsSurface implements Mesh {
 
     public List<float[]> vertices;
     public List<int[]> faces;
@@ -230,6 +230,19 @@ public class FsSurface {
         }
 
         return surface;
+    }
+
+    /**
+     * Read a file in MZ3 surface format and return an FsSurface object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mz3")`.
+     * @return an FsSurface object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
+     * @throws BufferUnderflowException if buffer underflow occurs, i.e., the file is too short to read the first header part required to determine the file format.
+     */
+    public static FsSurface fromMz3File(Path filePath) throws IOException, FileNotFoundException, BufferUnderflowException {
+        Mz3 mz3 = Mz3.fromMz3File(filePath);
+        return mz3.surface;
     }
 
     /**

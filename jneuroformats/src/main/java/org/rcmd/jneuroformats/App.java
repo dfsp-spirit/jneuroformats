@@ -21,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.rcmd.jneuroformats.Util.Viridis;
-
 import static org.rcmd.jneuroformats.Utilities.getAllColormapColors;
 import static org.rcmd.jneuroformats.Utilities.scaleToZeroOne;
 

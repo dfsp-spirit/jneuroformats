@@ -20,12 +20,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -72,7 +70,6 @@ public class FsMgh {
 
         byte[] data = Files.readAllBytes(filePath);
         ByteBuffer buffer = ByteBuffer.wrap(data);
-        buffer.order(ByteOrder.BIG_ENDIAN);
 
         // Read the header
         mgh.header = FsMghHeader.fromByteBuffer(buffer);
@@ -80,14 +77,6 @@ public class FsMgh {
 
         return mgh;
 
-    }
-
-    private static byte[] convertBytes(List<Byte> integers) {
-        byte[] ret = new byte[integers.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = integers.get(i).byteValue();
-        }
-        return ret;
     }
 
     public static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
@@ -102,7 +91,7 @@ public class FsMgh {
             }
         }
 
-        byte[] ab = convertBytes(allBytes);
+        byte[] ab = IO.convertBytes(allBytes);
         ByteBuffer bbuffer = ByteBuffer.wrap(ab);
 
         FsMgh mgh = new FsMgh();
@@ -114,7 +103,7 @@ public class FsMgh {
     /**
      * Write this volume to a file in MGH format.
      * @param filePath the path to the file to write to
-     * @param format the format to write in, must be "mgh".
+     * @param format the format to write in, must be "mgh" or "mgz".
      * @throws IOException
      */
     public void writeToFile(Path filePath, String format) throws IOException {
