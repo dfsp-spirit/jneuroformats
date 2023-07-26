@@ -66,4 +66,21 @@ public class FsSurfaceTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void oneCanWriteAndRereadASurfaceUsingPlyFormat() {
+
+        FsSurface cube = FsSurface.generateCube();
+
+        try {
+            Path temp = Files.createTempFile("", ".tmp");
+            cube.writeToFile(temp, "ply");
+            FsSurface cube2 = FsSurface.fromPlyFile(temp);
+            assertThat(cube2.getNumberOfVertices()).isEqualTo(cube.getNumberOfVertices());
+            assertThat(cube2.getNumberOfFaces()).isEqualTo(cube.getNumberOfFaces());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

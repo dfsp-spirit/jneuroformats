@@ -30,6 +30,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  * Represents a FreeSurfer surface, i.e. a triangular mesh
@@ -246,6 +247,109 @@ public class FsSurface implements Mesh {
     }
 
     /**
+     * Read a file in PLY format and return a FsSurface object. Skips vertex colors and normals, if any.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.ply")`.
+     * @return an FsSurface object.
+     * @throws IOException if IO error occurs.
+     */
+    public static FsSurface fromPlyFile(Path filePath) throws IOException {
+
+        FsSurface surface = new FsSurface();
+
+        List<String> lines = Files.readAllLines(filePath);
+        PlyHeaderInfo headerInfo = parsePlyHeader(lines, filePath);
+
+        List<String> vertexLines = lines.subList(headerInfo.headerEndLineIndex + 1, headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount);
+        for(String vertexLine : vertexLines) {
+            String[] vertexLineParts = vertexLine.split(" ");
+            if(vertexLineParts.length < 3) {
+                throw new IOException(MessageFormat.format("PLY file {0} contains an invalid vertex line: {1}.", filePath.toString(), vertexLine));
+            }
+            float[] vertex = new float[3];
+            vertex[0] = Float.parseFloat(vertexLineParts[0]);
+            vertex[1] = Float.parseFloat(vertexLineParts[1]);
+            vertex[2] = Float.parseFloat(vertexLineParts[2]);
+            surface.addVertex(vertex);
+        }
+
+        List<String> faceLines = lines.subList(headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount, headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount + headerInfo.faceCount);
+        for(String faceLine : faceLines) {
+            String[] faceLineParts = faceLine.split(" ");
+            if(faceLineParts.length < 4) {
+                throw new IOException(MessageFormat.format("PLY file {0} contains an invalid face line: {1}.", filePath.toString(), faceLine));
+            }
+            int[] face = new int[3];
+            face[0] = Integer.parseInt(faceLineParts[1]);
+            face[1] = Integer.parseInt(faceLineParts[2]);
+            face[2] = Integer.parseInt(faceLineParts[3]);
+            surface.addFace(face);
+        }
+
+        return surface;
+    }
+
+    protected static PlyHeaderInfo parsePlyHeader(List<String> plyLines, Path filePath) throws IOException {
+
+        if(plyLines.size() < 9) {
+            throw new IOException(MessageFormat.format("PLY files must have at least 9 lines but {0} has {1}.", filePath.toString(), plyLines.size()));
+        }
+
+        if(plyLines.get(0).compareTo("ply") != 0) {
+            throw new IOException(MessageFormat.format("First line of PLY file {0} must be 'ply' but is '{1}'.", filePath.toString(), plyLines.get(0)));
+        }
+
+        if(plyLines.get(1).compareTo("format ascii 1.0") != 0) {
+            throw new IOException(MessageFormat.format("Second line of PLY file {0} must be 'format ascii 1.0' but is '{1}'.", filePath.toString(), plyLines.get(1)));
+        }
+
+        PlyHeaderInfo headerInfo = new PlyHeaderInfo();
+        int headerEndLineIndex = plyLines.indexOf("end_header");
+        headerInfo.headerEndLineIndex = headerEndLineIndex;
+
+        List<String> headerLines = plyLines.subList(0, headerEndLineIndex);
+
+        // Determine vertex count
+        int vertexCountLineIndex = getListIndexStringStartingWith(headerLines, "element vertex");
+
+        if(vertexCountLineIndex == -1) {
+            throw new IOException(MessageFormat.format("PLY file {0} does not contain a line 'element vertex'.", filePath.toString()));
+        }
+        String vertexCountLine = headerLines.get(vertexCountLineIndex);
+        String[] vertexCountLineParts = vertexCountLine.split(" ");
+        if(vertexCountLineParts.length != 3) {
+            throw new IOException(MessageFormat.format("PLY file {0} contains an invalid line 'element vertex': {1}.", filePath.toString(), vertexCountLine));
+        }
+        headerInfo.vertexCount = Integer.parseInt(vertexCountLineParts[2]);
+
+        // Determine face count
+        int faceCountLineIndex = getListIndexStringStartingWith(headerLines, "element face");
+        if(faceCountLineIndex == -1) {
+            throw new IOException(MessageFormat.format("PLY file {0} does not contain a line 'element face'.", filePath.toString()));
+        }
+        String faceCountLine = headerLines.get(faceCountLineIndex);
+        String[] faceCountLineParts = faceCountLine.split(" ");
+        if(faceCountLineParts.length != 3) {
+            throw new IOException(MessageFormat.format("PLY file {0} contains an invalid line 'element face': {1}.", filePath.toString(), faceCountLine));
+        }
+        headerInfo.faceCount = Integer.parseInt(faceCountLineParts[2]);
+
+        headerInfo.containsVertexColors = headerLines.indexOf("property uchar red") >= 0;
+        headerInfo.containsVertexNormals = headerLines.indexOf("property float nx") >= 0;
+
+        return headerInfo;
+
+    }
+
+    protected static int getListIndexStringStartingWith(List<String> lines, String prefix) {
+        for(int i = 0; i < lines.size(); i++) {
+            if(lines.get(i).startsWith(prefix)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Generate string representation of this mesh in PLY format.
      * @return the PLY format string
      */
@@ -395,4 +499,16 @@ public class FsSurface implements Mesh {
         }
     }
 
+    protected static class PlyHeaderInfo {
+
+        public int headerEndLineIndex;
+        public int vertexCount;
+        public int faceCount;
+        public Boolean containsVertexColors;
+        public Boolean containsVertexNormals;
+
+    }
+
 }
+
+
