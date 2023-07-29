@@ -69,4 +69,27 @@ public class FsLabelTest {
         }
     }
 
+    @Test
+    public void oneCanWriteAndRereadFsLabelFromCsv() {
+
+        Path labelFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.cortex.label");
+        FsLabel cortex;
+        try {
+            cortex = FsLabel.fromFsLabelFile(labelFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path temp = Files.createTempFile("", ".csv");
+            cortex.writeToFile(temp, "csv");
+            FsLabel cortex2 = FsLabel.read(temp);
+            assertThat(cortex2.size()).isEqualTo(cortex.size());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -135,6 +135,57 @@ public class FsLabel {
     }
 
     /**
+     * Read a file in CSV format and return an FsLabel object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`. The file format is assumed to be CSV, with 5 columns in this order: index, coordx, coordy, coordz, value. The datatypes of the columns are integer for the index column, and float for all other columns.
+     * @param has_header whether the file has a header row at the top.
+     * @return an FsLabel object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     */
+    public static FsLabel fromCsvFile(Path filePath, Boolean has_header) throws IOException, FileNotFoundException {
+
+        FsLabel label = new FsLabel();
+        List<String> lines = Files.readAllLines(filePath);
+
+        if (has_header && lines.size() > 0) {
+            lines.remove(0);
+        }
+
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] tokens = line.trim().split(",");
+            if (tokens.length != 5) {
+                throw new IOException(MessageFormat.format("The label file contains more than 5 columns in line {0}. Invalid label file.", i));
+            }
+            label.elementIndex.add(Integer.parseInt(tokens[0]));
+            label.coordX.add(Float.parseFloat(tokens[1]));
+            label.coordY.add(Float.parseFloat(tokens[2]));
+            label.coordZ.add(Float.parseFloat(tokens[3]));
+            label.value.add(Float.parseFloat(tokens[4]));
+        }
+        return label;
+    }
+
+    /**
+     * Read a file in CSV or FreeSurfer label format and return an FsLabel object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`. The file format is assumed to be CSV, with 5 columns in this order: index, coordx, coordy, coordz, value. The datatypes of the columns are integer for the index column, and float for all other columns.
+     * @return an FsLabel object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.h
+     */
+    public static FsLabel read(Path filePath) throws IOException, FileNotFoundException {
+        if(filePath.toString().toLowerCase().endsWith(".csv")) {
+            return FsLabel.fromCsvFile(filePath, Boolean.TRUE);
+        }
+        else if(filePath.toString().endsWith(".label")) {
+            return FsLabel.fromFsLabelFile(filePath);
+        }
+        else {
+            throw new IOException(MessageFormat.format("Unknown FsLabel file format for file {0}.", filePath.toString()));
+        }
+    }
+
+    /**
      * Generate string representation of this FsLabel in FsLabel format.
      * @return the FsLabel format string
      */
