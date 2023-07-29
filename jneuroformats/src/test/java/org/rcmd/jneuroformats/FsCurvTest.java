@@ -72,4 +72,21 @@ public class FsCurvTest {
         }
     }
 
+    @Test
+    public void oneCanWriteAndRereadFsCurvInCsvFormat() {
+
+        ArrayList<Float> data = new ArrayList<>(Arrays.asList(1.0f, 1.0f, 1.0f));
+        FsCurv curv = new FsCurv(data);
+
+        try {
+            Path temp = Files.createTempFile("", ".csv");
+            curv.writeToFile(temp, "csv");
+            FsCurv curv2 = FsCurv.read(temp);
+            assertThat(curv2.data.size()).isEqualTo(curv.data.size());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

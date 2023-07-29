@@ -51,6 +51,53 @@ public class FsCurv {
     }
 
     /**
+     * Read a file in CSV format and return an FsCurv object.
+     *
+     * The file can have one of two formats: either one value per line, or two values per line, separated by a comma. In the latter case, the first value is ignored.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
+     * @param has_header whether the file has a header row at the top.
+     * @return an FsCurv object.
+     * @throws IOException if IO error occurs.
+     */
+    public static FsCurv fromCsvFile(Path filePath, Boolean has_header) throws IOException {
+        FsCurv curv = new FsCurv();
+        List<String> lines = Files.readAllLines(filePath);
+        if(has_header) {
+            lines.remove(0);
+        }
+        for (String line : lines) {
+            String[] parts = line.trim().split(",");
+            if (parts.length == 1) {
+                curv.data.add(Float.parseFloat(parts[0]));
+            }
+            else if (parts.length == 2) {
+                curv.data.add(Float.parseFloat(parts[1]));
+            }
+            else {
+                throw new IOException(MessageFormat.format("Invalid CSV file format: {0}.", filePath.toString()));
+            }
+        }
+        return curv;
+    }
+
+    /**
+     * Read a file in FreeSurfer curv or CSV format and return an FsCurv object.
+     *
+     * The file format is determined by the file extension. If the file extension is ".csv", the file is read as CSV, otherwise as FreeSurfer curv.
+     *
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`. For csv files, the file can have one of two formats: either one value per line, or two values per line (index and per-vertex value), separated by a comma. In the latter case, the first value (index) is ignored.
+     * @return an FsCurv object.
+     * @throws IOException if IO error occurs.
+     */
+    public static FsCurv read(Path filePath) throws IOException {
+        if(filePath.toString().toLowerCase().endsWith(".csv")) {
+            return FsCurv.fromCsvFile(filePath, Boolean.FALSE);
+        } else {
+            return FsCurv.fromFsCurvFile(filePath);
+        }
+    }
+
+    /**
      * Read a file in FreeSurfer curv format and return an FsCurv object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
      * @return an FsCurv object.
@@ -175,7 +222,7 @@ public class FsCurv {
     public void writeToFile(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
         if (format.equals("csv")) {
-            Files.write(filePath, toCsvFormat(Boolean.TRUE, Boolean.TRUE).getBytes());
+            Files.write(filePath, toCsvFormat(Boolean.FALSE, Boolean.FALSE).getBytes());
         }
         else if (format.equals("curv")) {
             this.writeCurv(filePath);
