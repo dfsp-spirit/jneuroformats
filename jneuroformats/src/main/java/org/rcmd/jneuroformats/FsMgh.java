@@ -20,8 +20,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -100,18 +102,45 @@ public class FsMgh {
         return mgh;
     }
 
+    protected void writeToMghFile(Path filePath) throws IOException {
+        ByteBuffer buf = writeFsMghToByteBuffer();
+        WritableByteChannel channel = Files.newByteChannel(filePath, StandardOpenOption.WRITE);
+        channel.write(buf);
+        channel.close();
+    }
+
+    protected void writeToMgzFile(Path filePath) throws IOException {
+        ByteBuffer buf = writeFsMghToByteBuffer();
+        IO.writeGzipFile(filePath, buf);
+    }
+
+    /**
+     * Write this mesh to a ByteBuffer in FreeSurfer surface format.
+     * @note This method is used internally by writeSurface(Path filePath).
+     * @throws IOException
+     */
+    protected ByteBuffer writeFsMghToByteBuffer() throws IOException {
+
+        ByteBuffer buf = ByteBuffer.allocate(this.header.getHeaderSizeInBytes() + this.header.getDataSizeInBytes() + 1000);
+        buf = this.header.writeFsMghHeaderToByteBuffer(buf);
+        buf = this.data.writeFsMghDataToByteBuffer(buf, this.header);
+
+        return buf;
+    }
+
     /**
      * Write this volume to a file in MGH format.
      * @param filePath the path to the file to write to
      * @param format the format to write in, must be "mgh" or "mgz".
      * @throws IOException
      */
-    public void writeToFile(Path filePath, String format) throws IOException {
+    public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
         if (format.equals("mgh")) {
-            System.err.println("FsMgh.writeToFile: Not implemented yet.");
-        }
-        else {
+            this.writeToMghFile(filePath);
+        } else if (format.equals("mgz")) {
+            this.writeToMgzFile(filePath);
+        } else {
             throw new IOException(MessageFormat.format("Unknown FsMgh export format {0}.", format));
         }
     }

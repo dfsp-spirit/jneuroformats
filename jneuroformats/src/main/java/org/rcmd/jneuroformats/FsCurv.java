@@ -62,7 +62,7 @@ public class FsCurv {
     public static FsCurv fromCsvFile(Path filePath, Boolean has_header) throws IOException {
         FsCurv curv = new FsCurv();
         List<String> lines = Files.readAllLines(filePath);
-        if(has_header) {
+        if (has_header) {
             lines.remove(0);
         }
         for (String line : lines) {
@@ -90,9 +90,10 @@ public class FsCurv {
      * @throws IOException if IO error occurs.
      */
     public static FsCurv read(Path filePath) throws IOException {
-        if(filePath.toString().toLowerCase().endsWith(".csv")) {
+        if (filePath.toString().toLowerCase().endsWith(".csv")) {
             return FsCurv.fromCsvFile(filePath, Boolean.FALSE);
-        } else {
+        }
+        else {
             return FsCurv.fromFsCurvFile(filePath);
         }
     }

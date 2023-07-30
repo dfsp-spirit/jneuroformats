@@ -27,9 +27,20 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.file.StandardOpenOption;
+
 
 public class IO {
 
+    /**
+     * Read a newline terminated string from a ByteBuffer.
+     * You should be sure that the string is terminated by a newline, otherwise this will read until the end of the buffer and then throw an exception from the `ByteBuffer.get()` call.
+     * @param buffer the ByteBuffer to read from
+     * @return the string
+     */
     protected static String readNewlineTerminatedString(ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder();
         char c = (char) getUint8(buffer);
@@ -40,6 +51,12 @@ public class IO {
         return builder.toString();
     }
 
+    /**
+     * Read a fixed-length ASCII string from a ByteBuffer.
+     * @param buffer the ByteBuffer to read from
+     * @param length the length of the string to read, in bytes
+     * @return the string
+     */
     protected static String readFixedLengthString(ByteBuffer buffer, int length) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
@@ -48,6 +65,11 @@ public class IO {
         return builder.toString();
     }
 
+    /**
+     * Read a 4-byte integer from a ByteBuffer.
+     * @param buffer the ByteBuffer to read from
+     * @return the integer
+     */
     protected static int getUint8(ByteBuffer buffer) {
         int pos = buffer.position();
         byte b = buffer.get(pos);
@@ -55,10 +77,15 @@ public class IO {
         return b & 0xFF;
     }
 
-    protected static byte[] convertBytes(List<Byte> integers) {
-        byte[] ret = new byte[integers.size()];
+    /**
+     * Convert a list of bytes to a byte array.
+     * @param integers the list of bytes
+     * @return the byte array
+     */
+    protected static byte[] convertBytes(List<Byte> bytes) {
+        byte[] ret = new byte[bytes.size()];
         for (int i = 0; i < ret.length; i++) {
-            ret[i] = integers.get(i).byteValue();
+            ret[i] = bytes.get(i).byteValue();
         }
         return ret;
     }
@@ -130,6 +157,19 @@ public class IO {
         }
         buffer = buffer.order(byteOrder);
         return buffer;
+    }
+
+    /**
+     * Write a ByteBuffer to a file, gzipping it.
+     * @param filePath the path to the file
+     * @param buffer the ByteBuffer to write
+     * @throws IOException if IO error occurs.
+     */
+    protected static void writeGzipFile(Path filePath, ByteBuffer buffer) throws IOException {
+        WritableByteChannel channel = Files.newByteChannel(filePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        GZIPOutputStream gzipOutputStream = new GZIPOutputStream(Channels.newOutputStream(channel));
+        gzipOutputStream.write(buffer.array());
+        gzipOutputStream.close();
     }
 
 }

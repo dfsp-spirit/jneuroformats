@@ -174,10 +174,10 @@ public class FsLabel {
      * @throws FileNotFoundException if the file does not exist.h
      */
     public static FsLabel read(Path filePath) throws IOException, FileNotFoundException {
-        if(filePath.toString().toLowerCase().endsWith(".csv")) {
+        if (filePath.toString().toLowerCase().endsWith(".csv")) {
             return FsLabel.fromCsvFile(filePath, Boolean.TRUE);
         }
-        else if(filePath.toString().endsWith(".label")) {
+        else if (filePath.toString().endsWith(".label")) {
             return FsLabel.fromFsLabelFile(filePath);
         }
         else {

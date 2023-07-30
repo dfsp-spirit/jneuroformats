@@ -116,6 +116,39 @@ public class FsMghHeader {
     }
 
     /**
+     * Get the size of the header part of the file, in bytes.
+     * @return the size of the header part of the file, in bytes. This is always the same for the MGH format, which uses a fixed size header.
+     */
+    public int getHeaderSizeInBytes() {
+        return 284;
+    }
+
+    /**
+     * Get the size of the data part of the file, in bytes. Data size is computed based on header information: data type and number of values.
+     * @return the size of the data part of the file, in bytes.
+     */
+    public int getDataSizeInBytes() {
+        return this.getNumValues() * this.getNumBytesPerValue();
+    }
+
+    private int getNumBytesPerValue() {
+        int numBytesPerValue = 4;
+        if (this.mri_datatype == FsMgh.MRI_FLOAT) {
+            numBytesPerValue = 4;
+        }
+        else if (this.mri_datatype == FsMgh.MRI_INT) {
+            numBytesPerValue = 4;
+        }
+        else if (this.mri_datatype == FsMgh.MRI_SHORT) {
+            numBytesPerValue = 2;
+        }
+        else if (this.mri_datatype == FsMgh.MRI_UCHAR) {
+            numBytesPerValue = 1;
+        }
+        return numBytesPerValue;
+    }
+
+    /**
      * Write the FsMghHeader to a ByteBuffer.
      * @param buf an existing ByteBuffer to write to. If null, a new ByteBuffer will be created.
      * @return the ByteBuffer, with the FsMghHeader written to it.
@@ -123,7 +156,7 @@ public class FsMghHeader {
      */
     protected ByteBuffer writeFsMghHeaderToByteBuffer(ByteBuffer buf) throws IOException {
         if (buf == null) {
-            buf = ByteBuffer.allocate(8182);
+            buf = ByteBuffer.allocate(this.getHeaderSizeInBytes() + this.getDataSizeInBytes()+ 1000);
         }
 
         int mghVersionNumber = 1;
@@ -153,14 +186,15 @@ public class FsMghHeader {
                 buf.putFloat(this.Pxyz_c.get(i));
             }
 
-        } else {
-            for(int i = 0; i < 60; i++) {
+        }
+        else {
+            for (int i = 0; i < 60; i++) {
                 buf.put((byte) 0);
             }
         }
 
         // fill rest of the reserved header space with zeros
-        for(int i = 0; i < 194; i++) {
+        for (int i = 0; i < 194; i++) {
             buf.put((byte) 0);
         }
 

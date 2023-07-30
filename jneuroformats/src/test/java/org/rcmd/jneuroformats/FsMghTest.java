@@ -16,6 +16,7 @@
 
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -82,6 +83,66 @@ public class FsMghTest {
         assertThat(brain.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
         assertThat(brain.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
         assertThat(brain.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+    }
+
+    @Test
+    public void oneCanWriteAndRereadFsMgh() {
+
+        Path mghFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "mri", "brain.mgz");
+        FsMgh brain;
+        try {
+            brain = FsMgh.fromFsMgzFile(mghFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path temp = Files.createTempFile("", ".mgh");
+            brain.write(temp, "mgh");
+            FsMgh brain2 = FsMgh.fromFsMghFile(temp);
+            assertThat(brain2.header.dim1size).isEqualTo(brain.header.dim1size);
+            assertThat(brain2.header.dim2size).isEqualTo(brain.header.dim2size);
+            assertThat(brain2.header.dim3size).isEqualTo(brain.header.dim3size);
+            assertThat(brain2.header.dim4size).isEqualTo(brain.header.dim4size);
+
+            assertThat(brain2.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+            assertThat(brain2.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
+            assertThat(brain2.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void oneCanWriteAndRereadFsMghWithMgzFormat() {
+
+        Path mghFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "mri", "brain.mgz");
+        FsMgh brain;
+        try {
+            brain = FsMgh.fromFsMgzFile(mghFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Path temp = Files.createTempFile("", ".mgz");
+            brain.write(temp, "mgz");
+            FsMgh brain2 = FsMgh.fromFsMgzFile(temp);
+            assertThat(brain2.header.dim1size).isEqualTo(brain.header.dim1size);
+            assertThat(brain2.header.dim2size).isEqualTo(brain.header.dim2size);
+            assertThat(brain2.header.dim3size).isEqualTo(brain.header.dim3size);
+            assertThat(brain2.header.dim4size).isEqualTo(brain.header.dim4size);
+
+            assertThat(brain2.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+            assertThat(brain2.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
+            assertThat(brain2.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

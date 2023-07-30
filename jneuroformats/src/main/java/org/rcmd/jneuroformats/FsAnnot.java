@@ -118,9 +118,11 @@ public class FsAnnot {
     public static FsAnnot read(Path filePath) throws IOException, FileNotFoundException {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
         if (fileNameLower.endsWith(".csv")) {
-            throw new IOException(MessageFormat.format("Reading FsAnnot from CSV files not supported yet. Please open an issue and supply an example file if you need this: '{0}'.\n",
-                    filePath.toString()));
-        } else {
+            throw new IOException(
+                    MessageFormat.format("Reading FsAnnot from CSV files not supported yet. Please open an issue and supply an example file if you need this: '{0}'.\n",
+                            filePath.toString()));
+        }
+        else {
             return FsAnnot.fromFsAnnotFile(filePath);
         }
     }

@@ -259,9 +259,9 @@ public class FsSurface implements Mesh {
         PlyHeaderInfo headerInfo = parsePlyHeader(lines, filePath);
 
         List<String> vertexLines = lines.subList(headerInfo.headerEndLineIndex + 1, headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount);
-        for(String vertexLine : vertexLines) {
+        for (String vertexLine : vertexLines) {
             String[] vertexLineParts = vertexLine.split(" ");
-            if(vertexLineParts.length < 3) {
+            if (vertexLineParts.length < 3) {
                 throw new IOException(MessageFormat.format("PLY file {0} contains an invalid vertex line: {1}.", filePath.toString(), vertexLine));
             }
             float[] vertex = new float[3];
@@ -271,10 +271,11 @@ public class FsSurface implements Mesh {
             surface.addVertex(vertex);
         }
 
-        List<String> faceLines = lines.subList(headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount, headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount + headerInfo.faceCount);
-        for(String faceLine : faceLines) {
+        List<String> faceLines = lines.subList(headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount,
+                headerInfo.headerEndLineIndex + 1 + headerInfo.vertexCount + headerInfo.faceCount);
+        for (String faceLine : faceLines) {
             String[] faceLineParts = faceLine.split(" ");
-            if(faceLineParts.length < 4) {
+            if (faceLineParts.length < 4) {
                 throw new IOException(MessageFormat.format("PLY file {0} contains an invalid face line: {1}.", filePath.toString(), faceLine));
             }
             int[] face = new int[3];
@@ -296,15 +297,15 @@ public class FsSurface implements Mesh {
      */
     protected static PlyHeaderInfo parsePlyHeader(List<String> plyLines, Path filePath) throws IOException {
 
-        if(plyLines.size() < 9) {
+        if (plyLines.size() < 9) {
             throw new IOException(MessageFormat.format("PLY files must have at least 9 lines but {0} has {1}.", filePath.toString(), plyLines.size()));
         }
 
-        if(plyLines.get(0).compareTo("ply") != 0) {
+        if (plyLines.get(0).compareTo("ply") != 0) {
             throw new IOException(MessageFormat.format("First line of PLY file {0} must be 'ply' but is '{1}'.", filePath.toString(), plyLines.get(0)));
         }
 
-        if(plyLines.get(1).compareTo("format ascii 1.0") != 0) {
+        if (plyLines.get(1).compareTo("format ascii 1.0") != 0) {
             throw new IOException(MessageFormat.format("Second line of PLY file {0} must be 'format ascii 1.0' but is '{1}'.", filePath.toString(), plyLines.get(1)));
         }
 
@@ -317,24 +318,24 @@ public class FsSurface implements Mesh {
         // Determine vertex count
         int vertexCountLineIndex = getListIndexStringStartingWith(headerLines, "element vertex");
 
-        if(vertexCountLineIndex == -1) {
+        if (vertexCountLineIndex == -1) {
             throw new IOException(MessageFormat.format("PLY file {0} does not contain a line 'element vertex'.", filePath.toString()));
         }
         String vertexCountLine = headerLines.get(vertexCountLineIndex);
         String[] vertexCountLineParts = vertexCountLine.split(" ");
-        if(vertexCountLineParts.length != 3) {
+        if (vertexCountLineParts.length != 3) {
             throw new IOException(MessageFormat.format("PLY file {0} contains an invalid line 'element vertex': {1}.", filePath.toString(), vertexCountLine));
         }
         headerInfo.vertexCount = Integer.parseInt(vertexCountLineParts[2]);
 
         // Determine face count
         int faceCountLineIndex = getListIndexStringStartingWith(headerLines, "element face");
-        if(faceCountLineIndex == -1) {
+        if (faceCountLineIndex == -1) {
             throw new IOException(MessageFormat.format("PLY file {0} does not contain a line 'element face'.", filePath.toString()));
         }
         String faceCountLine = headerLines.get(faceCountLineIndex);
         String[] faceCountLineParts = faceCountLine.split(" ");
-        if(faceCountLineParts.length != 3) {
+        if (faceCountLineParts.length != 3) {
             throw new IOException(MessageFormat.format("PLY file {0} contains an invalid line 'element face': {1}.", filePath.toString(), faceCountLine));
         }
         headerInfo.faceCount = Integer.parseInt(faceCountLineParts[2]);
@@ -353,8 +354,8 @@ public class FsSurface implements Mesh {
      * @return the index of the first line starting with the given prefix, or -1 if no such line exists.
      */
     protected static int getListIndexStringStartingWith(List<String> lines, String prefix) {
-        for(int i = 0; i < lines.size(); i++) {
-            if(lines.get(i).startsWith(prefix)) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).startsWith(prefix)) {
                 return i;
             }
         }
@@ -525,5 +526,3 @@ public class FsSurface implements Mesh {
     }
 
 }
-
-
