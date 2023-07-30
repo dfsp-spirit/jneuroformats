@@ -219,7 +219,7 @@ public class FsCurv {
      * @param format the format to write to, either "curv" or "csv".
      * @throws IOException
      */
-    public void writeToFile(Path filePath, String format) throws IOException {
+    public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.FALSE, Boolean.FALSE).getBytes());

@@ -63,7 +63,7 @@ public class FsAnnotTest {
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
-            desikan.writeToFile(temp, "fsannot");
+            desikan.write(temp, "fsannot");
             FsAnnot desikan2 = FsAnnot.fromFsAnnotFile(temp);
             assertThat(desikan.numRegions()).isEqualTo(desikan2.numRegions());
             assertThat(desikan.numVertices()).isEqualTo(desikan2.numVertices());

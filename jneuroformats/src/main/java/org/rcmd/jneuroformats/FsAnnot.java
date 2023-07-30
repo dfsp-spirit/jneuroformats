@@ -17,6 +17,7 @@
 package org.rcmd.jneuroformats;
 
 import java.awt.Color;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -109,12 +110,28 @@ public class FsAnnot {
     }
 
     /**
+     * Read a file in annot format and return an FsAnnot object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
+     * @return an FsAnnot object.
+     * @throws IOException if IO error occurs.
+     */
+    public static FsAnnot read(Path filePath) throws IOException, FileNotFoundException {
+        String fileNameLower = filePath.getFileName().toString().toLowerCase();
+        if (fileNameLower.endsWith(".csv")) {
+            throw new IOException(MessageFormat.format("Reading FsAnnot from CSV files not supported yet. Please open an issue and supply an example file if you need this: '{0}'.\n",
+                    filePath.toString()));
+        } else {
+            return FsAnnot.fromFsAnnotFile(filePath);
+        }
+    }
+
+    /**
      * Read a file in FreeSurfer annot format and return an FsAnnot object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
      */
-    public static FsAnnot fromFsAnnotFile(Path filePath) throws IOException {
+    public static FsAnnot fromFsAnnotFile(Path filePath) throws IOException, FileNotFoundException {
 
         FsAnnot annot = new FsAnnot();
 
@@ -239,7 +256,7 @@ public class FsAnnot {
      * @param format the format to write to, either "fsannot" or "csv".
      * @throws IOException
      */
-    public void writeToFile(Path filePath, String format) throws IOException {
+    public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.TRUE).getBytes());

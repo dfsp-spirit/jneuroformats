@@ -63,7 +63,7 @@ public class FsCurvTest {
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
-            curv.writeToFile(temp, "curv");
+            curv.write(temp, "curv");
             FsCurv curv2 = FsCurv.fromFsCurvFile(temp);
             assertThat(curv2.data.size()).isEqualTo(curv.data.size());
         }
@@ -80,7 +80,7 @@ public class FsCurvTest {
 
         try {
             Path temp = Files.createTempFile("", ".csv");
-            curv.writeToFile(temp, "csv");
+            curv.write(temp, "csv");
             FsCurv curv2 = FsCurv.read(temp);
             assertThat(curv2.data.size()).isEqualTo(curv.data.size());
         }

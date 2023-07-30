@@ -132,4 +132,62 @@ public class FsMghData {
         return data;
     }
 
+    /**
+     * Write the FsMghData to a ByteBuffer.
+     * @param buf an existing ByteBuffer to write to. If null, a new ByteBuffer will be created. Typically this should be an existing ByteBuffer filled partly, with the header bytes, and with enough space to hold the FsMghData.
+     * @param header the FsMghHeader from which to obtain information on which data to write. This header will not be written to the ByteBuffer.
+     * @return the ByteBuffer, with the FsMghData written to it.
+     * @throws IOException if IO error occurs.
+     */
+    protected ByteBuffer writeFsMghDataToByteBuffer(ByteBuffer buf, FsMghHeader header) throws IOException {
+        if (buf == null) {
+            buf = ByteBuffer.allocate(header.getNumValues() * 4);
+        }
+
+        if(this.mri_datatype == FsMgh.MRI_FLOAT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            buf.putFloat(this.data_mri_float[i][j][k][l]);
+                        }
+                    }
+                }
+            }
+        } else if(this.mri_datatype == FsMgh.MRI_INT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            buf.putInt((int) this.data_mri_int[i][j][k][l]);
+                        }
+                    }
+                }
+            }
+        } else if(this.mri_datatype == FsMgh.MRI_SHORT) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            buf.putShort((short) this.data_mri_short[i][j][k][l]);
+                        }
+                    }
+                }
+            }
+        } else if(this.mri_datatype == FsMgh.MRI_UCHAR) {
+            for(int i = 0; i < header.dim1size; i++) {
+                for(int j = 0; j < header.dim2size; j++) {
+                    for(int k = 0; k < header.dim3size; k++) {
+                        for(int l = 0; l < header.dim4size; l++) {
+                            buf.put((byte) this.data_mri_uchar[i][j][k][l]);
+                        }
+                    }
+                }
+            }
+        } else {
+            throw new IOException("Invalid MRI data type.");
+        }
+        return buf;
+    }
+
 }

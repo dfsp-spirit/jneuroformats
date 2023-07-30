@@ -54,6 +54,14 @@ public class FsMghHeader {
     }
 
     /**
+     * Get the number of values in the data part of the file.
+     * @return the number of values in the data part of the file.
+     */
+    public int getNumValues() {
+        return this.dim1size * this.dim2size * this.dim3size * this.dim4size;
+    }
+
+    /**
      * Read an FsMghHeader instance from a Buffer in FreeSurfer MGH format. Reads the header and advances the buffer to the data part of the file.
      * @param buf the buffer to read from.
      * @return an FsMghHeader instance.
@@ -79,7 +87,9 @@ public class FsMghHeader {
 
         int unusedHeaderSpaceSizeLeft = 254; // in bytes
 
-        if (header.rasGoodFlag == 1) {
+        Short validRasGoodFlagValue = 1;
+
+        if (header.rasGoodFlag == validRasGoodFlagValue) {
             header.sizeX = buf.getFloat();
             header.sizeY = buf.getFloat();
             header.sizeZ = buf.getFloat();
@@ -103,6 +113,58 @@ public class FsMghHeader {
         }
 
         return header;
+    }
+
+    /**
+     * Write the FsMghHeader to a ByteBuffer.
+     * @param buf an existing ByteBuffer to write to. If null, a new ByteBuffer will be created.
+     * @return the ByteBuffer, with the FsMghHeader written to it.
+     * @throws IOException if IO error occurs.
+     */
+    protected ByteBuffer writeFsMghHeaderToByteBuffer(ByteBuffer buf) throws IOException {
+        if (buf == null) {
+            buf = ByteBuffer.allocate(8182);
+        }
+
+        int mghVersionNumber = 1;
+        buf.putInt(mghVersionNumber);
+
+        buf.putInt(this.dim1size);
+        buf.putInt(this.dim2size);
+        buf.putInt(this.dim3size);
+        buf.putInt(this.dim4size);
+
+        buf.putInt(this.mri_datatype);
+        buf.putInt(this.dof);
+        buf.putShort(rasGoodFlag);
+
+        Short validRasGoodFlagValue = 1;
+
+        if (this.rasGoodFlag == validRasGoodFlagValue) {
+            buf.putFloat(this.sizeX);
+            buf.putFloat(this.sizeY);
+            buf.putFloat(this.sizeZ);
+
+            for (int i = 0; i < 9; i++) {
+                buf.putFloat(this.Mdc.get(i));
+            }
+
+            for (int i = 0; i < 3; i++) {
+                buf.putFloat(this.Pxyz_c.get(i));
+            }
+
+        } else {
+            for(int i = 0; i < 60; i++) {
+                buf.put((byte) 0);
+            }
+        }
+
+        // fill rest of the reserved header space with zeros
+        for(int i = 0; i < 194; i++) {
+            buf.put((byte) 0);
+        }
+
+        return buf;
     }
 
     /**
