@@ -48,7 +48,7 @@ public class FsMghTest {
         assertThat(brain.header.dim3size).isEqualTo(256);
         assertThat(brain.header.dim4size).isEqualTo(1);
 
-        assertThat(brain.header.mri_datatype).isEqualTo(FsMgh.MRI_UCHAR);
+        assertThat(brain.header.mriDatatype).isEqualTo(FsMgh.MRI_UCHAR);
 
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);
@@ -75,7 +75,7 @@ public class FsMghTest {
         assertThat(brain.header.dim3size).isEqualTo(256);
         assertThat(brain.header.dim4size).isEqualTo(1);
 
-        assertThat(brain.header.mri_datatype).isEqualTo(FsMgh.MRI_UCHAR);
+        assertThat(brain.header.mriDatatype).isEqualTo(FsMgh.MRI_UCHAR);
 
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);

@@ -37,15 +37,22 @@ public class FsMghHeader {
     public int dim3size = 0;
     public int dim4size = 0;
 
-    public int mri_datatype = FsMgh.MRI_FLOAT;
+    public int mriDatatype = FsMgh.MRI_FLOAT;
     public int dof = 0;
-    public short rasGoodFlag = 0; // stored as signed int16 in file. 1 means that the RAS matrix is good, everything else means it is not.
+    public short rasGoodFlag = 0; // stored as signed int16 in file. 1 means that the RAS matrix and info (size x/y/z, Mdc, Pxyz_c) is good, everything else means it is not.
 
     public float sizeX = 0.0f;
     public float sizeY = 0.0f;
     public float sizeZ = 0.0f;
 
+    /**
+     * The RAS matrix. 3x3 matrix, stored as 9 float values in the file. The matrix is stored in row-major order, i.e. the first 3 values are the first row, the next 3 values are the second row, and the last 3 values are the third row.
+     */
     public List<Float> Mdc = new ArrayList<>();
+
+    /**
+     * The RAS origin. Sometimes referred to as 'Point XYZ center' or 'Pxyz_c'. 3 float values, stored in the file as 3 float values.
+     */
     public List<Float> Pxyz_c = new ArrayList<>();
 
     public FsMghHeader() {
@@ -80,7 +87,7 @@ public class FsMghHeader {
         header.dim3size = buf.getInt();
         header.dim4size = buf.getInt();
 
-        header.mri_datatype = buf.getInt();
+        header.mriDatatype = buf.getInt();
         header.dof = buf.getInt();
 
         header.rasGoodFlag = buf.getShort();
@@ -133,16 +140,16 @@ public class FsMghHeader {
 
     private int getNumBytesPerValue() {
         int numBytesPerValue = 4;
-        if (this.mri_datatype == FsMgh.MRI_FLOAT) {
+        if (this.mriDatatype == FsMgh.MRI_FLOAT) {
             numBytesPerValue = 4;
         }
-        else if (this.mri_datatype == FsMgh.MRI_INT) {
+        else if (this.mriDatatype == FsMgh.MRI_INT) {
             numBytesPerValue = 4;
         }
-        else if (this.mri_datatype == FsMgh.MRI_SHORT) {
+        else if (this.mriDatatype == FsMgh.MRI_SHORT) {
             numBytesPerValue = 2;
         }
-        else if (this.mri_datatype == FsMgh.MRI_UCHAR) {
+        else if (this.mriDatatype == FsMgh.MRI_UCHAR) {
             numBytesPerValue = 1;
         }
         return numBytesPerValue;
@@ -167,7 +174,7 @@ public class FsMghHeader {
         buf.putInt(this.dim3size);
         buf.putInt(this.dim4size);
 
-        buf.putInt(this.mri_datatype);
+        buf.putInt(this.mriDatatype);
         buf.putInt(this.dof);
         buf.putShort(rasGoodFlag);
 

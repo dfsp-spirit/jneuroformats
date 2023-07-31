@@ -60,7 +60,7 @@ public class FsMghData {
     }
 
     public FsMghData(FsMghHeader header) {
-        this.mri_datatype = header.mri_datatype;
+        this.mri_datatype = header.mriDatatype;
         switch (mri_datatype) {
             case FsMgh.MRI_FLOAT:
                 data_mri_float = new float[header.dim1size][header.dim2size][header.dim3size][header.dim4size];
@@ -90,7 +90,7 @@ public class FsMghData {
     public static FsMghData fromByteBuffer(ByteBuffer buf, FsMghHeader header) throws IOException {
         FsMghData data = new FsMghData(header);
 
-        if (header.mri_datatype == FsMgh.MRI_FLOAT) {
+        if (header.mriDatatype == FsMgh.MRI_FLOAT) {
             for (int i = 0; i < header.dim1size; i++) {
                 for (int j = 0; j < header.dim2size; j++) {
                     for (int k = 0; k < header.dim3size; k++) {
@@ -100,7 +100,7 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mri_datatype == FsMgh.MRI_INT) {
+        } else if (header.mriDatatype == FsMgh.MRI_INT) {
             for (int i = 0; i < header.dim1size; i++) {
                 for (int j = 0; j < header.dim2size; j++) {
                     for (int k = 0; k < header.dim3size; k++) {
@@ -110,7 +110,7 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mri_datatype == FsMgh.MRI_SHORT) {
+        } else if (header.mriDatatype == FsMgh.MRI_SHORT) {
             for (int i = 0; i < header.dim1size; i++) {
                 for (int j = 0; j < header.dim2size; j++) {
                     for (int k = 0; k < header.dim3size; k++) {
@@ -120,7 +120,7 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mri_datatype == FsMgh.MRI_UCHAR) {
+        } else if (header.mriDatatype == FsMgh.MRI_UCHAR) {
             for (int i = 0; i < header.dim1size; i++) {
                 for (int j = 0; j < header.dim2size; j++) {
                     for (int k = 0; k < header.dim3size; k++) {
