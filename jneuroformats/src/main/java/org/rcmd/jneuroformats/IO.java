@@ -31,6 +31,7 @@ import java.util.zip.GZIPOutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.StandardOpenOption;
+import java.io.OutputStream;
 
 
 public class IO {
@@ -170,6 +171,12 @@ public class IO {
         GZIPOutputStream gzipOutputStream = new GZIPOutputStream(Channels.newOutputStream(channel));
         gzipOutputStream.write(buffer.array());
         gzipOutputStream.close();
+    }
+
+    protected static void writeFile(Path filePath, ByteBuffer buffer) throws IOException {
+        OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        outputStream.write(buffer.array());
+        outputStream.close();
     }
 
 }

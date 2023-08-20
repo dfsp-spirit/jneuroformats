@@ -20,10 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.WritableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
@@ -70,12 +67,22 @@ public class FsMgh {
 
         FsMgh mgh = new FsMgh();
 
-        byte[] data = Files.readAllBytes(filePath);
-        ByteBuffer buffer = ByteBuffer.wrap(data);
+        FileInputStream fis = new FileInputStream(filePath.toFile());
+        ArrayList<Byte> allBytes = new ArrayList<Byte>();
+        byte[] readBuffer = new byte[65536];
+        int numRead;
+        while ((numRead = fis.read(readBuffer)) != -1) {
+            for (int i = 0; i < numRead; i++) {
+                allBytes.add(readBuffer[i]);
+            }
+        }
+
+        byte[] ab = IO.convertBytes(allBytes);
+        ByteBuffer bbuffer = ByteBuffer.wrap(ab);
 
         // Read the header
-        mgh.header = FsMghHeader.fromByteBuffer(buffer);
-        mgh.data = FsMghData.fromByteBuffer(buffer, mgh.header);
+        mgh.header = FsMghHeader.fromByteBuffer(bbuffer);
+        mgh.data = FsMghData.fromByteBuffer(bbuffer, mgh.header);
 
         return mgh;
 
@@ -103,14 +110,12 @@ public class FsMgh {
     }
 
     protected void writeToMghFile(Path filePath) throws IOException {
-        ByteBuffer buf = writeFsMghToByteBuffer();
-        WritableByteChannel channel = Files.newByteChannel(filePath, StandardOpenOption.WRITE);
-        channel.write(buf);
-        channel.close();
+        ByteBuffer buf = this.writeFsMghToByteBuffer();
+        IO.writeFile(filePath, buf);
     }
 
     protected void writeToMgzFile(Path filePath) throws IOException {
-        ByteBuffer buf = writeFsMghToByteBuffer();
+        ByteBuffer buf = this.writeFsMghToByteBuffer();
         IO.writeGzipFile(filePath, buf);
     }
 

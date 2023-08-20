@@ -46,7 +46,7 @@ public class FsMghHeader {
     public float sizeZ = 0.0f;
 
     /**
-     * The RAS matrix. 3x3 matrix, stored as 9 float values in the file. The matrix is stored in row-major order, i.e. the first 3 values are the first row, the next 3 values are the second row, and the last 3 values are the third row.
+     * The Mdc matrix, used to compute the vox2RAS matrix and related information.
      */
     public List<Float> Mdc = new ArrayList<>();
 
@@ -163,7 +163,7 @@ public class FsMghHeader {
      */
     protected ByteBuffer writeFsMghHeaderToByteBuffer(ByteBuffer buf) throws IOException {
         if (buf == null) {
-            buf = ByteBuffer.allocate(this.getHeaderSizeInBytes() + this.getDataSizeInBytes()+ 1000);
+            buf = ByteBuffer.allocate(this.getHeaderSizeInBytes() + this.getDataSizeInBytes() + 1000);
         }
 
         int mghVersionNumber = 1;
