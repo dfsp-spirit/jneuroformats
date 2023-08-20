@@ -40,7 +40,7 @@ Many of the classes provide utility methods which are typically needed in struct
 
 ## Installation
 
-This is work-in-progress, not yet.
+This is work-in-progress, not yet. We will upload to Maven central once it's ready.
 
 
 ## Documentation and Usage
