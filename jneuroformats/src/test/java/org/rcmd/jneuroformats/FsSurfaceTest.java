@@ -57,7 +57,7 @@ public class FsSurfaceTest {
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
-            cube.writeToFile(temp, "surf");
+            cube.write(temp, "surf");
             FsSurface cube2 = FsSurface.fromFsSurfaceFile(temp);
             assertThat(cube2.getNumberOfVertices()).isEqualTo(cube.getNumberOfVertices());
             assertThat(cube2.getNumberOfFaces()).isEqualTo(cube.getNumberOfFaces());
@@ -74,7 +74,7 @@ public class FsSurfaceTest {
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
-            cube.writeToFile(temp, "ply");
+            cube.write(temp, "ply");
             FsSurface cube2 = FsSurface.fromPlyFile(temp);
             assertThat(cube2.getNumberOfVertices()).isEqualTo(cube.getNumberOfVertices());
             assertThat(cube2.getNumberOfFaces()).isEqualTo(cube.getNumberOfFaces());

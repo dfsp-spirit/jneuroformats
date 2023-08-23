@@ -490,25 +490,65 @@ public class FsSurface implements Mesh {
         return buf;
     }
 
+    public enum MeshFileType {
+        PLY, OBJ, SURF
+    }
+
+    private MeshFileType meshFileFormatFromFileExtension (Path filePath) {
+        String fileNameLower = filePath.getFileName().toString().toLowerCase();
+        if(fileNameLower.endsWith(".ply")) {
+            return MeshFileType.PLY;
+        }
+        else if(fileNameLower.endsWith(".obj")) {
+            return MeshFileType.OBJ;
+        }
+        else {  // FreeSurfer surf files typically have no file extension.
+            return MeshFileType.SURF;
+        }
+    }
+
+    private MeshFileType getMeshFileFormat(Path filePath, String format) throws IOException {
+        String formatLower = format.toLowerCase();
+        if(formatLower.equals("auto")) {
+            return meshFileFormatFromFileExtension(filePath);
+        } else {
+
+            if (format.equals("ply")) {
+                return MeshFileType.PLY;
+            }
+            else if (format.equals("obj")) {
+                return MeshFileType.OBJ;
+            }
+            else if (format.equals("surf")) {
+                return MeshFileType.SURF;
+            }
+            else {
+                throw new IOException(MessageFormat.format("Unknown mesh format {0}.", format));
+            }
+        }
+    }
+
     /**
-     * Write this mesh to a file in PLY or OBJ format.
+     * Write this mesh to a file in PLY, OBJ or FreeSurfer surf format.
      * @param filePath the path to the file to write to
-     * @param format the format to write to, either "ply", "obj", or "surf".
-     * @throws IOException
+     * @param format the format to write to, either "ply", "obj", or "surf". Alternatively, "auto" to derive the format from the filePath.
+     * @throws IOException if IO error occurs.
      */
-    public void writeToFile(Path filePath, String format) throws IOException {
-        format = format.toLowerCase();
-        if (format.equals("ply")) {
+    public void write(Path filePath, String format) throws IOException {
+
+        MeshFileType meshFileType = getMeshFileFormat(filePath, format);
+
+        if (meshFileType.equals(MeshFileType.PLY)) {
             Files.write(filePath, toPlyFormat().getBytes());
         }
-        else if (format.equals("obj")) {
+        else if (meshFileType.equals(MeshFileType.OBJ)) {
             Files.write(filePath, toObjFormat().getBytes());
         }
-        else if (format.equals("surf")) {
+        else if (meshFileType.equals(MeshFileType.SURF)) {
             this.writeSurface(filePath);
         }
         else {
-            throw new IOException(MessageFormat.format("Unknown mesh export format {0}.", format));
+            throw new IOException(MessageFormat.format("Unhandled mesh export format {0}.", meshFileType));
         }
     }
 
