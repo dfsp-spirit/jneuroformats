@@ -109,18 +109,67 @@ public class FsAnnot {
         }
     }
 
+    public enum AnnotFileFormat {
+        ANNOT, CSV
+    }
+
+    protected static AnnotFileFormat annotFileFormatFromFileExtension (Path filePath) throws IOException {
+        String fileNameLower = filePath.getFileName().toString().toLowerCase();
+        if(fileNameLower.endsWith(".annot")) {
+            return AnnotFileFormat.ANNOT;
+        }
+        else if(fileNameLower.endsWith(".mgz")) {
+            return AnnotFileFormat.CSV;
+        }
+        else {
+            throw new IOException(MessageFormat.format("Cannot determine annotation file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
+        }
+    }
+
+    protected static AnnotFileFormat getAnnotFileFormat(Path filePath, String format) throws IOException {
+        String formatLower = format.toLowerCase();
+        if(formatLower.equals("auto")) {
+            return annotFileFormatFromFileExtension(filePath);
+        } else {
+
+            if (format.equals("annot")) {
+                return AnnotFileFormat.ANNOT;
+            }
+            else if (format.equals("csv")) {
+                return AnnotFileFormat.CSV;
+            }
+            else {
+                throw new IOException(MessageFormat.format("Unknown annotation file format {0}.", format));
+            }
+        }
+    }
+
     /**
      * Read a file in annot format and return an FsAnnot object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @see #readFormat(Path, String) if you want to read a file and specify the format.
      */
     public static FsAnnot read(Path filePath) throws IOException, FileNotFoundException {
-        String fileNameLower = filePath.getFileName().toString().toLowerCase();
-        if (fileNameLower.endsWith(".csv")) {
+        return FsAnnot.readFormat(filePath, "auto");
+    }
+
+    /**
+     * Read a file in annot format and return an FsAnnot object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
+     * @param format the format of the file to read. Currently, only "annot" is supported.
+     * @return an FsAnnot object.
+     * @throws IOException if IO error occurs.
+     * @see #read(Path) if you want to read a file without specifying the format.
+     */
+    public static FsAnnot readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
+
+        AnnotFileFormat annotFormat = getAnnotFileFormat(filePath, format);
+
+        if (annotFormat == AnnotFileFormat.CSV) {
             throw new IOException(
-                    MessageFormat.format("Reading FsAnnot from CSV files not supported yet. Please open an issue and supply an example file if you need this: '{0}'.\n",
-                            filePath.toString()));
+                    MessageFormat.format("Reading FsAnnot from CSV files not supported yet: '{0}'.\n", filePath.toString()));
         }
         else {
             return FsAnnot.fromFsAnnotFile(filePath);
@@ -133,7 +182,7 @@ public class FsAnnot {
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
      */
-    public static FsAnnot fromFsAnnotFile(Path filePath) throws IOException, FileNotFoundException {
+    protected static FsAnnot fromFsAnnotFile(Path filePath) throws IOException, FileNotFoundException {
 
         FsAnnot annot = new FsAnnot();
 
@@ -255,7 +304,7 @@ public class FsAnnot {
     /**
      * Write this FsAnnot to a file in annot or CSV format.
      * @param filePath the path to the file to write to
-     * @param format the format to write to, either "fsannot" or "csv".
+     * @param format the format to write to, either "annot" or "csv".
      * @throws IOException
      */
     public void write(Path filePath, String format) throws IOException {
@@ -263,7 +312,7 @@ public class FsAnnot {
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.TRUE).getBytes());
         }
-        else if (format.equals("fsannot")) {
+        else if (format.equals("annot")) {
             this.writeAnnot(filePath);
         }
         else {
