@@ -59,7 +59,7 @@ public class FsCurv {
      * @return an FsCurv object.
      * @throws IOException if IO error occurs.
      */
-    public static FsCurv fromCsvFile(Path filePath, Boolean has_header) throws IOException {
+    protected static FsCurv fromCsvFile(Path filePath, Boolean has_header) throws IOException {
         FsCurv curv = new FsCurv();
         List<String> lines = Files.readAllLines(filePath);
         if (has_header) {
@@ -104,7 +104,7 @@ public class FsCurv {
      * @return an FsCurv object.
      * @throws IOException if IO error occurs.
      */
-    public static FsCurv fromFsCurvFile(Path filePath) throws IOException {
+    protected static FsCurv fromFsCurvFile(Path filePath) throws IOException {
 
         FsCurv curv = new FsCurv();
 

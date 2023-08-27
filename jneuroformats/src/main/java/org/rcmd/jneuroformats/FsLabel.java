@@ -45,6 +45,10 @@ public class FsLabel {
         value = new ArrayList<>();
     }
 
+    /**
+     * Return the number of vertices or voxels that are part of the label.
+     * @return the number of vertices or voxels that are part of the label.
+     */
     public int size() {
         return this.elementIndex.size();
     }
@@ -92,7 +96,7 @@ public class FsLabel {
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if the file does not exist.
      */
-    public static FsLabel fromFsLabelFile(Path filePath) throws IOException, FileNotFoundException {
+    protected static FsLabel fromFsLabelFile(Path filePath) throws IOException, FileNotFoundException {
 
         FsLabel label = new FsLabel();
         List<String> lines = Files.readAllLines(filePath);
@@ -142,7 +146,7 @@ public class FsLabel {
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if the file does not exist.
      */
-    public static FsLabel fromCsvFile(Path filePath, Boolean has_header) throws IOException, FileNotFoundException {
+    protected static FsLabel fromCsvFile(Path filePath, Boolean has_header) throws IOException, FileNotFoundException {
 
         FsLabel label = new FsLabel();
         List<String> lines = Files.readAllLines(filePath);
@@ -208,7 +212,7 @@ public class FsLabel {
      * @param format the format to write in, either "csv" or "fslabel".
      * @throws IOException
      */
-    public void writeToFile(Path filePath, String format) throws IOException {
+    public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
         if (format.equals("csv")) {
             Files.write(filePath, toCsvFormat(Boolean.TRUE).getBytes());

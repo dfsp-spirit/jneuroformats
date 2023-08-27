@@ -233,6 +233,44 @@ public class FsSurface implements Mesh {
     }
 
     /**
+     * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.ply")`. The file format will be determined from the file extension.
+     * @return an FsSurface object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     * @see #readFormat(Path, String) if you want to read a file and specify the format.
+     */
+    public static FsSurface read(Path filePath) throws IOException, FileNotFoundException {
+        return FsSurface.readFormat(filePath, "auto");
+    }
+
+    /**
+     * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mgz")`. The file format will be determined from the file extension if parameter `format` is set to `auto`.
+     * @param format the file format to read, either "mz3", "ply", "surf", or "auto" to auto-detect from the file name.
+     * @return an FsSurface object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     * @see #read(Path) if you want to read a file without specifying the format.
+     */
+    public static FsSurface readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
+        MeshFileFormat meshFormat = getMeshFileFormat(filePath, format);
+
+        if(meshFormat.equals(MeshFileFormat.MZ3)) {
+            return FsSurface.fromMz3File(filePath);
+        }
+        else if(meshFormat.equals(MeshFileFormat.PLY)) {
+            return fromPlyFile(filePath);
+        }
+        else if(meshFormat.equals(MeshFileFormat.SURF)) {
+            return fromFsSurfaceFile(filePath);
+        }
+        else {
+            throw new IOException(MessageFormat.format("Unknown mesh file format {0}.", meshFormat.toString()));
+        }
+    }
+
+    /**
      * Read a file in MZ3 surface format and return an FsSurface object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mz3")`.
      * @return an FsSurface object.
@@ -372,8 +410,8 @@ public class FsSurface implements Mesh {
     }
 
     /**
-     * Generate string representation of this mesh in PLY format.
-     * @param vertexColors the vertex colors to use, as a list of int arrays of length 3, with values in the range 0-255. The first 3 values must be the r, g and b value for the first vertex.
+     * Generate string representation of this mesh in PLY format, with vertex colors.
+     * @param vertexColors the vertex colors to use, as a list of `java.awt.color` instances.
      * @return the PLY format string
      */
     public String toPlyFormat(List<Color> vertexColors) {
@@ -490,37 +528,37 @@ public class FsSurface implements Mesh {
         return buf;
     }
 
-    public enum MeshFileType {
-        PLY, OBJ, SURF
+    public enum MeshFileFormat {
+        PLY, OBJ, SURF, MZ3
     }
 
-    private MeshFileType meshFileFormatFromFileExtension (Path filePath) {
+    private static MeshFileFormat meshFileFormatFromFileExtension (Path filePath) {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
         if(fileNameLower.endsWith(".ply")) {
-            return MeshFileType.PLY;
+            return MeshFileFormat.PLY;
         }
         else if(fileNameLower.endsWith(".obj")) {
-            return MeshFileType.OBJ;
+            return MeshFileFormat.OBJ;
         }
         else {  // FreeSurfer surf files typically have no file extension.
-            return MeshFileType.SURF;
+            return MeshFileFormat.SURF;
         }
     }
 
-    private MeshFileType getMeshFileFormat(Path filePath, String format) throws IOException {
+    private static MeshFileFormat getMeshFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
         if(formatLower.equals("auto")) {
             return meshFileFormatFromFileExtension(filePath);
         } else {
 
             if (format.equals("ply")) {
-                return MeshFileType.PLY;
+                return MeshFileFormat.PLY;
             }
             else if (format.equals("obj")) {
-                return MeshFileType.OBJ;
+                return MeshFileFormat.OBJ;
             }
             else if (format.equals("surf")) {
-                return MeshFileType.SURF;
+                return MeshFileFormat.SURF;
             }
             else {
                 throw new IOException(MessageFormat.format("Unknown mesh format {0}.", format));
@@ -536,15 +574,15 @@ public class FsSurface implements Mesh {
      */
     public void write(Path filePath, String format) throws IOException {
 
-        MeshFileType meshFileType = getMeshFileFormat(filePath, format);
+        MeshFileFormat meshFileType = getMeshFileFormat(filePath, format);
 
-        if (meshFileType.equals(MeshFileType.PLY)) {
+        if (meshFileType.equals(MeshFileFormat.PLY)) {
             Files.write(filePath, toPlyFormat().getBytes());
         }
-        else if (meshFileType.equals(MeshFileType.OBJ)) {
+        else if (meshFileType.equals(MeshFileFormat.OBJ)) {
             Files.write(filePath, toObjFormat().getBytes());
         }
-        else if (meshFileType.equals(MeshFileType.SURF)) {
+        else if (meshFileType.equals(MeshFileFormat.SURF)) {
             this.writeSurface(filePath);
         }
         else {

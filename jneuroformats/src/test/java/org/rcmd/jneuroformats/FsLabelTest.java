@@ -60,7 +60,7 @@ public class FsLabelTest {
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
-            cortex.writeToFile(temp, "fslabel");
+            cortex.write(temp, "fslabel");
             FsLabel cortex2 = FsLabel.fromFsLabelFile(temp);
             assertThat(cortex2.size()).isEqualTo(cortex.size());
         }
@@ -83,7 +83,7 @@ public class FsLabelTest {
 
         try {
             Path temp = Files.createTempFile("", ".csv");
-            cortex.writeToFile(temp, "csv");
+            cortex.write(temp, "csv");
             FsLabel cortex2 = FsLabel.read(temp);
             assertThat(cortex2.size()).isEqualTo(cortex.size());
         }

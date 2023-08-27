@@ -50,11 +50,82 @@ public class FsMgh {
         this.data = data;
     }
 
-    public static void validateMriDataType(int mriDataType) throws IOException {
+    protected static void validateMriDataType(int mriDataType) throws IOException {
         if (!(mriDataType == MRI_FLOAT || mriDataType == MRI_INT || mriDataType == MRI_SHORT || mriDataType == MRI_UCHAR)) {
             throw new IOException("Invalid MRI data type.");
         }
     }
+
+    public enum VolumeFileType {
+        MGH, MGZ
+    }
+
+    protected static VolumeFileType volumeFileFormatFromFileExtension (Path filePath) throws IOException {
+        String fileNameLower = filePath.getFileName().toString().toLowerCase();
+        if(fileNameLower.endsWith(".mgh")) {
+            return VolumeFileType.MGH;
+        }
+        else if(fileNameLower.endsWith(".mgz")) {
+            return VolumeFileType.MGZ;
+        }
+        else {
+            throw new IOException(MessageFormat.format("Cannot determine volume file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
+        }
+    }
+
+    protected static VolumeFileType getVolumeFileFormat(Path filePath, String format) throws IOException {
+        String formatLower = format.toLowerCase();
+        if(formatLower.equals("auto")) {
+            return volumeFileFormatFromFileExtension(filePath);
+        } else {
+
+            if (format.equals("mgh")) {
+                return VolumeFileType.MGH;
+            }
+            else if (format.equals("mgz")) {
+                return VolumeFileType.MGZ;
+            }
+            else {
+                throw new IOException(MessageFormat.format("Unknown volume file format {0}.", format));
+            }
+        }
+    }
+
+    /**
+     * Read a file in FreeSurfer MGH format or MGZ format and return a FsMgh object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mgz")`. The file format will be determined from the file extension.
+     * @return an FsMgh object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     * @see #readFormat(Path, String) if you want to read a file and specify the format.
+     */
+    public static FsMgh read(Path filePath) throws IOException, FileNotFoundException {
+        return FsMgh.readFormat(filePath, "auto");
+    }
+
+    /**
+     * Read a file in FreeSurfer MGH format or MGZ format and return a FsMgh object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mgz")`. The file format will be determined from the file extension if parameter `format` is set to `auto`.
+     * @param format the file format to read, either "mgh", "mgz", or "auto" to auto-detect from the file name.
+     * @return an FsMgh object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     * @see #read(Path) if you want to read a file without specifying the format.
+     */
+    public static FsMgh readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
+        VolumeFileType vol = getVolumeFileFormat(filePath, format);
+
+        if(vol.equals(VolumeFileType.MGH)) {
+            return fromFsMghFile(filePath);
+        }
+        else if(vol.equals(VolumeFileType.MGZ)) {
+            return fromFsMgzFile(filePath);
+        }
+        else {
+            throw new IOException(MessageFormat.format("Unknown volume file format {0}.", vol.toString()));
+        }
+    }
+
 
     /**
      * Read a file in FreeSurfer mgh format and return a FsMgh object.
@@ -63,7 +134,7 @@ public class FsMgh {
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if the file does not exist.
      */
-    public static FsMgh fromFsMghFile(Path filePath) throws IOException, FileNotFoundException {
+    protected static FsMgh fromFsMghFile(Path filePath) throws IOException, FileNotFoundException {
 
         FsMgh mgh = new FsMgh();
 
@@ -88,7 +159,7 @@ public class FsMgh {
 
     }
 
-    public static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
+    protected static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
         FileInputStream fis = new FileInputStream(filePath.toFile());
         GZIPInputStream gzis = new GZIPInputStream(fis);
         ArrayList<Byte> allBytes = new ArrayList<Byte>();
