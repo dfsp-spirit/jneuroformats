@@ -50,6 +50,21 @@ public class FsAnnotTest {
     }
 
     @Test
+    public void oneCanReadOurDemoAnnotFileUsingRead() {
+
+        Path annotFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.aparc.annot");
+        FsAnnot desikan;
+        try {
+            desikan = FsAnnot.read(annotFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        assertThat(desikan.numRegions()).isEqualTo(35);
+        assertThat(desikan.numVertices()).isEqualTo(149244);
+    }
+
+    @Test
     public void oneCanWriteAndRereadFsAnnot() {
 
         Path annotFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.aparc.annot");
