@@ -28,18 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mz3 {
-    public FsSurface surface;
+    public Mesh mesh;
     public List<Float> perVertexData;
     public List<Color> vertexColors;
 
     public Mz3() {
-        surface = new FsSurface();
-        perVertexData = new ArrayList<>();
-        vertexColors = new ArrayList<>();
+        this.mesh = new Mesh();
+        this.perVertexData = new ArrayList<>();
+        this.vertexColors = new ArrayList<>();
     }
 
-    public Mz3(FsSurface surface, List<Float> perVertexData, List<Color> vertexColors) {
-        this.surface = surface;
+    public Mz3(Mesh mesh, List<Float> perVertexData, List<Color> vertexColors) {
+        this.mesh = mesh;
         this.perVertexData = perVertexData;
         this.vertexColors = vertexColors;
     }
@@ -54,14 +54,14 @@ public class Mz3 {
      */
     public static Mz3 fromMz3File(Path filePath) throws IOException, FileNotFoundException, BufferUnderflowException {
 
-        FsSurface surface = new FsSurface();
+        Mesh mesh = new Mesh();
 
         Boolean is_gzip = mz3FileIsGzipped(filePath);
         ByteBuffer buf = IO.readAllFileBytesGzipOrNot(filePath, is_gzip, ByteOrder.LITTLE_ENDIAN);
 
         Short magicNumber = buf.getShort();
         if (!magicNumber.equals((short) 23117)) {
-            throw new IOException(MessageFormat.format("Invalid magic number in MZ3 surface file: magic code {0}, expected 23117. File invalid.",
+            throw new IOException(MessageFormat.format("Invalid magic number in MZ3 mesh file: magic code {0}, expected 23117. File invalid.",
                     magicNumber));
         }
 
@@ -89,7 +89,7 @@ public class Mz3 {
                 face[0] = buf.getInt();
                 face[1] = buf.getInt();
                 face[2] = buf.getInt();
-                surface.addFace(face);
+                mesh.addFace(face);
             }
         }
 
@@ -99,7 +99,7 @@ public class Mz3 {
                 vertex[0] = buf.getFloat();
                 vertex[1] = buf.getFloat();
                 vertex[2] = buf.getFloat();
-                surface.addVertex(vertex);
+                mesh.addVertex(vertex);
             }
         }
 
@@ -123,7 +123,7 @@ public class Mz3 {
         }
 
         Mz3 mz3 = new Mz3();
-        mz3.surface = surface;
+        mz3.mesh = mesh;
         mz3.perVertexData = perVertexData;
         mz3.vertexColors = vertexColors;
 

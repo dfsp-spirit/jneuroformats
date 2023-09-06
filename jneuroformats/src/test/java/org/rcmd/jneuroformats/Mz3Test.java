@@ -13,7 +13,7 @@ public class Mz3Test {
     public void initMz3() {
 
         Mz3 mz3 = new Mz3();
-        assertThat(mz3.surface.getNumberOfVertices()).isEqualTo(0);
+        assertThat(mz3.mesh.getNumberOfVertices()).isEqualTo(0);
         assertThat(mz3.perVertexData.size()).isEqualTo(0);
         assertThat(mz3.vertexColors.size()).isEqualTo(0);
     }
@@ -29,7 +29,7 @@ public class Mz3Test {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertThat(mz3.surface.getNumberOfVertices()).isEqualTo(8);
+        assertThat(mz3.mesh.getNumberOfVertices()).isEqualTo(8);
         assertThat(mz3.perVertexData.size()).isEqualTo(0);
         assertThat(mz3.vertexColors.size()).isEqualTo(0);
     }

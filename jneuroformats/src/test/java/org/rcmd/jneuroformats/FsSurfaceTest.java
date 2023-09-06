@@ -26,34 +26,26 @@ import static org.assertj.core.api.Assertions.*;
 
 public class FsSurfaceTest {
 
-    @Test
-    public void oneCanGenerateCube() {
-
-        FsSurface cube = FsSurface.generateCube();
-
-        assertThat(cube.getNumberOfVertices()).isEqualTo(8);
-        assertThat(cube.getNumberOfFaces()).isEqualTo(12);
-    }
 
     @Test
     public void oneCanReadOurDemoSurfFile() {
 
         Path surfFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "surf", "lh.white");
-        FsSurface hemi_mesh;
+        FsSurface surface;
         try {
-            hemi_mesh = FsSurface.fromFsSurfaceFile(surfFile);
+            surface = FsSurface.fromFsSurfaceFile(surfFile);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertThat(hemi_mesh.getNumberOfVertices()).isEqualTo(149244);
-        assertThat(hemi_mesh.getNumberOfFaces()).isEqualTo(298484);
+        assertThat(surface.mesh.getNumberOfVertices()).isEqualTo(149244);
+        assertThat(surface.mesh.getNumberOfFaces()).isEqualTo(298484);
     }
 
     @Test
     public void oneCanWriteAndRereadASurface() {
 
-        FsSurface cube = FsSurface.generateCube();
+        FsSurface cube = new FsSurface(Mesh.generateCube());
 
         try {
             Path temp = Files.createTempFile("", ".tmp");
@@ -70,12 +62,12 @@ public class FsSurfaceTest {
     @Test
     public void oneCanWriteAndRereadASurfaceUsingPlyFormat() {
 
-        FsSurface cube = FsSurface.generateCube();
+        FsSurface cube = new FsSurface(Mesh.generateCube());
 
         try {
-            Path temp = Files.createTempFile("", ".tmp");
+            Path temp = Files.createTempFile("", ".ply");
             cube.write(temp, "ply");
-            FsSurface cube2 = FsSurface.fromPlyFile(temp);
+            FsSurface cube2 = FsSurface.read(temp);
             assertThat(cube2.getNumberOfVertices()).isEqualTo(cube.getNumberOfVertices());
             assertThat(cube2.getNumberOfFaces()).isEqualTo(cube.getNumberOfFaces());
         }

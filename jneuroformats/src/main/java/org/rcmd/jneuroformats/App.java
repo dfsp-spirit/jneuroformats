@@ -101,7 +101,7 @@ public class App {
         try {
             Colormap viridis = new Viridis();
             List<Color> vertexColorsRgb = getAllColormapColors(viridis, scaleToZeroOne(lhSulc.data));
-            Files.write(plyFileSulc, lhSurface.toPlyFormat(vertexColorsRgb).getBytes());
+            Files.write(plyFileSulc, lhSurface.mesh.toPlyFormat(vertexColorsRgb).getBytes());
             System.out.println("Wrote mesh vertex-colored by per-vertex sulcal depth to file: " + plyFileSulc.toString());
         }
         catch (Exception e) {
@@ -111,7 +111,7 @@ public class App {
         // Now export a vertex-colored mesh in PLY format from the annotation.
         Path plyFileAnnot = java.nio.file.Paths.get(subjectDir.toString(), "label", "lh.aparc.annot.ply");
         try {
-            Files.write(plyFileAnnot, lhSurface.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
+            Files.write(plyFileAnnot, lhSurface.mesh.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
             System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + plyFileAnnot.toString());
         }
         catch (Exception e) {

@@ -35,4 +35,17 @@ public interface IMesh {
      */
     public List<float[]> getVertices();
 
+
+    /**
+     * Set the vertices of the mesh. Does not change the faces, you have to ensure consistency yourself.
+     * @param vertices the new vertices.
+     */
+    public void setVertices(List<float[]> vertices);
+
+    /**
+     * Set the faces of the mesh. Does not change the vertices, you have to ensure consistency yourself.
+     * @param faces the new faces.
+     */
+    public void setFaces(List<int[]> faces);
+
 }
