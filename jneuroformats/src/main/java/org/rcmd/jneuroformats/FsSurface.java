@@ -39,7 +39,7 @@ import java.util.List;
  * to store brain surface reconstructions, e.g., the cortical
  * surface reconstructed from a T1-weighted MRI scan.
  */
-public class FsSurface implements Mesh {
+public class FsSurface implements IMesh {
 
     public List<float[]> vertices;
     public List<int[]> faces;

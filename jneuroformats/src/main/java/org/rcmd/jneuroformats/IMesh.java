@@ -21,17 +21,17 @@ import java.util.List;
 /**
  * Models a triangular mesh, i.e. a set of vertices and faces.
  */
-public interface Mesh {
+public interface IMesh {
 
     /**
      * Get all faces of the mesh.
-     * @return the faces of the mesh.
+     * @return the faces of the mesh. The mesh is triangular, so each face is a triplet of indices into the vertex list.
      */
     public List<int[]> getFaces();
 
     /**
      * Get all vertices of the mesh.
-     * @return the vertices of the mesh.
+     * @return the vertices of the mesh. Each vertex is a triplet of coordinates.
      */
     public List<float[]> getVertices();
 
