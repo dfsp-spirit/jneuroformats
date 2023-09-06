@@ -32,10 +32,10 @@ import java.util.List;
  */
 public class FsMghHeader {
 
-    public int dim1size = 0;
-    public int dim2size = 0;
-    public int dim3size = 0;
-    public int dim4size = 0;
+    public int dim1Size = 0;
+    public int dim2Size = 0;
+    public int dim3Size = 0;
+    public int dim4Size = 0;
 
     public int mriDatatype = FsMgh.MRI_FLOAT;
     public int dof = 0;
@@ -65,7 +65,7 @@ public class FsMghHeader {
      * @return the number of values in the data part of the file.
      */
     public int getNumValues() {
-        return this.dim1size * this.dim2size * this.dim3size * this.dim4size;
+        return this.dim1Size * this.dim2Size * this.dim3Size * this.dim4Size;
     }
 
     /**
@@ -82,10 +82,10 @@ public class FsMghHeader {
             throw new IOException(MessageFormat.format("Invalid MGH format version in MGH file: expected 1, got {0}. File invalid.", mghVersion));
         }
 
-        header.dim1size = buf.getInt();
-        header.dim2size = buf.getInt();
-        header.dim3size = buf.getInt();
-        header.dim4size = buf.getInt();
+        header.dim1Size = buf.getInt();
+        header.dim2Size = buf.getInt();
+        header.dim3Size = buf.getInt();
+        header.dim4Size = buf.getInt();
 
         header.mriDatatype = buf.getInt();
         header.dof = buf.getInt();
@@ -169,10 +169,10 @@ public class FsMghHeader {
         int mghVersionNumber = 1;
         buf.putInt(mghVersionNumber);
 
-        buf.putInt(this.dim1size);
-        buf.putInt(this.dim2size);
-        buf.putInt(this.dim3size);
-        buf.putInt(this.dim4size);
+        buf.putInt(this.dim1Size);
+        buf.putInt(this.dim2Size);
+        buf.putInt(this.dim3Size);
+        buf.putInt(this.dim4Size);
 
         buf.putInt(this.mriDatatype);
         buf.putInt(this.dof);

@@ -29,7 +29,7 @@ public class FsMghTest {
     @Test
     public void oneCanConstructEmptyFsMghInstances() {
         FsMgh mgh = new FsMgh();
-        assertThat(mgh.header.dim1size).isEqualTo(0);
+        assertThat(mgh.header.dim1Size).isEqualTo(0);
     }
 
     @Test
@@ -43,19 +43,19 @@ public class FsMghTest {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertThat(brain.header.dim1size).isEqualTo(256);
-        assertThat(brain.header.dim2size).isEqualTo(256);
-        assertThat(brain.header.dim3size).isEqualTo(256);
-        assertThat(brain.header.dim4size).isEqualTo(1);
+        assertThat(brain.header.dim1Size).isEqualTo(256);
+        assertThat(brain.header.dim2Size).isEqualTo(256);
+        assertThat(brain.header.dim3Size).isEqualTo(256);
+        assertThat(brain.header.dim4Size).isEqualTo(1);
 
         assertThat(brain.header.mriDatatype).isEqualTo(FsMgh.MRI_UCHAR);
 
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);
 
-        assertThat(brain.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-        assertThat(brain.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-        assertThat(brain.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        assertThat(brain.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+        assertThat(brain.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+        assertThat(brain.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
     }
 
     @Test
@@ -72,9 +72,9 @@ public class FsMghTest {
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);
 
-        assertThat(brain.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-        assertThat(brain.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-        assertThat(brain.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        assertThat(brain.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+        assertThat(brain.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+        assertThat(brain.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
     }
 
     // Also test MGZ format, which is just a gzipped MGH file.
@@ -89,19 +89,19 @@ public class FsMghTest {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-        assertThat(brain.header.dim1size).isEqualTo(256);
-        assertThat(brain.header.dim2size).isEqualTo(256);
-        assertThat(brain.header.dim3size).isEqualTo(256);
-        assertThat(brain.header.dim4size).isEqualTo(1);
+        assertThat(brain.header.dim1Size).isEqualTo(256);
+        assertThat(brain.header.dim2Size).isEqualTo(256);
+        assertThat(brain.header.dim3Size).isEqualTo(256);
+        assertThat(brain.header.dim4Size).isEqualTo(1);
 
         assertThat(brain.header.mriDatatype).isEqualTo(FsMgh.MRI_UCHAR);
 
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);
 
-        assertThat(brain.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-        assertThat(brain.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-        assertThat(brain.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        assertThat(brain.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+        assertThat(brain.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+        assertThat(brain.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
     }
 
     // Also test MGZ format, which is just a gzipped MGH file.
@@ -119,9 +119,9 @@ public class FsMghTest {
         short expectedRasGoodFlag = 1;
         assertThat(brain.header.rasGoodFlag).isEqualTo(expectedRasGoodFlag);
 
-        assertThat(brain.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-        assertThat(brain.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-        assertThat(brain.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+        assertThat(brain.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+        assertThat(brain.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+        assertThat(brain.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
     }
 
     @Test
@@ -140,14 +140,14 @@ public class FsMghTest {
             Path temp = Files.createTempFile("", ".mgh");
             brain.write(temp, "mgh");
             FsMgh brain2 = FsMgh.fromFsMghFile(temp);
-            assertThat(brain2.header.dim1size).isEqualTo(brain.header.dim1size);
-            assertThat(brain2.header.dim2size).isEqualTo(brain.header.dim2size);
-            assertThat(brain2.header.dim3size).isEqualTo(brain.header.dim3size);
-            assertThat(brain2.header.dim4size).isEqualTo(brain.header.dim4size);
+            assertThat(brain2.header.dim1Size).isEqualTo(brain.header.dim1Size);
+            assertThat(brain2.header.dim2Size).isEqualTo(brain.header.dim2Size);
+            assertThat(brain2.header.dim3Size).isEqualTo(brain.header.dim3Size);
+            assertThat(brain2.header.dim4Size).isEqualTo(brain.header.dim4Size);
 
-            assertThat(brain2.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-            assertThat(brain2.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-            assertThat(brain2.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+            assertThat(brain2.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+            assertThat(brain2.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+            assertThat(brain2.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -170,14 +170,14 @@ public class FsMghTest {
             Path temp = Files.createTempFile("", ".mgz");
             brain.write(temp, "mgz");
             FsMgh brain2 = FsMgh.fromFsMgzFile(temp);
-            assertThat(brain2.header.dim1size).isEqualTo(brain.header.dim1size);
-            assertThat(brain2.header.dim2size).isEqualTo(brain.header.dim2size);
-            assertThat(brain2.header.dim3size).isEqualTo(brain.header.dim3size);
-            assertThat(brain2.header.dim4size).isEqualTo(brain.header.dim4size);
+            assertThat(brain2.header.dim1Size).isEqualTo(brain.header.dim1Size);
+            assertThat(brain2.header.dim2Size).isEqualTo(brain.header.dim2Size);
+            assertThat(brain2.header.dim3Size).isEqualTo(brain.header.dim3Size);
+            assertThat(brain2.header.dim4Size).isEqualTo(brain.header.dim4Size);
 
-            assertThat(brain2.data.data_mri_uchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
-            assertThat(brain2.data.data_mri_uchar[109][109][109][0]).isEqualTo(71);
-            assertThat(brain2.data.data_mri_uchar[0][0][0][0]).isEqualTo(0);
+            assertThat(brain2.data.dataMriUchar[99][99][99][0]).isEqualTo(77); // try on command line: mri_info --voxel 99 99 99 pathto/subjects_dir/subject1/mri/brain.mgh
+            assertThat(brain2.data.dataMriUchar[109][109][109][0]).isEqualTo(71);
+            assertThat(brain2.data.dataMriUchar[0][0][0][0]).isEqualTo(0);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
