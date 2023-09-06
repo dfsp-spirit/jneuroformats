@@ -66,8 +66,6 @@ public class FsSurface implements IMesh {
         this.mesh.faces = faces;
     }
 
-
-
     /**
      * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.ply")`. The file format will be determined from the file extension.
@@ -112,7 +110,7 @@ public class FsSurface implements IMesh {
      * @return an FsSurface object.
      * @throws IOException if IO error occurs.
      */
-    public static FsSurface fromFsSurfaceFile(Path filePath) throws IOException {
+    protected static FsSurface fromFsSurfaceFile(Path filePath) throws IOException {
 
         FsSurface surface = new FsSurface();
 
@@ -258,6 +256,10 @@ public class FsSurface implements IMesh {
         this.mesh.setFaces(faces);
     }
 
+    /**
+     * Get the number of vertices in the mesh.
+     * @return the number of vertices in the mesh.
+     */
     public int getNumberOfVertices() {
         return this.mesh.vertices.size();
     }

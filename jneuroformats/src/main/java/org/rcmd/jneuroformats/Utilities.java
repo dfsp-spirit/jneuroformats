@@ -49,4 +49,25 @@ public class Utilities {
         }
         return colors;
     }
+
+    protected static double[] convertFloatsToDoubles(float[] input) {
+        if (input == null) {
+            return null;
+        }
+
+        double[] output = new double[input.length];
+
+        for (int i = 0; i < input.length; i++) {
+            output[i] = input[i];
+        }
+        return output;
+    }
+
+    protected static float[] vectorSubtract(float[] v0, float[] v1) {
+        float[] result = new float[3];
+        result[0] = v0[0] - v1[0];
+        result[1] = v0[1] - v1[1];
+        result[2] = v0[2] - v1[2];
+        return result;
+    }
 }

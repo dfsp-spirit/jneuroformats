@@ -26,6 +26,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.vecmath.Vector3d;
 
 
 public class Mesh implements IMesh {
@@ -123,6 +124,71 @@ public class Mesh implements IMesh {
     public List<int[]> getFaces() {
         return this.faces;
     }
+
+    /**
+     * Compute the vertex normals of the mesh.
+     * @return the vertex normals of the mesh.
+     */
+    public List<float[]> getVertexNormals() {
+        List<float[]> vertexNormals = new ArrayList<>();
+        for (int i = 0; i < this.vertices.size(); i++) {
+            vertexNormals.add(new float[]{0, 0, 0});
+        }
+        for (int[] face : this.faces) {
+            float[] v0 = this.vertices.get(face[0]);
+            float[] v1 = this.vertices.get(face[1]);
+            float[] v2 = this.vertices.get(face[2]);
+            float[] normal = computeNormal(v0, v1, v2);
+            for (int i = 0; i < 3; i++) {
+                vertexNormals.get(face[i])[0] += normal[0];
+                vertexNormals.get(face[i])[1] += normal[1];
+                vertexNormals.get(face[i])[2] += normal[2];
+            }
+        }
+        for (int i = 0; i < vertexNormals.size(); i++) {
+            double[] normal = Utilities.convertFloatsToDoubles(vertexNormals.get(i));
+            double length = new Vector3d(normal).length();
+            if (length > 0) {
+                normal[0] /= length;
+                normal[1] /= length;
+                normal[2] /= length;
+            }
+        }
+        return vertexNormals;
+    }
+
+    /**
+     * Compute the face normals of the mesh.
+     * @return the face normals of the mesh.
+     */
+    public List<float[]> getFaceNormals() {
+        List<float[]> faceNormals = new ArrayList<>();
+        for (int[] face : this.faces) {
+            float[] v0 = this.vertices.get(face[0]);
+            float[] v1 = this.vertices.get(face[1]);
+            float[] v2 = this.vertices.get(face[2]);
+            faceNormals.add(computeNormal(v0, v1, v2));
+        }
+        return faceNormals;
+    }
+
+    /**
+     * Compute the normal given the three vertices of a face.
+     * @param v0 coordinates of the first vertex
+     * @param v1 coordinates of the second vertex
+     * @param v2 coordinates of the third vertex
+     * @return the normal vector
+     */
+    private float[] computeNormal(float[] v0, float[] v1, float[] v2) {
+        float[] normal = new float[3];
+        float[] v01 = Utilities.vectorSubtract(v1, v0);
+        float[] v02 = Utilities.vectorSubtract(v2, v0);
+        normal[0] = v01[1] * v02[2] - v01[2] * v02[1];
+        normal[1] = v01[2] * v02[0] - v01[0] * v02[2];
+        normal[2] = v01[0] * v02[1] - v01[1] * v02[0];
+        return normal;
+    }
+
 
     /**
      * Generate a cube with side length 1 and centered at the origin.
