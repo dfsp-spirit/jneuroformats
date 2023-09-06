@@ -129,7 +129,7 @@ public class Mesh implements IMesh {
      * Compute the vertex normals of the mesh.
      * @return the vertex normals of the mesh.
      */
-    public List<float[]> getVertexNormals() {
+    public List<float[]> computeVertexNormals() {
         List<float[]> vertexNormals = new ArrayList<>();
         for (int i = 0; i < this.vertices.size(); i++) {
             vertexNormals.add(new float[]{0, 0, 0});
@@ -161,7 +161,7 @@ public class Mesh implements IMesh {
      * Compute the face normals of the mesh.
      * @return the face normals of the mesh.
      */
-    public List<float[]> getFaceNormals() {
+    public List<float[]> computeFaceNormals() {
         List<float[]> faceNormals = new ArrayList<>();
         for (int[] face : this.faces) {
             float[] v0 = this.vertices.get(face[0]);

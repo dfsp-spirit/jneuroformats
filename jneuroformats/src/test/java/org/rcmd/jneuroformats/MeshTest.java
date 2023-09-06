@@ -17,6 +17,7 @@
 package org.rcmd.jneuroformats;
 
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -29,6 +30,28 @@ public class MeshTest {
 
         assertThat(cube.getNumberOfVertices()).isEqualTo(8);
         assertThat(cube.getNumberOfFaces()).isEqualTo(12);
+    }
+
+    @Test
+    public void oneCanComputeVertexNormals() {
+
+        Mesh cube = Mesh.generateCube();
+
+        List<float[]> vNormals = cube.computeVertexNormals();
+
+        assertThat(vNormals).isNotNull();
+        assertThat(vNormals.size()).isEqualTo(cube.getNumberOfVertices());
+    }
+
+    @Test
+    public void oneCanComputeFaceNormals() {
+
+        Mesh cube = Mesh.generateCube();
+
+        List<float[]> fNormals = cube.computeFaceNormals();
+
+        assertThat(fNormals).isNotNull();
+        assertThat(fNormals.size()).isEqualTo(cube.getNumberOfFaces());
     }
 
 }
