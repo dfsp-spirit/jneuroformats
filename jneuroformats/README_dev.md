@@ -9,6 +9,7 @@ I suggest to install [SDKMan](https://sdkman.io/) and use it to make sure you ha
 
 ```shell
 curl -s "https://get.sdkman.io" | bash         # install SDKMan
+bash     # Starts a new shell session, so the 'sdk' command becomes available.
 sdk install java    # installs latest LTS version of JDK by default, which is fine. Should be 17.x as of 2023.
 sdk install maven
 ```
