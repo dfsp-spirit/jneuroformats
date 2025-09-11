@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.FileInputStream;
@@ -57,27 +56,30 @@ public class FsMgh {
     }
 
     public enum VolumeFileType {
-        MGH, MGZ
+        MGH,
+        MGZ
     }
 
-    protected static VolumeFileType volumeFileFormatFromFileExtension (Path filePath) throws IOException {
+    protected static VolumeFileType volumeFileFormatFromFileExtension(Path filePath) throws IOException {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
-        if(fileNameLower.endsWith(".mgh")) {
+        if (fileNameLower.endsWith(".mgh")) {
             return VolumeFileType.MGH;
         }
-        else if(fileNameLower.endsWith(".mgz")) {
+        else if (fileNameLower.endsWith(".mgz")) {
             return VolumeFileType.MGZ;
         }
         else {
-            throw new IOException(MessageFormat.format("Cannot determine volume file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
+            throw new IOException(
+                    MessageFormat.format("Cannot determine volume file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
         }
     }
 
     protected static VolumeFileType getVolumeFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
-        if(formatLower.equals("auto")) {
+        if (formatLower.equals("auto")) {
             return volumeFileFormatFromFileExtension(filePath);
-        } else {
+        }
+        else {
 
             if (format.equals("mgh")) {
                 return VolumeFileType.MGH;
@@ -115,17 +117,16 @@ public class FsMgh {
     public static FsMgh readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
         VolumeFileType vol = getVolumeFileFormat(filePath, format);
 
-        if(vol.equals(VolumeFileType.MGH)) {
+        if (vol.equals(VolumeFileType.MGH)) {
             return fromFsMghFile(filePath);
         }
-        else if(vol.equals(VolumeFileType.MGZ)) {
+        else if (vol.equals(VolumeFileType.MGZ)) {
             return fromFsMgzFile(filePath);
         }
         else {
             throw new IOException(MessageFormat.format("Unknown volume file format {0}.", vol.toString()));
         }
     }
-
 
     /**
      * Read a file in FreeSurfer mgh format and return a FsMgh object.
@@ -214,9 +215,11 @@ public class FsMgh {
         format = format.toLowerCase();
         if (format.equals("mgh")) {
             this.writeToMghFile(filePath);
-        } else if (format.equals("mgz")) {
+        }
+        else if (format.equals("mgz")) {
             this.writeToMgzFile(filePath);
-        } else {
+        }
+        else {
             throw new IOException(MessageFormat.format("Unknown FsMgh export format {0}.", format));
         }
     }

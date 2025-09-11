@@ -57,6 +57,15 @@ Run the following command to format the source code and organize the imports as 
 mvn process-sources
 ```
 
+
+### Build errors
+
+If you get an error from maven plugin `license-maven-plugin:4.1:check (default) on project jneuroformats: Some files do not have the expected license header`, you can run this command to add the header automatically. The header is defined in `src/main/resources/header.txt`.
+
+```shell
+mvn license:format
+```
+
 #### Building the docs
 
 Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo.
@@ -67,12 +76,17 @@ mvn javadoc:javadoc
 
 ### Running the demo App
 
+The demo app loads various FreeSurfer data for a subjects from the FreeSurfer output directory, known as the subjects_dir in FreeSurfer speech.
+
 Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo.
 
 ```shell
 mvn package    # to build the jar file.
-java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App src/test/resources/subjects_dir subject1
+java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App --help  # to get usage info
+java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App src/test/resources/subjects_dir subject1  # to run with demo data from the repo
 ```
+
+The last command above runs the app `org.rcmd.jneuroformats.App` with two arguments: The subjects_dir (`src/test/resources/subjects_dir`) and the subject (`subject1`), and prints some information on the loaded files and the data contained in them.
 
 ### Publishing to Maven central
 

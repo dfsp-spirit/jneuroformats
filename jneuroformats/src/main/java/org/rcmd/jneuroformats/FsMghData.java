@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.IOException;
@@ -100,7 +99,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mriDatatype == FsMgh.MRI_INT) {
+        }
+        else if (header.mriDatatype == FsMgh.MRI_INT) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -110,7 +110,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mriDatatype == FsMgh.MRI_SHORT) {
+        }
+        else if (header.mriDatatype == FsMgh.MRI_SHORT) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -120,7 +121,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (header.mriDatatype == FsMgh.MRI_UCHAR) {
+        }
+        else if (header.mriDatatype == FsMgh.MRI_UCHAR) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -162,7 +164,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (this.mriDataType == FsMgh.MRI_INT) {
+        }
+        else if (this.mriDataType == FsMgh.MRI_INT) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -172,7 +175,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (this.mriDataType == FsMgh.MRI_SHORT) {
+        }
+        else if (this.mriDataType == FsMgh.MRI_SHORT) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -182,7 +186,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else if (this.mriDataType == FsMgh.MRI_UCHAR) {
+        }
+        else if (this.mriDataType == FsMgh.MRI_UCHAR) {
             for (int i = 0; i < header.dim1Size; i++) {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
@@ -192,7 +197,8 @@ public class FsMghData {
                     }
                 }
             }
-        } else {
+        }
+        else {
             throw new IOException("Invalid MRI data type.");
         }
         return buf;
