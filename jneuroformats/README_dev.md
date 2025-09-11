@@ -94,6 +94,27 @@ This is easiest via sontype OSSRH, see [docs here](https://docs.github.com/en/ac
 
 This may also be relevant: [Publishing to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md).
 
+### Publishing to GitHub packages
+
+Make sure the `pom.xml` is setup correctly, including new package version etc. Then, make sure your Maven config file on your local computer in your home, `~/.m2/settings.xml`, has a section like this:
+
+```
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+
+<servers>
+  <server>
+    <id>github</id>
+    <username>your-github-username</username>
+    <password>your-personal-access-token</password>
+  </server>
+</servers>
+
+</settings>
+```
+
+The `id`, here `github`, needs to match the sections `<distributionManagement>`, `<repositories>`, and `<pluginRepositories>` in your `pom.xml` file.
+
+Then run `mvn clean deploy`.
 
 ### Credits
 
