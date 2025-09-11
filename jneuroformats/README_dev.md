@@ -114,6 +114,8 @@ Make sure the `pom.xml` is setup correctly, including new package version etc. T
 
 The `id`, here `github`, needs to match the sections `<distributionManagement>`, `<repositories>`, and `<pluginRepositories>` in your `pom.xml` file.
 
+Note that you can check the validity of your token by running `curl -H "Authorization: token <your-personal-access-token>" https://api.github.com/user/packages`.
+
 Then run `mvn clean deploy`.
 
 ### Credits
