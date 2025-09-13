@@ -90,7 +90,7 @@ The last command above runs the app `org.rcmd.jneuroformats.App` with two argume
 
 ### Publishing to Maven central
 
-Sontype OSSRH is now outdated. Therefore, one should now [publish to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md). Their docs aren't great though.
+Sontype OSSRH is now outdated. Therefore, one should now [publish to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md). Their docs aren't great though. We have not done this yet, and currently only use GitHub pages, see below.
 
 ### Publishing to GitHub packages
 

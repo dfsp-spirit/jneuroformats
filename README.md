@@ -40,8 +40,7 @@ Many of the classes provide utility methods which are typically needed in struct
 
 ## Installation
 
-This is work-in-progress, not yet. We will upload to Maven central once it's ready.
-
+An early alpha version of the package can be found [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using it in your project.
 
 ## Documentation and Usage
 
