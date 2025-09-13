@@ -44,9 +44,29 @@ An early alpha version of the package can be found [here on GitHub packages](htt
 
 ## Documentation and Usage
 
-The API documentation will be published to a central repository once the package is officially released. See the development information if you want to generate it yourself.
+Quick Usage Example: Read a brain mesh and per-vertex data for it, and export to colored PLY mesh (see the screenshot above for the PLY mesh rendered in [MeshLab](https://www.meshlab.net/)):
 
-A full example app can be found in the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java).
+```java
+// Read the mesh
+Path lhWhitePath = java.nio.file.Paths.get("subject1", "surf", "lh.white");
+FsSurface lhSurface = FsSurface.fromFsSurfaceFile(lhWhitePath);
+System.out.println("Read " + lhSurface.getNumberOfVertices() + " vertices and " + lhSurface.getNumberOfFaces() + " faces from the surface file.");
+
+// Now read the annotation file.
+Path lhAnnotPath = java.nio.file.Paths.get(subjectDir.toString(), "label", "lh.aparc.annot");
+FsAnnot lhAnnot = FsAnnot.fromFsAnnotFile(lhAnnotPath);
+
+// Write to colored PLY mesh
+Path plyFileAnnot = java.nio.file.Paths.get("subject1", "label", "lh.aparc.annot.ply");
+Files.write(plyFileAnnot, lhSurface.mesh.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
+System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + plyFileAnnot.toString());
+```
+
+For a full app with this example combined with proper error handling and all imports, see the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java). The file also loads per-vertex data and exports it.
+
+
+The API documentation will be published to a central repository once the package is officially released. See the development information below if you want to generate it yourself.
+
 
 The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.
 
