@@ -71,6 +71,12 @@ The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jne
 The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.
 
 
+## Author and License
+
+The jneuroformats package was written by [Tim Schäfer](https://ts.rcmd.org).
+
+It is published under the very permissive [MIT license](./LICENSE).
+
 ## Development
 
 Development information can be found [here](./jneuroformats/README_dev.md).
