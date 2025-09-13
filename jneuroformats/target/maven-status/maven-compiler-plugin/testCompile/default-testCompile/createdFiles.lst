@@ -1,0 +1,8 @@
+org\rcmd\jneuroformats\FsLabelTest.class
+org\rcmd\jneuroformats\Mz3Test.class
+org\rcmd\jneuroformats\FsColortableTest.class
+org\rcmd\jneuroformats\MeshTest.class
+org\rcmd\jneuroformats\FsSurfaceTest.class
+org\rcmd\jneuroformats\FsAnnotTest.class
+org\rcmd\jneuroformats\FsCurvTest.class
+org\rcmd\jneuroformats\FsMghTest.class

@@ -1,0 +1,51 @@
+@options
+@packages
+-classpath
+'C:/Users/ts/.m2/repository/javax/vecmath/vecmath/1.5.2/vecmath-1.5.2.jar'
+-encoding
+'UTF-8'
+-protected
+--release
+11
+-sourcepath
+'C:/Users/ts/develop/jneuroformats/jneuroformats/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2023&#x2013;2025. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/ts/develop/jneuroformats/jneuroformats/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'jneuroformats 1.0-SNAPSHOT API'
+-linkoffline
+'https://docs.oracle.com/en/java/javase/11/docs/api' 'C:/Users/ts/develop/jneuroformats/jneuroformats/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'jneuroformats 1.0-SNAPSHOT API'
+org.rcmd.jneuroformats
+C:\Users\ts\.m2\repository\javax\vecmath\vecmath\1.5.2\vecmath-1.5.2.jar = 1757590737224
+C:\Users\ts\develop\jneuroformats\jneuroformats\src\main\java = 1757590473432
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\allclasses-index.html = 1757766187629
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\allpackages-index.html = 1757766187631
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\constant-values.html = 1757766187537
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\copy.svg = 1757766187666
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\element-list = 1757766187505
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\help-doc.html = 1757766187663
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\index-all.html = 1757766187650
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\index.html = 1757766187653
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\link.svg = 1757766187667
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\member-search-index.js = 1757766187633
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\module-search-index.js = 1757766187632
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\overview-tree.html = 1757766187604
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\package-search-index.js = 1757766187632
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\script.js = 1757766187665
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\search-page.js = 1757766187668
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\search.html = 1757766187652
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\search.js = 1757766187668
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\stylesheet.css = 1757766187665
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\tag-search-index.js = 1757766187634
+C:\Users\ts\develop\jneuroformats\jneuroformats\target\site\apidocs\type-search-index.js = 1757766187633
