@@ -90,9 +90,7 @@ The last command above runs the app `org.rcmd.jneuroformats.App` with two argume
 
 ### Publishing to Maven central
 
-This is easiest via sontype OSSRH, see [docs here](https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-maven).
-
-This may also be relevant: [Publishing to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md).
+Sontype OSSRH is now outdated. Therefore, one should now [publish to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md). Their docs aren't great though.
 
 ### Publishing to GitHub packages
 
@@ -113,6 +111,10 @@ Make sure the `pom.xml` is setup correctly, including new package version etc. T
 ```
 
 The `id`, here `github`, needs to match the sections `<distributionManagement>`, `<repositories>`, and `<pluginRepositories>` in your `pom.xml` file.
+
+The token you will have to create in your GitHub profile, login and click the User picture, then `Settings` -> `Developer Settings` -> `Personal Access Tokens`. Create one that has the permission "Write packages". This will automatically add required other permissions (e.g., read permissions). Generate and save the token in the `settings.xml` file.
+
+Note that if you already have a token for login to GitHub, it most likely does not have the permission "Write packages", unless you created if after GitHub packages was started and explicitely enabled that for the token.
 
 Note that you can check the validity of your token by running `curl -H "Authorization: token <your-personal-access-token>" https://api.github.com/user/packages`.
 
