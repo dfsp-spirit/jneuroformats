@@ -54,13 +54,13 @@ public class FsMghHeader {
 
     // The voxel size in the x, y, and z dimensions. Sometimes referred to as 'Delta' or 'Step' in some FreeSurfer documentation. 3 float values, stored in the file as 3 float values.
 
-    /* The voxel size in the x dimension */
+    /** The voxel size in the x dimension */
     public float sizeX = 0.0f;
 
-    /* The voxel size in the y dimension */
+    /** The voxel size in the y dimension */
     public float sizeY = 0.0f;
 
-    /* The voxel size in the z dimension */
+    /** The voxel size in the z dimension */
     public float sizeZ = 0.0f;
 
     /**

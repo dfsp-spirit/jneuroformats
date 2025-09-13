@@ -254,9 +254,13 @@ public class Mesh implements IMesh {
      * Enumeration of supported mesh file formats.
      */
     public enum MeshFileFormat {
+        /** The PLY file format. */
         PLY,
+        /** The OBJ file format. */
         OBJ,
+        /** The FreeSurfer SURF file format. */
         SURF,
+        /** The MZ3 file format. */
         MZ3
     }
 
@@ -573,10 +577,35 @@ public class Mesh implements IMesh {
      */
     protected static class PlyHeaderInfo {
 
+        /** Constructor for PlyHeaderInfo. */
+        public PlyHeaderInfo() {
+        }
+
+        /** The index of the end of the header section. */
         public int headerEndLineIndex;
+
+        /** The index of the start of the vertex section. */
+        public int vertexStartLineIndex;
+
+        /** The index of the start of the face section. */
+        public int faceStartLineIndex;
+
+        /** The index of the end of the vertex section. */
+        public int vertexEndLineIndex;
+
+        /** The index of the end of the face section. */
+        public int faceEndLineIndex;
+
+        /** The number of vertices in the mesh. */
         public int vertexCount;
+
+        /** The number of faces in the mesh. */
         public int faceCount;
+
+        /** Whether the mesh contains vertex colors. */
         public Boolean containsVertexColors;
+
+        /** Whether the mesh contains vertex normals. */
         public Boolean containsVertexNormals;
 
     }

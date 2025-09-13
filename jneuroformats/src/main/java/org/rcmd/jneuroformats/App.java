@@ -29,6 +29,11 @@ import static org.rcmd.jneuroformats.Utilities.scaleToZeroOne;
  */
 public class App {
 
+    /** Default constructor for App.
+    */
+    public App() {
+    }
+
     /**
      * Print usage information.
      */
@@ -40,6 +45,9 @@ public class App {
         System.out.println(" <subject_id>   : string, subject identifier, e.g. 'bert'. A sub directory with this name must exist under <subjects_dir>.");
     }
 
+    /** Main entry point for the application.
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
 
         // Minimal command line argument parsing.

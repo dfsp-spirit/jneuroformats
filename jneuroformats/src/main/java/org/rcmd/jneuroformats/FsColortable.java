@@ -96,7 +96,7 @@ public class FsColortable {
 
     /**
      * Validate this FsColortable object. Checks that all lists have the same length.
-     * @throws IOException
+     * @throws IOException if the lists do not have the same length.
      */
     public void validate() throws IOException {
         if (this.structureId.size() != this.red.size()) {

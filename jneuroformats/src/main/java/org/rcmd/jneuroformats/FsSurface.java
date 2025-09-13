@@ -168,7 +168,7 @@ public class FsSurface implements IMesh {
     /**
      * Write this mesh to a file in FreeSurfer surface format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     protected void writeSurface(Path filePath) throws IOException {
         ByteBuffer buf = writeSurfaceToByteBuffer();
@@ -180,7 +180,7 @@ public class FsSurface implements IMesh {
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
      * @note This method is used internally by writeSurface(Path filePath).
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private ByteBuffer writeSurfaceToByteBuffer() throws IOException {
 

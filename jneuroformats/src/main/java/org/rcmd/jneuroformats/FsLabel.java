@@ -30,10 +30,19 @@ import java.util.List;
  */
 public class FsLabel {
 
+    /** The element index (vertex or voxel index) */
     public List<Integer> elementIndex;
+
+    /** The x coordinate of the element */
     public List<Float> coordX;
+
+    /** The y coordinate of the element */
     public List<Float> coordY;
+
+    /** The z coordinate of the element */
     public List<Float> coordZ;
+
+    /** The value assigned to the element */
     public List<Float> value;
 
     /**
@@ -216,7 +225,7 @@ public class FsLabel {
      * Write this label to a file in CSV or FsLabel format.
      * @param filePath the path to the file to write to
      * @param format the format to write in, either "csv" or "fslabel".
-     * @throws IOException
+     * @throws IOException  if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();

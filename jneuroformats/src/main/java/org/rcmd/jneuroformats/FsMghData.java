@@ -105,9 +105,10 @@ public class FsMghData {
      * the header and advances the buffer to the data part of the file.
      *
      * @param buf the buffer to read from.
-     * @return an FsMghHeader instance.
-     * @throws IOException if IO error occurs, or if the file is not in valid MGH
-     *                     format.
+     * @param header the FsMghHeader instance that has already been read from the buffer.
+     * @return an FsMghData instance.
+     * @throws IOException if IO error occurs, or if the file is not in valid MG format.
+     *
      */
     public static FsMghData fromByteBuffer(ByteBuffer buf, FsMghHeader header) throws IOException {
         FsMghData data = new FsMghData(header);

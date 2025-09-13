@@ -49,6 +49,7 @@ public class FsAnnot {
 
     /**
      * Whether this annot contains its own color table, i.e., whether its colortable attribute is not null.
+     * @return true if this annot has a colortable, false otherwise.
      */
     public Boolean hasColortable() {
         return this.colortable != null;
@@ -121,7 +122,7 @@ public class FsAnnot {
     /**
      * Validate this FsAnnot object. Checks that the number of vertex indices matches the number of vertex labels,
      * and if a colortable is present, that the number of unique labels matches the number of regions in the colortable.
-     * @throws IOException
+     * @throws IOException  if the validation fails.
      */
     public void validate() throws IOException {
         if (this.vertexIndices.size() != this.vertexLabels.size()) {
@@ -139,7 +140,9 @@ public class FsAnnot {
      * Enum for the different annotation file formats.
      */
     public enum AnnotFileFormat {
+        /** FreeSurfer annotation file format */
         ANNOT,
+        /** CSV file format (comma separated values) */
         CSV
     }
 
@@ -194,6 +197,7 @@ public class FsAnnot {
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      * @see #readFormat(Path, String) if you want to read a file and specify the format.
      */
     public static FsAnnot read(Path filePath) throws IOException, FileNotFoundException {
@@ -206,6 +210,7 @@ public class FsAnnot {
      * @param format the format of the file to read. Currently, only "annot" is supported.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      * @see #read(Path) if you want to read a file without specifying the format.
      */
     public static FsAnnot readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
@@ -226,6 +231,7 @@ public class FsAnnot {
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      */
     protected static FsAnnot fromFsAnnotFile(Path filePath) throws IOException, FileNotFoundException {
 
@@ -295,7 +301,7 @@ public class FsAnnot {
     /**
      * Write this FsCurv to a file in FreeSurfer curv format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private void writeAnnot(Path filePath) throws IOException {
         ByteBuffer buf = writeFsAnnotToByteBuffer();
@@ -306,8 +312,7 @@ public class FsAnnot {
 
     /**
      * Get the colors for each vertex in this annot as a list of java.awt.Color objects.
-     * @return a list of Color objects, one for each vertex in the annot.
-     * @throws IOException if this annot does not have a colortable.
+     * @return a list of Color objects, one for each vertex in the annot. If the annot does not have a colortable, returns an empty list.
      */
     public List<Color> getVertexColorsRgb() {
         List<Color> colors = new ArrayList<>(this.numVertices());
@@ -320,7 +325,7 @@ public class FsAnnot {
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
      * @note This method is used internally by writeSurface(Path filePath).
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private ByteBuffer writeFsAnnotToByteBuffer() throws IOException {
 
@@ -355,7 +360,7 @@ public class FsAnnot {
      * Write this FsAnnot to a file in annot or CSV format.
      * @param filePath the path to the file to write to
      * @param format the format to write to, either "annot" or "csv".
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();

@@ -24,6 +24,10 @@ import java.util.List;
  */
 public class Utilities {
 
+    /** Default constructor for Utilities. */
+    public Utilities() {
+    }
+
     /**
      * Scale a list of float values to the range 0.0 to 1.0.
      * @param values the list of float values to scale

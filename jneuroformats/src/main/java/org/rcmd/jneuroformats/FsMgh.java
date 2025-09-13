@@ -82,7 +82,9 @@ public class FsMgh {
      * Enum for the different volume file types.
      */
     public enum VolumeFileType {
+        /** FreeSurfer MGH file format. */
         MGH,
+        /** FreeSurfer MGZ file format, a zipped version of MGH. */
         MGZ
     }
 
@@ -232,7 +234,7 @@ public class FsMgh {
     /**
      * Write this mesh to a file in FreeSurfer MGH format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     protected void writeToMghFile(Path filePath) throws IOException {
         ByteBuffer buf = this.writeFsMghToByteBuffer();
@@ -242,7 +244,7 @@ public class FsMgh {
     /**
      * Write this mesh to a file in FreeSurfer MGZ format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     protected void writeToMgzFile(Path filePath) throws IOException {
         ByteBuffer buf = this.writeFsMghToByteBuffer();
@@ -251,8 +253,9 @@ public class FsMgh {
 
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
-     * @note This method is used internally by writeSurface(Path filePath).
-     * @throws IOException
+     * This method is used internally by writeSurface(Path filePath).
+     * @return a ByteBuffer containing the MGH data.
+     * @throws IOException if IO error occurs.
      */
     protected ByteBuffer writeFsMghToByteBuffer() throws IOException {
 
@@ -267,7 +270,7 @@ public class FsMgh {
      * Write this volume to a file in MGH format.
      * @param filePath the path to the file to write to
      * @param format the format to write in, must be "mgh" or "mgz".
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();

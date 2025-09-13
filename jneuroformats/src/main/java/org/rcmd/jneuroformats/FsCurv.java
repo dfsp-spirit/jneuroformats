@@ -44,6 +44,7 @@ public class FsCurv {
 
     /**
      * Constructor for FsCurv with data.
+     * @param data the per-vertex data, one value per vertex.
      */
     public FsCurv(List<Float> data) {
         this.data = data;
@@ -181,7 +182,7 @@ public class FsCurv {
     /**
      * Write this FsCurv to a file in FreeSurfer curv format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private void writeCurv(Path filePath) throws IOException {
         ByteBuffer buf = writeFsCurvToByteBuffer();
@@ -224,7 +225,7 @@ public class FsCurv {
      * Write this FsCurv to a file in curv or CSV format.
      * @param filePath the path to the file to write to
      * @param format the format to write to, either "curv" or "csv".
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();

@@ -37,6 +37,10 @@ import java.util.zip.GZIPOutputStream;
  */
 public class IO {
 
+    /** Default constructor for IO. */
+    public IO() {
+    }
+
     /**
      * Read a newline terminated string from a ByteBuffer.
      * You should be sure that the string is terminated by a newline, otherwise this will read until the end of the buffer and then throw an exception from the `ByteBuffer.get()` call.
@@ -81,7 +85,7 @@ public class IO {
 
     /**
      * Convert a list of bytes to a byte array.
-     * @param integers the list of bytes
+     * @param bytes the list of bytes
      * @return the byte array
      */
     protected static byte[] convertBytes(List<Byte> bytes) {
