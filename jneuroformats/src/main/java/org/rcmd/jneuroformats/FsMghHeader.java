@@ -31,17 +31,36 @@ import java.util.List;
  */
 public class FsMghHeader {
 
+    /** Size of dimension 1 */
     public int dim1Size = 0;
+
+    /** Size of dimension 2 */
     public int dim2Size = 0;
+
+    /** Size of dimension 3 */
     public int dim3Size = 0;
+
+    /** Size of dimension 4 */
     public int dim4Size = 0;
 
+    /** The MRI data type, one of the MRI_* constants defined in FsMgh. This tells you which of the data arrays to use. */
     public int mriDatatype = FsMgh.MRI_FLOAT;
+
+    /** The degrees of freedom (DOF) for the MRI data. */
     public int dof = 0;
+
+    /** The RAS good flag, indicating if the RAS matrix and info are valid. */
     public short rasGoodFlag = 0; // stored as signed int16 in file. 1 means that the RAS matrix and info (size x/y/z, Mdc, Pxyz_c) is good, everything else means it is not.
 
+    // The voxel size in the x, y, and z dimensions. Sometimes referred to as 'Delta' or 'Step' in some FreeSurfer documentation. 3 float values, stored in the file as 3 float values.
+
+    /* The voxel size in the x dimension */
     public float sizeX = 0.0f;
+
+    /* The voxel size in the y dimension */
     public float sizeY = 0.0f;
+
+    /* The voxel size in the z dimension */
     public float sizeZ = 0.0f;
 
     /**
@@ -54,6 +73,9 @@ public class FsMghHeader {
      */
     public List<Float> Pxyz_c = new ArrayList<>();
 
+    /**
+     * Default constructor for FsMghHeader. Initializes empty lists for Mdc and Pxyz_c.
+     */
     public FsMghHeader() {
         Mdc = new ArrayList<>();
         Pxyz_c = new ArrayList<>();

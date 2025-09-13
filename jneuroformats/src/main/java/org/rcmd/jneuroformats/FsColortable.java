@@ -23,16 +23,36 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A FreeSurfer colortable, as used in the annotation files. The colortable maps region codes (labels) to region names and colors.
+ * See also the FsAnnot class, which contains an FsColortable object.
+ */
 public class FsColortable {
 
+    /** The structure ID, for internal use only. This is NOT the region code from the annotation file. See the label field for that. */
     public List<Integer> structureId;
+
+    /** The red value of the RGB color used to visualize the region. */
     public List<Integer> red;
+
+    /** The green value of the RGB color used to visualize the region. */
     public List<Integer> green;
+
+    /** The blue value of the RGB color used to visualize the region. */
     public List<Integer> blue;
+
+    /** The transparency value of the RGBA color used to visualize the region. Transparency is 0 - 255, 255 is fully transparent, 0 is fully opaque. */
     public List<Integer> transparency;
+
+    /** The name of the region, e.g. "bankssts". */
     public List<String> structureName;
+
+    /** The region code, as used in the annotation file. This is NOT the structure ID. */
     public List<Integer> label;
 
+    /**
+     * Default constructor for FsColortable. Initializes empty lists for all fields.
+     */
     public FsColortable() {
         structureId = new ArrayList<>(); // the structure ID, seems unused. This is NOT the region code from the annotation file. See the label field for that.
         red = new ArrayList<>(); // RGBA color red channel value, 0 - 255.
@@ -43,6 +63,16 @@ public class FsColortable {
         label = new ArrayList<>(); // the region code, as used in the annotation file.
     }
 
+    /**
+     * Constructor for FsColortable.
+     * @param structureId the structure IDs, for internal use only. This is NOT the region code from the annotation file. See the label field for that.
+     * @param red the red values of the RGB colors used to visualize the regions.
+     * @param green the green values of the RGB colors used to visualize the regions.
+     * @param blue the blue values of the RGB colors used to visualize the regions.
+     * @param transparency the transparency values of the RGBA colors used to visualize the regions. Transparency is 0 - 255, 255 is fully transparent, 0 is fully opaque.
+     * @param structureName the names of the regions, e.g. "bankssts".
+     * @param label the region codes, as used in the annotation file.
+     */
     public FsColortable(List<Integer> structureId, List<Integer> red, List<Integer> green, List<Integer> blue, List<Integer> transparency, List<String> structureName,
                         List<Integer> label) {
         this.structureId = structureId;
@@ -54,12 +84,20 @@ public class FsColortable {
         this.label = label;
     }
 
+    /**
+     * Get the number of regions in this colortable.
+     * @return integer, the number of regions.
+     */
     public int numRegions() {
         return structureId.size();
     }
 
     private Boolean didPrintFullDuringWarning = Boolean.FALSE;
 
+    /**
+     * Validate this FsColortable object. Checks that all lists have the same length.
+     * @throws IOException
+     */
     public void validate() throws IOException {
         if (this.structureId.size() != this.red.size()) {
             throw new IOException("The number of entries in the FsColortable structureID list does not match the number of elements in the red list.");
@@ -169,10 +207,23 @@ public class FsColortable {
         return colortable;
     }
 
+    /**
+     * Compute the label value from the RGBA color values.
+     * @param red the red channel value, 0 - 255.
+     * @param green the green channel value, 0 - 255.
+     * @param blue the blue channel value, 0 - 255.
+     * @param alpha the alpha channel value, 0 - 255.
+     * @return the label value, as used in the annotation file.
+     */
     public static int computeLabelFromRgb(int red, int green, int blue, int alpha) {
         return red + green * 256 + blue * 65536 + alpha * 16777216;
     }
 
+    /**
+     * Compute the RGBA color values from the label value.
+     * @param label the label value, as used in the annotation file.
+     * @return an array of four integers, representing the red, green, blue, and alpha channel values, in that order. Values are in range 0 - 255.
+     */
     public static int[] computeRgbFromLabel(int label) {
         int[] rgbt = new int[4];
         rgbt[0] = label % 256;
@@ -204,6 +255,10 @@ public class FsColortable {
         return new Color(255, 255, 255);
     }
 
+    /**
+     * Get a string representation of this FsColortable object.
+     * @return a string representation of this FsColortable object.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

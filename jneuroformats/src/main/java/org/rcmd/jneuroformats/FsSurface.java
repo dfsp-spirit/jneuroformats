@@ -39,8 +39,13 @@ import org.rcmd.jneuroformats.Mesh.MeshFileFormat;
  */
 public class FsSurface implements IMesh {
 
+    /** The mesh data */
     public Mesh mesh;
+
+    /** Metadata, a comment line that is part of the FreeSurfer surface file format. Typically contains information on how and when the file was created. */
     public String commentLine = "";
+
+    /** Metadata, a created line that is part of the FreeSurfer surface file format. Typically contains information on how and when the file was created, but is often empty. */
     public String createdLine = "";
 
     /**
@@ -50,6 +55,10 @@ public class FsSurface implements IMesh {
         this.mesh = new Mesh();
     }
 
+    /**
+     * Constructor that takes a Mesh object.
+     * @param mesh the mesh object containing vertices and faces.
+     */
     public FsSurface(Mesh mesh) {
         this.mesh = mesh;
     }
@@ -234,21 +243,37 @@ public class FsSurface implements IMesh {
         }
     }
 
+    /**
+     * Get the faces of the mesh.
+     * @return the faces of the mesh, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     @Override
     public List<int[]> getFaces() {
         return this.mesh.getFaces();
     }
 
+    /**
+     * Get the vertices of the mesh.
+     * @return the vertices of the mesh, as x,y,z coordinates.
+     */
     @Override
     public List<float[]> getVertices() {
         return this.mesh.getVertices();
     }
 
+    /**
+     * Set the vertices of the mesh.
+     * @param vertices the vertices of the mesh, as x,y,z coordinates.
+     */
     @Override
     public void setVertices(List<float[]> vertices) {
         this.mesh.setVertices(vertices);
     }
 
+    /**
+     * Set the faces of the mesh.
+     * @param faces the faces of the mesh, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     @Override
     public void setFaces(List<int[]> faces) {
         this.mesh.setFaces(faces);

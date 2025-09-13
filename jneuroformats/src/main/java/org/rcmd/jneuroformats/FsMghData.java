@@ -28,13 +28,29 @@ import java.nio.ByteBuffer;
  */
 public class FsMghData {
 
+    /** 4D float array for MRI_FLOAT data. MRI_FLOAT is a float (32 bits). */
     public float[][][][] dataMriFloat;
+
+    /** 4D float array for MRI_INT data. MRI_INT is a signed int (32 bits). */
     public float[][][][] dataMriInt;
+
+    /** 4D float array for MRI_SHORT data. MRI_SHORT is a signed short (16 bits). */
     public float[][][][] dataMriShort;
+
+    /** 4D float array for MRI_UCHAR data. MRI_UCHAR is a unsigned char (8 bits). */
     public float[][][][] dataMriUchar;
 
+    /** The MRI data type, one of the MRI_* constants defined in FsMgh. This tells you which of the data arrays to use. */
     public int mriDataType = FsMgh.MRI_FLOAT;
 
+    /**
+     * Constructor for FsMghData with data.
+     * @param mriDataType the MRI data type, one of the MRI_* constants defined in FsMgh. This tells you which of the data arrays to use.
+     * @param dim1Size size of dimension 1
+     * @param dim2Size size of dimension 2
+     * @param dim3Size size of dimension 3
+     * @param dim4Size size of dimension 4
+     */
     public FsMghData(int mriDataType, int dim1Size, int dim2Size, int dim3Size, int dim4Size) {
         this.mriDataType = mriDataType;
         switch (mriDataType) {
@@ -53,11 +69,18 @@ public class FsMghData {
         }
     }
 
+    /**
+     * Default constructor for FsMghData. Initializes empty arrays.
+     */
     public FsMghData() {
         this.mriDataType = FsMgh.MRI_FLOAT;
         this.dataMriFloat = new float[0][0][0][0];
     }
 
+    /**
+     * Constructor for FsMghData with header.
+     * @param header the FsMghHeader from which to obtain information on which data arrays to create.
+     */
     public FsMghData(FsMghHeader header) {
         this.mriDataType = header.mriDatatype;
         switch (mriDataType) {

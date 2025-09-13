@@ -25,41 +25,73 @@ import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Models a FreeSurfer label, can be a surface label or a volume label.
+ * Models a FreeSurfer volume.
  *
- * The label is defined by a set of vertices or voxels that are part of the structure, and a value that is assigned to all vertices or voxels that are part of the structure. Sometimes the value is not needed, and can be set to 0.
+ * The volume is defined by a header (FsMghHeader) and the actual data (FsMghData). The data is stored in a 4-dimensional array.
  */
 public class FsMgh {
 
+    /** MRI data type constants. MRI_UCHAR is a unsigned char (8 bits). */
     public static final int MRI_UCHAR = 0;
+
+    /** MRI data type constants. MRI_INT is a signed int (32 bits). */
     public static final int MRI_INT = 1;
+
+    /** MRI data type constants. MRI_FLOAT is a float (32 bits). */
     public static final int MRI_FLOAT = 3;
+
+    /** MRI data type constants. MRI_SHORT is a signed short (16 bits). */
     public static final int MRI_SHORT = 4;
 
+    /** The FsMghHeader instance stores the header information for the volume. */
     public FsMghHeader header;
+
+    /** The FsMghData instance stores the actual volume data. */
     public FsMghData data;
 
+    /**
+     * Default constructor for FsMgh. Initializes an empty header and data object.
+     */
     public FsMgh() {
         this.header = new FsMghHeader();
         this.data = new FsMghData(this.header);
     }
 
+    /**
+     * Constructor for FsMgh with header and data.
+     * @param header the FsMghHeader object.
+     * @param data the FsMghData object.
+     */
     public FsMgh(FsMghHeader header, FsMghData data) {
         this.header = header;
         this.data = data;
     }
 
+    /**
+     * Validate the MRI data type.
+     * @param mriDataType the MRI data type to validate.
+     * @throws IOException if the MRI data type is invalid.
+     */
     protected static void validateMriDataType(int mriDataType) throws IOException {
         if (!(mriDataType == MRI_FLOAT || mriDataType == MRI_INT || mriDataType == MRI_SHORT || mriDataType == MRI_UCHAR)) {
             throw new IOException("Invalid MRI data type.");
         }
     }
 
+    /**
+     * Enum for the different volume file types.
+     */
     public enum VolumeFileType {
         MGH,
         MGZ
     }
 
+    /**
+     * Determine the volume file format from the file extension.
+     * @param filePath the path to the file.
+     * @return the volume file type.
+     * @throws IOException if the file extension is not recognized.
+     */
     protected static VolumeFileType volumeFileFormatFromFileExtension(Path filePath) throws IOException {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
         if (fileNameLower.endsWith(".mgh")) {
@@ -74,6 +106,13 @@ public class FsMgh {
         }
     }
 
+    /**
+     * Determine the volume file format from the file extension or from the specified format.
+     * @param filePath the path to the file.
+     * @param format the format to use if specified.
+     * @return the volume file type.
+     * @throws IOException if the file extension is not recognized.
+     */
     protected static VolumeFileType getVolumeFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
         if (formatLower.equals("auto")) {
@@ -160,6 +199,13 @@ public class FsMgh {
 
     }
 
+    /**
+     * Read a file in FreeSurfer MGH format and return a FsMgh object.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
+     * @return an FsMgh object.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     */
     protected static FsMgh fromFsMgzFile(Path filePath) throws IOException, FileNotFoundException {
         FileInputStream fis = new FileInputStream(filePath.toFile());
         GZIPInputStream gzis = new GZIPInputStream(fis);
@@ -178,14 +224,26 @@ public class FsMgh {
         FsMgh mgh = new FsMgh();
         mgh.header = FsMghHeader.fromByteBuffer(bbuffer);
         mgh.data = FsMghData.fromByteBuffer(bbuffer, mgh.header);
+        gzis.close();
+        fis.close();
         return mgh;
     }
 
+    /**
+     * Write this mesh to a file in FreeSurfer MGH format.
+     * @param filePath the path to the file to write to
+     * @throws IOException
+     */
     protected void writeToMghFile(Path filePath) throws IOException {
         ByteBuffer buf = this.writeFsMghToByteBuffer();
         IO.writeFile(filePath, buf);
     }
 
+    /**
+     * Write this mesh to a file in FreeSurfer MGZ format.
+     * @param filePath the path to the file to write to
+     * @throws IOException
+     */
     protected void writeToMgzFile(Path filePath) throws IOException {
         ByteBuffer buf = this.writeFsMghToByteBuffer();
         IO.writeGzipFile(filePath, buf);

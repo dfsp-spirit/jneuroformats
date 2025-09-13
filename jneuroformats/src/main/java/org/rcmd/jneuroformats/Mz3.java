@@ -26,17 +26,35 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a MZ3 surface file.
+ */
 public class Mz3 {
+
+    /** The mesh contained in the MZ3 file. */
     public Mesh mesh;
+
+    /** Per-vertex data, one value per vertex. */
     public List<Float> perVertexData;
+
+    /** Per-vertex colors, one color per vertex. */
     public List<Color> vertexColors;
 
+    /**
+     * Default constructor for Mz3. Initializes empty mesh, perVertexData and vertexColors.
+     */
     public Mz3() {
         this.mesh = new Mesh();
         this.perVertexData = new ArrayList<>();
         this.vertexColors = new ArrayList<>();
     }
 
+    /**
+     * Constructor for Mz3 with data.
+     * @param mesh the mesh contained in the MZ3 file.
+     * @param perVertexData per-vertex data, one value per vertex.
+     * @param vertexColors per-vertex colors, one color per vertex.
+     */
     public Mz3(Mesh mesh, List<Float> perVertexData, List<Color> vertexColors) {
         this.mesh = mesh;
         this.perVertexData = perVertexData;
@@ -129,6 +147,14 @@ public class Mz3 {
         return mz3;
     }
 
+    /**
+     * Check whether a MZ3 file is gzipped.
+     * @param filePath the path to the file
+     * @return true if the file is gzipped, false otherwise
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
+     * @throws BufferUnderflowException if buffer underflow occurs, i.e., the file is too short to read the first header part required to determine the file format.
+     */
     protected static Boolean mz3FileIsGzipped(Path filePath) throws IOException, FileNotFoundException, BufferUnderflowException {
         ByteBuffer buffer = IO.peakIntoFile(filePath, Boolean.TRUE, ByteOrder.LITTLE_ENDIAN, 16);
         Short magicNumber = buffer.getShort();

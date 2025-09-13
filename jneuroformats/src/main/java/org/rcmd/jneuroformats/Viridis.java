@@ -37,12 +37,22 @@ public class Viridis implements Colormap {
     private Color highColor = null;
     private Color nanColor = Color.WHITE;
 
+    /**
+     * Constructor for Viridis colormap with custom low, high, and NaN colors.
+     * @param lowColor the color to use for values below 0.0 (if null, the lowest color from the colormap is used)
+     * @param highColor the color to use for values above 1.0 (if null, the highest color from the colormap is used)
+     * @param nanColor the color to use for NaN values (if null, white is used)
+     */
     public Viridis(Color lowColor, Color highColor, Color nanColor) {
         this.lowColor = lowColor;
         this.highColor = highColor;
         this.nanColor = nanColor;
     }
 
+    /**
+     * Get the color to use for values below 0.0.
+     * @return the low color
+     */
     private Color getLowColor() {
         if (this.lowColor == null) {
             return this.colors.get(0);
@@ -50,6 +60,10 @@ public class Viridis implements Colormap {
         return this.lowColor;
     }
 
+    /**
+     * Get the color to use for values above 1.0.
+     * @return the high color
+     */
     private Color getHighColor() {
         if (this.highColor == null) {
             return this.colors.get(colors.size() - 1);
@@ -57,6 +71,10 @@ public class Viridis implements Colormap {
         return this.highColor;
     }
 
+    /**
+     * Get the color to use for NaN values.
+     * @return the NaN color
+     */
     private Color getNanColor() {
         if (this.nanColor == null) {
             return Color.WHITE;
@@ -64,9 +82,17 @@ public class Viridis implements Colormap {
         return this.nanColor;
     }
 
+    /**
+     * Default constructor for Viridis colormap.
+     */
     public Viridis() {
     }
 
+    /**
+     * Get the color corresponding to a position in the colormap.
+     * @param position the position in the colormap, in the range 0.0 to 1.0
+     * @return the color corresponding to the position
+     */
     @Override
     public Color get(Float position) {
         if (position == null || !Float.isFinite(position)) {

@@ -23,8 +23,15 @@ import java.util.List;
 import static org.rcmd.jneuroformats.Utilities.getAllColormapColors;
 import static org.rcmd.jneuroformats.Utilities.scaleToZeroOne;
 
+/**
+ * A simple demo application that reads some data from a FreeSurfer subject directory
+ * and writes out some vertex-colored meshes in PLY format.
+ */
 public class App {
 
+    /**
+     * Print usage information.
+     */
     private static void usage() {
         System.out.println("=== jneuroformats Demo App: load some data from a FreeSurfer subject directory ===");
         System.out.println("USAGE: java -jar app.jar <subjects_dir> <subject_id>");

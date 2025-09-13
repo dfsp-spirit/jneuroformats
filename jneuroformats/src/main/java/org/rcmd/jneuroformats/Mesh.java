@@ -28,9 +28,20 @@ import java.util.List;
 
 import javax.vecmath.Vector3d;
 
+/**
+ * Class representing a 3D mesh, with vertices and faces.
+ * The mesh is assumed to be made of triangular faces.
+ */
 public class Mesh implements IMesh {
 
+    /**
+     * The mesh vertices, as x,y,z coordinates.
+     */
     public List<float[]> vertices;
+
+    /**
+     * The mesh faces, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     public List<int[]> faces;
 
     /**
@@ -76,10 +87,19 @@ public class Mesh implements IMesh {
         return vertices.get(index);
     }
 
+    /**
+     * Get a face from the mesh.
+     * @param index the index of the face to get.
+     * @return the face, as indices into the vertex list. The face is assumed to be triangular.
+     */
     public int[] getFace(int index) {
         return faces.get(index);
     }
 
+    /**
+     * Get the number of vertices in the mesh.
+     * @return the number of vertices in the mesh.
+     */
     public int getNumberOfVertices() {
         return vertices.size();
     }
@@ -230,6 +250,9 @@ public class Mesh implements IMesh {
         return cube;
     }
 
+    /**
+     * Enumeration of supported mesh file formats.
+     */
     public enum MeshFileFormat {
         PLY,
         OBJ,
@@ -237,6 +260,10 @@ public class Mesh implements IMesh {
         MZ3
     }
 
+    /**
+     * Generate string representation of this mesh in PLY format.
+     * @return the PLY format string
+     */
     private static MeshFileFormat meshFileFormatFromFileExtension(Path filePath) {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
         if (fileNameLower.endsWith(".ply")) {
@@ -250,6 +277,13 @@ public class Mesh implements IMesh {
         }
     }
 
+    /**
+     * Get the mesh file format from the file path and format string.
+     * @param filePath the path to the file
+     * @param format the format string
+     * @return the mesh file format
+     * @throws IOException if an error occurs
+     */
     protected static MeshFileFormat getMeshFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
         if (formatLower.equals("auto")) {

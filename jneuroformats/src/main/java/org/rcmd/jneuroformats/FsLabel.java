@@ -36,6 +36,9 @@ public class FsLabel {
     public List<Float> coordZ;
     public List<Float> value;
 
+    /**
+     * Default constructor for FsLabel. Initializes empty lists for all fields.
+     */
     public FsLabel() {
         elementIndex = new ArrayList<>();
         coordX = new ArrayList<>();
@@ -52,6 +55,10 @@ public class FsLabel {
         return this.elementIndex.size();
     }
 
+    /**
+     * Validate that the label is internally consistent, i.e. that all lists have the same number of elements.
+     * @throws IOException if the label is not internally consistent.
+     */
     public void validate() throws IOException {
         if (this.elementIndex.size() != this.coordX.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordX list.");

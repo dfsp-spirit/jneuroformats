@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * Utility class for reading and writing files, handling gzip compression and byte order.
+ */
 public class IO {
 
     /**
@@ -171,6 +174,12 @@ public class IO {
         gzipOutputStream.close();
     }
 
+    /**
+     * Write a ByteBuffer to a file.
+     * @param filePath the path to the file
+     * @param buffer the ByteBuffer to write
+     * @throws IOException if IO error occurs.
+     */
     protected static void writeFile(Path filePath, ByteBuffer buffer) throws IOException {
         OutputStream outputStream = Files.newOutputStream(filePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         outputStream.write(buffer.array());

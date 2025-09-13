@@ -26,9 +26,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a FreeSurfer curv file, or a CSV file with per-vertex data for a surface (mesh)
+ */
 public class FsCurv {
 
-    // The per-vertex data.
+    /** The per-vertex data, one value per vertex. */
     public List<Float> data;
 
     /**
@@ -36,15 +39,19 @@ public class FsCurv {
      */
     public Integer numberOfFaces = 0;
 
-    /** Leave this at 1, or terrible things will happen. */
+    /** Leave this at 1, or terrible things will happen. It exists in the header, but I have never seen a FreeSurfer file with more than one value per vertex, and you can be sure that various software and scripts will not handle it properly. */
     private Integer numberOfValuesPerVertex = 1;
 
-    // Constructor
+    /**
+     * Constructor for FsCurv with data.
+     */
     public FsCurv(List<Float> data) {
         this.data = data;
     }
 
-    // Constructor
+    /**
+     * Default constructor for FsCurv. Initializes an empty list for the data.
+     */
     public FsCurv() {
         this.data = new ArrayList<>();
     }
