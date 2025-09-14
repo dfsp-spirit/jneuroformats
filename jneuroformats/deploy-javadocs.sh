@@ -37,8 +37,8 @@ git stash && { git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pag
 cd .. && echo "Changed to repo root. Current directory: $(pwd), current branch $(git rev-parse --abbrev-ref HEAD)"
 
 # Ensure once more we are in the correct directory: it should be the root of the repo now.
-if [ ! -f jneuroformats/pom.xml ]; then
-  echo "Error: jneuroformats/pom.xml not found. Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, check errors above."
+if [ ! -f pom.xml ]; then
+  echo "Error: pom.xml not found in current dir. Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, check errors above."
   exit 1
 fi
 
