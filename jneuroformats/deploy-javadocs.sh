@@ -19,6 +19,8 @@ fi
 # Generate docs
 mvn javadoc:javadoc || { echo "Maven Javadoc generation failed"; exit 1; }
 
+echo "Now in directory $(pwd) on brain $(git rev-parse --abbrev-ref HEAD). Generating Javadocs..."
+
 # ensure we are in the correct directory
 if [ ! -d target/site/apidocs ]; then
   echo "Error: target/site/apidocs directory does not exist. Please run this script from the jneuroformats/ directory after building the project."
@@ -30,7 +32,9 @@ TMP_DIR=$(mktemp -d)
 cp -r target/site/apidocs/* "$TMP_DIR"
 
 # Deploy to gh-pages
-git stash && { git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages; } && cd .. && echo "Switched to gh-pages branch and into repo root. Current directory: $(pwd)"
+git stash && { git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages; } && echo "Switched to gh-pages branch. Current directory: $(pwd), current branch $(git rev-parse --abbrev-ref HEAD)"
+
+cd .. && echo "Changed to repo root. Current directory: $(pwd), current branch $(git rev-parse --abbrev-ref HEAD)"
 
 # Ensure once more we are in the correct directory: it should be the root of the repo now.
 if [ ! -f jneuroformats/pom.xml ]; then
