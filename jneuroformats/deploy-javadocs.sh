@@ -30,7 +30,7 @@ TMP_DIR=$(mktemp -d)
 cp -r target/site/apidocs/* "$TMP_DIR"
 
 # Deploy to gh-pages
-git stash && git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages && cd .. && echo "Switched to gh-pages branch and into repo root."
+git stash && { git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pages; } && cd .. && echo "Switched to gh-pages branch and into repo root."
 
 # Ensure once more we are in the correct directory: it should be the root of the repo now.
 if [ ! -f jneuroformats/pom.xml ]; then
