@@ -260,11 +260,42 @@ public class FsLabel {
     }
 
     /**
+     * Apply this label to a list of float values, such as the data in an FsCurv object. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curvData the list of float values to apply the label to. This function will return the subset of the data in the list that is part of the label.
+     * @param invert if set to True, the values returned will be only the values which are NOT part of the label.
+     * @return a new ArrayList containing the subset of the data in the input list that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurvData(List<Float> curvData, boolean invert) {
+        ArrayList<Float> result = new ArrayList<>(this.size());
+        if (invert) {
+            for (int i = 0; i < curvData.size(); i++) {
+                if (!this.elementIndex.contains(i)) {
+                    result.add(curvData.get(i));
+                }
+            }
+            return result;
+        }
+        else {
+            return applyToCurvData(curvData);
+        }
+    }
+
+    /**
      * Apply this label to an FsCurv object containing per-vertex data. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
      * @param curv the FsCurv object to apply the label to. This function will return the subset of the data in the FsCurv object that is part of the label.
      * @return a new ArrayList containing the subset of the data in the FsCurv object that is part of the label. The size of the returned list is equal to the number of elements in this label.
      */
-    public List<Float> applyToCurv(FsCurv curv) {
+    public List<Float> applyToCurv(FsCurv curv) throws IOException {
         return applyToCurvData(curv.data);
+    }
+
+    /**
+     * Apply this label to an FsCurv object containing per-vertex data. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curv the FsCurv object to apply the label to. This function will return the subset of the data in the FsCurv object that is part of the label.
+     * @param invert if set to True, the values returned will be only the values which are NOT part of the label.
+     * @return a new ArrayList containing the subset of the data in the FsCurv object that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurv(FsCurv curv, boolean invert) throws IOException {
+        return applyToCurvData(curv.data, invert);
     }
 }
