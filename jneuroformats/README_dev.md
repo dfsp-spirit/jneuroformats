@@ -128,6 +128,7 @@ Then run `mvn clean deploy`.
 * Add a description of the changes since last release to the file [CHANGES](../CHANGES) (always do this after every change, on the go).
 * Run the tests with `mvn test` and ensure everything is green
 * Build the docs locally, and ensure there are no warnings about undocumented code, via `mvn javadoc:javadoc`.
+* Update the published version of the API documentation on GitHub pages, by copying the locally build docs to the `gh-pages` branch.
 * Bump the version in [pom.xml](./pom.xml)
 * Publish the package to GitHub pages as described above in the section `Publishing to GitHub packages`
 * Tag the commit hash of the version you published with the version, e.g., `git log --oneline` to see last commits, then `git tag v1.2.0 asfjhjs`, where asfjhjs is your commit hash from the git log command. Then upload the tag via `git push --tags`.
