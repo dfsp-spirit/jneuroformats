@@ -2,8 +2,13 @@ jneuroformats Changes
 =====================
 
 
-Version 0.1.0 -- Initial release
----------------------------------
+Version 1.1.0 -- Better docs, some quality of life features
+-----------------------------------------------------------
+* add convenience functions `FsLabel.applyToCurvData` and `FsLabel.applyToCurv` to filter curv data and return only that subset included in a label.
+
+
+Version 1.0.0-SNAPSHOT -- Initial release
+-------------------------------------------
 Features of this version:
 * Meshes:
     - Read brain meshes in FreeSurfer binary mesh format (like recon_all output file `<SUBJECTS_DIR>/<subject>/surf/lh.white`): use function FsSurface.fromFsSurfaceFile()

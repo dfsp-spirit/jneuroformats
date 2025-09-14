@@ -91,4 +91,36 @@ public class FsLabelTest {
         }
     }
 
+    @Test
+    public void oneCanApplyALabelToCurv() {
+        Path labelFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.cortex.label");
+        FsLabel cortex;
+        try {
+            cortex = FsLabel.fromFsLabelFile(labelFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        assertThat(cortex.size()).isEqualTo(140891);
+
+        Path curvFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "surf", "lh.sulc");
+        FsCurv curv;
+        try {
+            curv = FsCurv.fromFsCurvFile(curvFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        assertThat(curv.data.size()).isEqualTo(149244);
+
+        // apply label to curv
+        try {
+            var subset = cortex.applyToCurv(curv);
+            assertThat(subset.size()).isEqualTo(cortex.size());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

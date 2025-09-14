@@ -240,4 +240,31 @@ public class FsLabel {
         }
     }
 
+    /**
+     * Apply this label to a list of float values, such as the data in an FsCurv object. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curvData the list of float values to apply the label to. This function will return the subset of the data in the list that is part of the label.
+     * @return a new ArrayList containing the subset of the data in the input list that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurvData(List<Float> curvData) {
+        ArrayList<Float> result = new ArrayList<>(this.size());
+        for (int i = 0; i < this.size(); i++) {
+            int vertexIndex = this.elementIndex.get(i);
+            if (vertexIndex < 0 || vertexIndex >= curvData.size()) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "The vertex index {0} in the label is out of bounds for the FsCurv data, which has {1} vertices.",
+                        vertexIndex, curvData.size()));
+            }
+            result.add(curvData.get(vertexIndex));
+        }
+        return result;
+    }
+
+    /**
+     * Apply this label to an FsCurv object containing per-vertex data. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curv the FsCurv object to apply the label to. This function will return the subset of the data in the FsCurv object that is part of the label.
+     * @return a new ArrayList containing the subset of the data in the FsCurv object that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurv(FsCurv curv) {
+        return applyToCurvData(curv.data);
+    }
 }
