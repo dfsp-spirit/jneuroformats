@@ -53,12 +53,12 @@ else
     echo "File 'pom.xml' not found in current dir, looks like we are on the gh-pages branch."
 fi
 
-if [ -d jneuroformats ]; then
-  echo "Error: directory 'jneuroformats/' found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
-  exit 1
-else
-    echo "Directory 'jneuroformats/' not found in current dir, looks like we are on the gh-pages branch."
-fi
+#if [ -d jneuroformats ]; then
+#  echo "Error: directory 'jneuroformats/' found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
+#  exit 1
+#else
+#    echo "Directory 'jneuroformats/' not found in current dir, looks like we are on the gh-pages branch."
+#fi
 
 # Verify the name of the directory is correct - we should be in the root of the repo now, which is most likely called neuroformats. We will run 'rm -rf ./*' so we want to be sure.
 if [ "$(basename "$(pwd)")" != "jneuroformats" ]; then
