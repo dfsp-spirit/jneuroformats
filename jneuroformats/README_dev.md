@@ -125,7 +125,7 @@ Then run `mvn clean deploy`.
 ### Making a new Release -- Checklist
 
 * Add your new code and unit tests for it
-* Add a description of the changes since last release to the file [CHANGES](./CHANGES) (always do this after every change, on the go).
+* Add a description of the changes since last release to the file [CHANGES](../CHANGES) (always do this after every change, on the go).
 * Run the tests with `mvn test` and ensure everything is green
 * Build the docs locally, and ensure there are no warnings about undocumented code, via `mvn javadoc:javadoc`.
 * Bump the version in [pom.xml](./pom.xml)
