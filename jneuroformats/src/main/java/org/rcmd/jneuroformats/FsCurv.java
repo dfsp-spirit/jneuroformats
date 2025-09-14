@@ -240,4 +240,85 @@ public class FsCurv {
         }
     }
 
+    /**
+     * Get the number of vertices (data points) in this FsCurv object.
+     * @return the number of vertices (data points) in this FsCurv object.
+     */
+    public int size() {
+        return this.data.size();
+    }
+
+    /**
+     * Check if the data contains any NaN values.
+     * @return true if the data contains NaN values, false otherwise.
+     */
+    public boolean containsNaN() {
+        for (float value : this.data) {
+            if (Float.isNaN(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get the indices of the data points that are NaN.
+     * @return a list of indices of the data points that are NaN.
+     */
+    public List<Integer> getIndicesOfNaN() {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < this.data.size(); i++) {
+            if (Float.isNaN(this.data.get(i))) {
+                indices.add(i);
+            }
+        }
+        return indices;
+    }
+
+    /** Compute the minimum of the data.
+     * @return the minimum of the data.
+     */
+    public float min() {
+        float min = Float.MAX_VALUE;
+        for (float value : this.data) {
+            if (value < min) {
+                min = value;
+            }
+        }
+        return min;
+    }
+
+    /** Compute the maximum of the data.
+     * @return the maximum of the data.
+     */
+    public float max() {
+        float max = Float.MIN_VALUE;
+        for (float value : this.data) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    /** Compute the mean of the data.
+     * @return the mean of the data.
+     */
+    public double mean() {
+        double sum = 0.0;
+        for (float value : this.data) {
+            sum += value;
+        }
+        return sum / this.data.size();
+    }
+
+    public double std() {
+        double mean = this.mean();
+        double sum = 0.0;
+        for (float value : this.data) {
+            sum += (value - mean) * (value - mean);
+        }
+        return Math.sqrt(sum / this.data.size());
+    }
+
 }

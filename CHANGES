@@ -5,6 +5,7 @@ jneuroformats Changes
 Version 1.1.0 -- Better docs, some quality of life features
 -----------------------------------------------------------
 * add convenience functions `FsLabel.applyToCurvData` and `FsLabel.applyToCurv` to filter curv data and return only that subset included in a label.
+* add convenience functions `FsCurv.size()`, `.mean()`, `.min()`, `.max()`, `.std()`, `.containsNan()` and `.getIndicesOfNaN()`
 
 
 Version 1.0.0-SNAPSHOT -- Initial release

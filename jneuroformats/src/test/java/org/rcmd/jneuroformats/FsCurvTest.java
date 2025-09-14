@@ -88,4 +88,17 @@ public class FsCurvTest {
         }
     }
 
+    @Test
+    public void simpleStatFunctionsOfFsCurvWork() {
+        ArrayList<Float> data = new ArrayList<>(Arrays.asList(1.0f, 2.0f, 3.0f));
+        FsCurv curv = new FsCurv(data);
+        assertThat(curv.size()).isEqualTo(3);
+        assertThat(curv.mean()).isEqualTo(2.0f);
+        assertThat(curv.min()).isEqualTo(1.0f);
+        assertThat(curv.max()).isEqualTo(3.0f);
+        assertThat(curv.std()).isEqualTo(0.816496580927726, within(1e-6));
+        assertThat(curv.containsNaN()).isFalse();
+        assertThat(curv.getIndicesOfNaN()).isEmpty();
+    }
+
 }
