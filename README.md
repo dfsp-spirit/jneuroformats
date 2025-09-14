@@ -1,5 +1,5 @@
 # jneuroformats
-Reading and writing structural neuroimaging file formats for Java.
+A library for reading and writing structural neuroimaging file formats with Java.
 
 [![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
 
@@ -8,6 +8,8 @@ Reading and writing structural neuroimaging file formats for Java.
 
 File format readers and writers for file formats used in structural neuroimaging research, with a focus on the
 surface-based workflow used in [FreeSurfer](https://freesurfer.net).
+
+The files that can be read with this library are usually derived from Magnetic Resonance Imaging (MRI) scans of the human brain.
 
 
 ![Vis](./img/rgl_brain_aparc.jpg?raw=true "An aparc brain atlas visualization.")
@@ -40,7 +42,9 @@ Many of the classes provide utility methods which are typically needed in struct
 
 ## Installation
 
-An early alpha version of the package can be found [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using it in your project.
+The `jneuroformats` package requires a Java version of at least [Java SE 11](https://en.wikipedia.org/wiki/Java_version_history#Java_SE_11_(LTS)), released in 2018. Of course, any later version is fine as well.
+
+Packages are available [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using them in your project.
 
 ## Documentation and Usage
 
