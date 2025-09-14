@@ -37,8 +37,20 @@ git stash && { git checkout gh-pages 2>/dev/null || git checkout --orphan gh-pag
 cd .. && echo "Changed to repo root. Current directory: $(pwd), current branch $(git rev-parse --abbrev-ref HEAD)"
 
 # Ensure once more we are in the correct directory: it should be the root of the repo now.
-if [ ! -f pom.xml ]; then
-  echo "Error: pom.xml not found in current dir. Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, check errors above."
+# Because we are on the gh-pages branch (should be), we should NOT see pom.xml or jneuroformats/ here, but we should see search.js from the last deployment of java docs.
+
+if [ ! -f search.js ]; then
+  echo "Error: file 'search.js' NOT found in current dir. Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
+  exit 1
+fi
+
+if [ -f pom.xml ]; then
+  echo "Error: pom.xml found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
+  exit 1
+fi
+
+if [ -d jneuroformats ]; then
+  echo "Error: directory 'jneuroformats/' found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
   exit 1
 fi
 
