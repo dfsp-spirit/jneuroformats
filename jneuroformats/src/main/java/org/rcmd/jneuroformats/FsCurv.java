@@ -312,6 +312,10 @@ public class FsCurv {
         return sum / this.data.size();
     }
 
+    /**
+     * Compute the standard deviation of the data.
+     * @return the standard deviation of the data.
+     */
     public double std() {
         double mean = this.mean();
         double sum = 0.0;

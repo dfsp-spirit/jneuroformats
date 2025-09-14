@@ -76,15 +76,17 @@ mvn javadoc:javadoc
 
 ### Running the demo App
 
-The demo app loads various FreeSurfer data for a subjects from the FreeSurfer output directory, known as the subjects_dir in FreeSurfer speech.
+The demo app loads various FreeSurfer data for a subjects from the FreeSurfer output directory, known as the subjects_dir in FreeSurfer speech. Some demo data in a directory that is organized like a FreeSurfer subjects_dir comes with this software in the repo, so you do **not** need to acquire and process an MRI scan to run the demo app.
 
-Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root of the repo.
+Make sure you are in the `<repo>/jneuroformats/` sub directory, not just in the root of the repo.
 
 ```shell
 mvn package    # to build the jar file.
 java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App --help  # to get usage info
 java -cp target/jneuroformats-1.0-SNAPSHOT.jar org.rcmd.jneuroformats.App src/test/resources/subjects_dir subject1  # to run with demo data from the repo
 ```
+
+Of course, replace `jneuroformats-1.0-SNAPSHOT.jar` with the jar of the version you intend to run.
 
 The last command above runs the app `org.rcmd.jneuroformats.App` with two arguments: The subjects_dir (`src/test/resources/subjects_dir`) and the subject (`subject1`), and prints some information on the loaded files and the data contained in them.
 
@@ -120,8 +122,24 @@ Note that you can check the validity of your token by running `curl -H "Authoriz
 
 Then run `mvn clean deploy`.
 
+### Making a new Release -- Checklist
+
+* Add your new code and unit tests for it
+* Add a description of the changes since last release to the file [CHANGES](./CHANGES) (always do this after every change, on the go).
+* Run the tests with `mvn test` and ensure everything is green
+* Build the docs locally, and ensure there are no warnings about undocumented code, via `mvn javadoc:javadoc`.
+* Bump the version in [pom.xml](./pom.xml)
+* Publish the package to GitHub pages as described above in the section `Publishing to GitHub packages`
+* Tag the commit hash of the version you published with the version, e.g., `git log --oneline` to see last commits, then `git tag v1.2.0 asfjhjs`, where asfjhjs is your commit hash from the git log command. Then upload the tag via `git push --tags`.
+
+
+### Contributions
+
+We are happy to accept pull requests. It's best to first open an issue here on GitHub to discuss your plans, especially if you intend to do larger changes.
+
+
 ### Credits
 
 
 * Thanks to all the authors of the dependencies (and their dependencies), as well as our toolchain.
-* This project was bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype. At the time when I used it (July 2023), it required some manual updates to package versions though, it was a bit outdated.
+* This project was bootstrapped using the [ModiTect OSS Quickstart](https://github.com/moditect/oss-quickstart) archetype. At the time when I used it (July 2023), it required some manual updates to package versions before it worked though, it was a bit outdated.
