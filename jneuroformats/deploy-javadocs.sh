@@ -42,21 +42,27 @@ cd .. && echo "Changed to repo root. Current directory: $(pwd), current branch $
 if [ ! -f search.js ]; then
   echo "Error: file 'search.js' NOT found in current dir. Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
   exit 1
+else
+    echo "Found file 'search.js' in current dir, looks like we are on the gh-pages branch and in the root of the repo."
 fi
 
 if [ -f pom.xml ]; then
-  echo "Error: pom.xml found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
+  echo "Error: file 'pom.xml' found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
   exit 1
+else
+    echo "File 'pom.xml' not found in current dir, looks like we are on the gh-pages branch."
 fi
 
 if [ -d jneuroformats ]; then
   echo "Error: directory 'jneuroformats/' found in current dir. We are most likely on incorrect branch (not gh-pages). Please run this script from the jneuroformats/ sub directory of the repo. Maybe changing to the root of the repo failed, or changing branch to gh-pages failed, check errors above."
   exit 1
+else
+    echo "Directory 'jneuroformats/' not found in current dir, looks like we are on the gh-pages branch."
 fi
 
 # Verify the name of the directory is correct - we should be in the root of the repo now, which is most likely called neuroformats. We will run 'rm -rf ./*' so we want to be sure.
 if [ "$(basename "$(pwd)")" != "jneuroformats" ]; then
-  echo "Error: You must be in the jneuroformats/ directory of the repo. Please run this script from the jneuroformats/ sub directory of the repo."
+  echo "Error: Basename is not jneuroformats. Did you use another name when you checked out the repo? If so: this is not supported by this script, rename it. You must be in the jneuroformats/ directory of the repo. Please run this script from the jneuroformats/ sub directory of the repo."
   exit 1
 fi
 
