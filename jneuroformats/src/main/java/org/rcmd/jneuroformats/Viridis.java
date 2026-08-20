@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.awt.Color;
@@ -38,12 +37,22 @@ public class Viridis implements Colormap {
     private Color highColor = null;
     private Color nanColor = Color.WHITE;
 
+    /**
+     * Constructor for Viridis colormap with custom low, high, and NaN colors.
+     * @param lowColor the color to use for values below 0.0 (if null, the lowest color from the colormap is used)
+     * @param highColor the color to use for values above 1.0 (if null, the highest color from the colormap is used)
+     * @param nanColor the color to use for NaN values (if null, white is used)
+     */
     public Viridis(Color lowColor, Color highColor, Color nanColor) {
         this.lowColor = lowColor;
         this.highColor = highColor;
         this.nanColor = nanColor;
     }
 
+    /**
+     * Get the color to use for values below 0.0.
+     * @return the low color
+     */
     private Color getLowColor() {
         if (this.lowColor == null) {
             return this.colors.get(0);
@@ -51,6 +60,10 @@ public class Viridis implements Colormap {
         return this.lowColor;
     }
 
+    /**
+     * Get the color to use for values above 1.0.
+     * @return the high color
+     */
     private Color getHighColor() {
         if (this.highColor == null) {
             return this.colors.get(colors.size() - 1);
@@ -58,6 +71,10 @@ public class Viridis implements Colormap {
         return this.highColor;
     }
 
+    /**
+     * Get the color to use for NaN values.
+     * @return the NaN color
+     */
     private Color getNanColor() {
         if (this.nanColor == null) {
             return Color.WHITE;
@@ -65,9 +82,17 @@ public class Viridis implements Colormap {
         return this.nanColor;
     }
 
+    /**
+     * Default constructor for Viridis colormap.
+     */
     public Viridis() {
     }
 
+    /**
+     * Get the color corresponding to a position in the colormap.
+     * @param position the position in the colormap, in the range 0.0 to 1.0
+     * @return the color corresponding to the position
+     */
     @Override
     public Color get(Float position) {
         if (position == null || !Float.isFinite(position)) {

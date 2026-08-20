@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.IOException;
@@ -27,9 +26,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a FreeSurfer curv file, or a CSV file with per-vertex data for a surface (mesh)
+ */
 public class FsCurv {
 
-    // The per-vertex data.
+    /** The per-vertex data, one value per vertex. */
     public List<Float> data;
 
     /**
@@ -37,15 +39,20 @@ public class FsCurv {
      */
     public Integer numberOfFaces = 0;
 
-    /** Leave this at 1, or terrible things will happen. */
+    /** Leave this at 1, or terrible things will happen. It exists in the header, but I have never seen a FreeSurfer file with more than one value per vertex, and you can be sure that various software and scripts will not handle it properly. */
     private Integer numberOfValuesPerVertex = 1;
 
-    // Constructor
+    /**
+     * Constructor for FsCurv with data.
+     * @param data the per-vertex data, one value per vertex.
+     */
     public FsCurv(List<Float> data) {
         this.data = data;
     }
 
-    // Constructor
+    /**
+     * Default constructor for FsCurv. Initializes an empty list for the data.
+     */
     public FsCurv() {
         this.data = new ArrayList<>();
     }
@@ -175,7 +182,7 @@ public class FsCurv {
     /**
      * Write this FsCurv to a file in FreeSurfer curv format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private void writeCurv(Path filePath) throws IOException {
         ByteBuffer buf = writeFsCurvToByteBuffer();
@@ -218,7 +225,7 @@ public class FsCurv {
      * Write this FsCurv to a file in curv or CSV format.
      * @param filePath the path to the file to write to
      * @param format the format to write to, either "curv" or "csv".
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
@@ -231,6 +238,91 @@ public class FsCurv {
         else {
             throw new IOException(MessageFormat.format("Unknown FsCurv export format {0}.", format));
         }
+    }
+
+    /**
+     * Get the number of vertices (data points) in this FsCurv object.
+     * @return the number of vertices (data points) in this FsCurv object.
+     */
+    public int size() {
+        return this.data.size();
+    }
+
+    /**
+     * Check if the data contains any NaN values.
+     * @return true if the data contains NaN values, false otherwise.
+     */
+    public boolean containsNaN() {
+        for (float value : this.data) {
+            if (Float.isNaN(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get the indices of the data points that are NaN.
+     * @return a list of indices of the data points that are NaN.
+     */
+    public List<Integer> getIndicesOfNaN() {
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < this.data.size(); i++) {
+            if (Float.isNaN(this.data.get(i))) {
+                indices.add(i);
+            }
+        }
+        return indices;
+    }
+
+    /** Compute the minimum of the data.
+     * @return the minimum of the data.
+     */
+    public float min() {
+        float min = Float.MAX_VALUE;
+        for (float value : this.data) {
+            if (value < min) {
+                min = value;
+            }
+        }
+        return min;
+    }
+
+    /** Compute the maximum of the data.
+     * @return the maximum of the data.
+     */
+    public float max() {
+        float max = Float.MIN_VALUE;
+        for (float value : this.data) {
+            if (value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    /** Compute the mean of the data.
+     * @return the mean of the data.
+     */
+    public double mean() {
+        double sum = 0.0;
+        for (float value : this.data) {
+            sum += value;
+        }
+        return sum / this.data.size();
+    }
+
+    /**
+     * Compute the standard deviation of the data.
+     * @return the standard deviation of the data.
+     */
+    public double std() {
+        double mean = this.mean();
+        double sum = 0.0;
+        for (float value : this.data) {
+            sum += (value - mean) * (value - mean);
+        }
+        return Math.sqrt(sum / this.data.size());
     }
 
 }

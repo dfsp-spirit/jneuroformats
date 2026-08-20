@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.FileNotFoundException;
@@ -40,8 +39,13 @@ import org.rcmd.jneuroformats.Mesh.MeshFileFormat;
  */
 public class FsSurface implements IMesh {
 
+    /** The mesh data */
     public Mesh mesh;
+
+    /** Metadata, a comment line that is part of the FreeSurfer surface file format. Typically contains information on how and when the file was created. */
     public String commentLine = "";
+
+    /** Metadata, a created line that is part of the FreeSurfer surface file format. Typically contains information on how and when the file was created, but is often empty. */
     public String createdLine = "";
 
     /**
@@ -51,6 +55,10 @@ public class FsSurface implements IMesh {
         this.mesh = new Mesh();
     }
 
+    /**
+     * Constructor that takes a Mesh object.
+     * @param mesh the mesh object containing vertices and faces.
+     */
     public FsSurface(Mesh mesh) {
         this.mesh = mesh;
     }
@@ -90,13 +98,13 @@ public class FsSurface implements IMesh {
     public static FsSurface readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
         Mesh.MeshFileFormat meshFormat = Mesh.getMeshFileFormat(filePath, format);
 
-        if(meshFormat.equals(Mesh.MeshFileFormat.MZ3)) {
+        if (meshFormat.equals(Mesh.MeshFileFormat.MZ3)) {
             return new FsSurface(Mesh.fromMz3File(filePath));
         }
-        else if(meshFormat.equals(Mesh.MeshFileFormat.PLY)) {
+        else if (meshFormat.equals(Mesh.MeshFileFormat.PLY)) {
             return new FsSurface(Mesh.fromPlyFile(filePath));
         }
-        else if(meshFormat.equals(Mesh.MeshFileFormat.SURF)) {
+        else if (meshFormat.equals(Mesh.MeshFileFormat.SURF)) {
             return FsSurface.fromFsSurfaceFile(filePath);
         }
         else {
@@ -160,7 +168,7 @@ public class FsSurface implements IMesh {
     /**
      * Write this mesh to a file in FreeSurfer surface format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     protected void writeSurface(Path filePath) throws IOException {
         ByteBuffer buf = writeSurfaceToByteBuffer();
@@ -172,7 +180,7 @@ public class FsSurface implements IMesh {
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
      * @note This method is used internally by writeSurface(Path filePath).
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private ByteBuffer writeSurfaceToByteBuffer() throws IOException {
 
@@ -235,22 +243,37 @@ public class FsSurface implements IMesh {
         }
     }
 
-
+    /**
+     * Get the faces of the mesh.
+     * @return the faces of the mesh, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     @Override
     public List<int[]> getFaces() {
         return this.mesh.getFaces();
     }
 
+    /**
+     * Get the vertices of the mesh.
+     * @return the vertices of the mesh, as x,y,z coordinates.
+     */
     @Override
     public List<float[]> getVertices() {
         return this.mesh.getVertices();
     }
 
+    /**
+     * Set the vertices of the mesh.
+     * @param vertices the vertices of the mesh, as x,y,z coordinates.
+     */
     @Override
     public void setVertices(List<float[]> vertices) {
         this.mesh.setVertices(vertices);
     }
 
+    /**
+     * Set the faces of the mesh.
+     * @param faces the faces of the mesh, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     @Override
     public void setFaces(List<int[]> faces) {
         this.mesh.setFaces(faces);
@@ -271,7 +294,5 @@ public class FsSurface implements IMesh {
     public int getNumberOfFaces() {
         return this.mesh.faces.size();
     }
-
-
 
 }

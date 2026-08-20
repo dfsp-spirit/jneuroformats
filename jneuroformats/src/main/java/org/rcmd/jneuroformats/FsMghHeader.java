@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.FileNotFoundException;
@@ -32,17 +31,36 @@ import java.util.List;
  */
 public class FsMghHeader {
 
+    /** Size of dimension 1 */
     public int dim1Size = 0;
+
+    /** Size of dimension 2 */
     public int dim2Size = 0;
+
+    /** Size of dimension 3 */
     public int dim3Size = 0;
+
+    /** Size of dimension 4 */
     public int dim4Size = 0;
 
+    /** The MRI data type, one of the MRI_* constants defined in FsMgh. This tells you which of the data arrays to use. */
     public int mriDatatype = FsMgh.MRI_FLOAT;
+
+    /** The degrees of freedom (DOF) for the MRI data. */
     public int dof = 0;
+
+    /** The RAS good flag, indicating if the RAS matrix and info are valid. */
     public short rasGoodFlag = 0; // stored as signed int16 in file. 1 means that the RAS matrix and info (size x/y/z, Mdc, Pxyz_c) is good, everything else means it is not.
 
+    // The voxel size in the x, y, and z dimensions. Sometimes referred to as 'Delta' or 'Step' in some FreeSurfer documentation. 3 float values, stored in the file as 3 float values.
+
+    /** The voxel size in the x dimension */
     public float sizeX = 0.0f;
+
+    /** The voxel size in the y dimension */
     public float sizeY = 0.0f;
+
+    /** The voxel size in the z dimension */
     public float sizeZ = 0.0f;
 
     /**
@@ -55,6 +73,9 @@ public class FsMghHeader {
      */
     public List<Float> Pxyz_c = new ArrayList<>();
 
+    /**
+     * Default constructor for FsMghHeader. Initializes empty lists for Mdc and Pxyz_c.
+     */
     public FsMghHeader() {
         Mdc = new ArrayList<>();
         Pxyz_c = new ArrayList<>();

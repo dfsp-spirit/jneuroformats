@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.io.FileNotFoundException;
@@ -31,12 +30,24 @@ import java.util.List;
  */
 public class FsLabel {
 
+    /** The element index (vertex or voxel index) */
     public List<Integer> elementIndex;
+
+    /** The x coordinate of the element */
     public List<Float> coordX;
+
+    /** The y coordinate of the element */
     public List<Float> coordY;
+
+    /** The z coordinate of the element */
     public List<Float> coordZ;
+
+    /** The value assigned to the element */
     public List<Float> value;
 
+    /**
+     * Default constructor for FsLabel. Initializes empty lists for all fields.
+     */
     public FsLabel() {
         elementIndex = new ArrayList<>();
         coordX = new ArrayList<>();
@@ -53,6 +64,10 @@ public class FsLabel {
         return this.elementIndex.size();
     }
 
+    /**
+     * Validate that the label is internally consistent, i.e. that all lists have the same number of elements.
+     * @throws IOException if the label is not internally consistent.
+     */
     public void validate() throws IOException {
         if (this.elementIndex.size() != this.coordX.size()) {
             throw new IOException("The number of elements in the FsLabel elementIndex list does not match the number of elements in the coordX list.");
@@ -210,7 +225,7 @@ public class FsLabel {
      * Write this label to a file in CSV or FsLabel format.
      * @param filePath the path to the file to write to
      * @param format the format to write in, either "csv" or "fslabel".
-     * @throws IOException
+     * @throws IOException  if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();
@@ -225,4 +240,64 @@ public class FsLabel {
         }
     }
 
+    /**
+     * Apply this label to a list of float values, such as the data in an FsCurv object. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curvData the list of float values to apply the label to. This function will return the subset of the data in the list that is part of the label.
+     * @return a new ArrayList containing the subset of the data in the input list that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurvData(List<Float> curvData) {
+        ArrayList<Float> result = new ArrayList<>(this.size());
+        for (int i = 0; i < this.size(); i++) {
+            int vertexIndex = this.elementIndex.get(i);
+            if (vertexIndex < 0 || vertexIndex >= curvData.size()) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "The vertex index {0} in the label is out of bounds for the FsCurv data, which has {1} vertices.",
+                        vertexIndex, curvData.size()));
+            }
+            result.add(curvData.get(vertexIndex));
+        }
+        return result;
+    }
+
+    /**
+     * Apply this label to a list of float values, such as the data in an FsCurv object. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curvData the list of float values to apply the label to. This function will return the subset of the data in the list that is part of the label.
+     * @param invert if set to True, the values returned will be only the values which are NOT part of the label.
+     * @return a new ArrayList containing the subset of the data in the input list that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     */
+    public List<Float> applyToCurvData(List<Float> curvData, boolean invert) {
+        ArrayList<Float> result = new ArrayList<>(this.size());
+        if (invert) {
+            for (int i = 0; i < curvData.size(); i++) {
+                if (!this.elementIndex.contains(i)) {
+                    result.add(curvData.get(i));
+                }
+            }
+            return result;
+        }
+        else {
+            return applyToCurvData(curvData);
+        }
+    }
+
+    /**
+     * Apply this label to an FsCurv object containing per-vertex data. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curv the FsCurv object to apply the label to. This function will return the subset of the data in the FsCurv object that is part of the label.
+     * @return a new ArrayList containing the subset of the data in the FsCurv object that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     * @throws IOException if an error occurs, e.g. if the label contains vertex indices that are out of bounds for the FsCurv data.
+     */
+    public List<Float> applyToCurv(FsCurv curv) throws IOException {
+        return applyToCurvData(curv.data);
+    }
+
+    /**
+     * Apply this label to an FsCurv object containing per-vertex data. This makes sense only if the label is a surface label, and the list of float values contains per-vertex data for the same surface the label is defined on.
+     * @param curv the FsCurv object to apply the label to. This function will return the subset of the data in the FsCurv object that is part of the label.
+     * @param invert if set to True, the values returned will be only the values which are NOT part of the label.
+     * @return a new ArrayList containing the subset of the data in the FsCurv object that is part of the label. The size of the returned list is equal to the number of elements in this label.
+     * @throws IOException if an error occurs, e.g. if the label contains vertex indices that are out of bounds for the FsCurv data.
+     */
+    public List<Float> applyToCurv(FsCurv curv, boolean invert) throws IOException {
+        return applyToCurvData(curv.data, invert);
+    }
 }

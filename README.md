@@ -1,5 +1,5 @@
 # jneuroformats
-Reading and writing structural neuroimaging file formats for Java.
+A library for reading and writing structural neuroimaging file formats with Java.
 
 [![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
 
@@ -8,6 +8,8 @@ Reading and writing structural neuroimaging file formats for Java.
 
 File format readers and writers for file formats used in structural neuroimaging research, with a focus on the
 surface-based workflow used in [FreeSurfer](https://freesurfer.net).
+
+The files that can be read with this library are usually derived from Magnetic Resonance Imaging (MRI) scans of the human brain.
 
 
 ![Vis](./img/rgl_brain_aparc.jpg?raw=true "An aparc brain atlas visualization.")
@@ -40,17 +42,44 @@ Many of the classes provide utility methods which are typically needed in struct
 
 ## Installation
 
-This is work-in-progress, not yet. We will upload to Maven central once it's ready.
+The `jneuroformats` package requires a Java version of at least [Java SE 11](https://en.wikipedia.org/wiki/Java_version_history#Java_SE_11_(LTS)), released in 2018. Of course, any later version is fine as well.
 
+Packages are available [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using them in your project.
 
 ## Documentation and Usage
 
-The API documentation will be published to a central repository once the package is officially released. See the development information if you want to generate it yourself.
+Quick Usage Example: Read a brain mesh and per-vertex data for it, and export to colored PLY mesh (see the screenshot above for the PLY mesh rendered in [MeshLab](https://www.meshlab.net/)):
 
-A full example app can be found in the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java).
+```java
+// Read the mesh
+Path lhWhitePath = java.nio.file.Paths.get("subject1", "surf", "lh.white");
+FsSurface lhSurface = FsSurface.fromFsSurfaceFile(lhWhitePath);
+System.out.println("Read " + lhSurface.getNumberOfVertices() + " vertices and " + lhSurface.getNumberOfFaces() + " faces from the surface file.");
+
+// Now read the annotation file.
+Path lhAnnotPath = java.nio.file.Paths.get(subjectDir.toString(), "label", "lh.aparc.annot");
+FsAnnot lhAnnot = FsAnnot.fromFsAnnotFile(lhAnnotPath);
+
+// Write to colored PLY mesh
+Path plyFileAnnot = java.nio.file.Paths.get("subject1", "label", "lh.aparc.annot.ply");
+Files.write(plyFileAnnot, lhSurface.mesh.toPlyFormat(lhAnnot.getVertexColorsRgb()).getBytes());
+System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + plyFileAnnot.toString());
+```
+
+For a full app with this example combined with proper error handling and all imports, see the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java). The file also loads per-vertex data and exports it.
+
+
+The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jneuroformats](https://dfsp-spirit.github.io/jneuroformats).
+
 
 The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.
 
+
+## Author and License
+
+The jneuroformats package was written by [Tim Schäfer](https://ts.rcmd.org).
+
+It is published under the very permissive [MIT license](./LICENSE).
 
 ## Development
 

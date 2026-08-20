@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.awt.Color;
@@ -26,12 +25,23 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.vecmath.Vector3d;
 
-
+/**
+ * Class representing a 3D mesh, with vertices and faces.
+ * The mesh is assumed to be made of triangular faces.
+ */
 public class Mesh implements IMesh {
 
+    /**
+     * The mesh vertices, as x,y,z coordinates.
+     */
     public List<float[]> vertices;
+
+    /**
+     * The mesh faces, as indices into the vertex list. The mesh is assumed to be triangular.
+     */
     public List<int[]> faces;
 
     /**
@@ -77,10 +87,19 @@ public class Mesh implements IMesh {
         return vertices.get(index);
     }
 
+    /**
+     * Get a face from the mesh.
+     * @param index the index of the face to get.
+     * @return the face, as indices into the vertex list. The face is assumed to be triangular.
+     */
     public int[] getFace(int index) {
         return faces.get(index);
     }
 
+    /**
+     * Get the number of vertices in the mesh.
+     * @return the number of vertices in the mesh.
+     */
     public int getNumberOfVertices() {
         return vertices.size();
     }
@@ -132,7 +151,7 @@ public class Mesh implements IMesh {
     public List<float[]> computeVertexNormals() {
         List<float[]> vertexNormals = new ArrayList<>();
         for (int i = 0; i < this.vertices.size(); i++) {
-            vertexNormals.add(new float[]{0, 0, 0});
+            vertexNormals.add(new float[]{ 0, 0, 0 });
         }
         for (int[] face : this.faces) {
             float[] v0 = this.vertices.get(face[0]);
@@ -189,7 +208,6 @@ public class Mesh implements IMesh {
         return normal;
     }
 
-
     /**
      * Generate a cube with side length 1 and centered at the origin.
      *
@@ -232,28 +250,50 @@ public class Mesh implements IMesh {
         return cube;
     }
 
+    /**
+     * Enumeration of supported mesh file formats.
+     */
     public enum MeshFileFormat {
-        PLY, OBJ, SURF, MZ3
+        /** The PLY file format. */
+        PLY,
+        /** The OBJ file format. */
+        OBJ,
+        /** The FreeSurfer SURF file format. */
+        SURF,
+        /** The MZ3 file format. */
+        MZ3
     }
 
-    private static MeshFileFormat meshFileFormatFromFileExtension (Path filePath) {
+    /**
+     * Generate string representation of this mesh in PLY format.
+     * @return the PLY format string
+     */
+    private static MeshFileFormat meshFileFormatFromFileExtension(Path filePath) {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
-        if(fileNameLower.endsWith(".ply")) {
+        if (fileNameLower.endsWith(".ply")) {
             return MeshFileFormat.PLY;
         }
-        else if(fileNameLower.endsWith(".obj")) {
+        else if (fileNameLower.endsWith(".obj")) {
             return MeshFileFormat.OBJ;
         }
-        else {  // FreeSurfer surf files typically have no file extension.
+        else { // FreeSurfer surf files typically have no file extension.
             return MeshFileFormat.SURF;
         }
     }
 
+    /**
+     * Get the mesh file format from the file path and format string.
+     * @param filePath the path to the file
+     * @param format the format string
+     * @return the mesh file format
+     * @throws IOException if an error occurs
+     */
     protected static MeshFileFormat getMeshFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
-        if(formatLower.equals("auto")) {
+        if (formatLower.equals("auto")) {
             return meshFileFormatFromFileExtension(filePath);
-        } else {
+        }
+        else {
 
             if (format.equals("ply")) {
                 return MeshFileFormat.PLY;
@@ -295,8 +335,6 @@ public class Mesh implements IMesh {
         }
     }
 
-
-
     /**
      * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.ply")`. The file format will be determined from the file extension.
@@ -321,13 +359,13 @@ public class Mesh implements IMesh {
     public static Mesh readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
         MeshFileFormat meshFormat = getMeshFileFormat(filePath, format);
 
-        if(meshFormat.equals(MeshFileFormat.MZ3)) {
+        if (meshFormat.equals(MeshFileFormat.MZ3)) {
             return fromMz3File(filePath);
         }
-        else if(meshFormat.equals(MeshFileFormat.PLY)) {
+        else if (meshFormat.equals(MeshFileFormat.PLY)) {
             return fromPlyFile(filePath);
         }
-        else if(meshFormat.equals(MeshFileFormat.SURF)) {
+        else if (meshFormat.equals(MeshFileFormat.SURF)) {
             FsSurface surface = FsSurface.fromFsSurfaceFile(filePath);
             return surface.mesh;
         }
@@ -534,16 +572,40 @@ public class Mesh implements IMesh {
         return builder.toString();
     }
 
-
     /**
      * Models the header information from an ASCII PLY file.
      */
     protected static class PlyHeaderInfo {
 
+        /** Constructor for PlyHeaderInfo. */
+        public PlyHeaderInfo() {
+        }
+
+        /** The index of the end of the header section. */
         public int headerEndLineIndex;
+
+        /** The index of the start of the vertex section. */
+        public int vertexStartLineIndex;
+
+        /** The index of the start of the face section. */
+        public int faceStartLineIndex;
+
+        /** The index of the end of the vertex section. */
+        public int vertexEndLineIndex;
+
+        /** The index of the end of the face section. */
+        public int faceEndLineIndex;
+
+        /** The number of vertices in the mesh. */
         public int vertexCount;
+
+        /** The number of faces in the mesh. */
         public int faceCount;
+
+        /** Whether the mesh contains vertex colors. */
         public Boolean containsVertexColors;
+
+        /** Whether the mesh contains vertex normals. */
         public Boolean containsVertexNormals;
 
     }

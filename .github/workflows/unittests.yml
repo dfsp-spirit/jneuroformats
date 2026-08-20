@@ -2,6 +2,9 @@ name: Unittests
 
 on:
   push:
+    branches:
+      - '**'           # Run on all branches
+      - '!gh-pages'    # EXCEPT gh-pages branch
   workflow_dispatch:
 
 jobs:

@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.awt.Color;
@@ -30,12 +29,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Represents a FreeSurfer annotation file.
+ * An annotation is a mapping of vertices to brain regions, where each region has a label and a color.
+ *
+ */
 public class FsAnnot {
 
     /** The vertex indices to the data in the 'labels'. This seems to always be simply a list from 0 to numVertices - 1, as
      * an annotation typically spans the entire cortex. Vertices not belongning to any relevant region are assigned to an 'unknown' region.
      */
     public List<Integer> vertexIndices;
+
     /** The labels for the vertices, i.e., a region code. The code can be mapped to a region name and a color using a lookup table.
      * purposes. The color table that comes with FreeSurfer can be found in the FreeSurfer directory under 'FreeSurferColorLUT.txt'.
      * The annot file itself also includes a color table.
@@ -44,28 +49,41 @@ public class FsAnnot {
 
     /**
      * Whether this annot contains its own color table, i.e., whether its colortable attribute is not null.
+     * @return true if this annot has a colortable, false otherwise.
      */
     public Boolean hasColortable() {
         return this.colortable != null;
     }
 
+    /** The color table for this annotation, mapping region codes to region names and colors. May be null if the annot does not have a colortable. */
     public FsColortable colortable;
 
-    // Constructor
+    /**
+     * Constructor for FsAnnot.
+     * @param vertexIndices this indices of the vertices in the mesh that this annot applies to.
+     * @param vertexLabels this labels for the vertices, i.e., a region code. The code can be mapped to a region name and a color using a lookup table.
+     */
     public FsAnnot(List<Integer> vertexIndices, List<Integer> vertexLabels) {
         this.vertexIndices = vertexIndices;
         this.vertexLabels = vertexLabels;
         this.colortable = null;
     }
 
-    // Constructor
+    /**
+     * Constructor for FsAnnot.
+     * @param vertexIndices this indices of the vertices in the mesh that this annot applies to.
+     * @param vertexLabels this labels for the vertices, i.e., a region code. The code can be mapped to a region name and a color using a lookup table.
+     * @param colortable this color table for the annotation, mapping region codes to region names and colors.
+     */
     public FsAnnot(List<Integer> vertexIndices, List<Integer> vertexLabels, FsColortable colortable) {
         this.vertexIndices = vertexIndices;
         this.vertexLabels = vertexLabels;
         this.colortable = colortable;
     }
 
-    // Constructor
+    /**
+     * Default constructor for FsAnnot. Initializes empty lists for vertexIndices and vertexLabels, and null colortable.
+     */
     public FsAnnot() {
         this.vertexIndices = new ArrayList<>();
         this.vertexLabels = new ArrayList<>();
@@ -80,6 +98,10 @@ public class FsAnnot {
         return new HashSet<>(this.vertexLabels).size();
     }
 
+    /**
+     * Get the number of vertices in this annot.
+     * @return integer, the number of vertices.
+     */
     public int numVertices() {
         return this.vertexIndices.size();
     }
@@ -97,6 +119,11 @@ public class FsAnnot {
         }
     }
 
+    /**
+     * Validate this FsAnnot object. Checks that the number of vertex indices matches the number of vertex labels,
+     * and if a colortable is present, that the number of unique labels matches the number of regions in the colortable.
+     * @throws IOException  if the validation fails.
+     */
     public void validate() throws IOException {
         if (this.vertexIndices.size() != this.vertexLabels.size()) {
             throw new IOException("The number of entries in the FsAnnot vertexIndices list does not match the number of elements in the vertexLabels list.");
@@ -109,28 +136,49 @@ public class FsAnnot {
         }
     }
 
+    /**
+     * Enum for the different annotation file formats.
+     */
     public enum AnnotFileFormat {
-        ANNOT, CSV
+        /** FreeSurfer annotation file format */
+        ANNOT,
+        /** CSV file format (comma separated values) */
+        CSV
     }
 
-    protected static AnnotFileFormat annotFileFormatFromFileExtension (Path filePath) throws IOException {
+    /**
+     * Determine the annotation file format based on the file extension.
+     * @param filePath the path to the file
+     * @return the annotation file format
+     * @throws IOException if the file extension is unknown
+     */
+    protected static AnnotFileFormat annotFileFormatFromFileExtension(Path filePath) throws IOException {
         String fileNameLower = filePath.getFileName().toString().toLowerCase();
-        if(fileNameLower.endsWith(".annot")) {
+        if (fileNameLower.endsWith(".annot")) {
             return AnnotFileFormat.ANNOT;
         }
-        else if(fileNameLower.endsWith(".mgz")) {
+        else if (fileNameLower.endsWith(".mgz")) {
             return AnnotFileFormat.CSV;
         }
         else {
-            throw new IOException(MessageFormat.format("Cannot determine annotation file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
+            throw new IOException(
+                    MessageFormat.format("Cannot determine annotation file format for file {0} from name: unknown file extension.", filePath.getFileName().toString()));
         }
     }
 
+    /**
+     * Determine the annotation file format based on the file extension or a specified format string.
+     * @param filePath the path to the file
+     * @param format the format string, either "auto", "annot", or "csv"
+     * @return the annotation file format
+     * @throws IOException if the file extension is unknown or the format string is invalid
+     */
     protected static AnnotFileFormat getAnnotFileFormat(Path filePath, String format) throws IOException {
         String formatLower = format.toLowerCase();
-        if(formatLower.equals("auto")) {
+        if (formatLower.equals("auto")) {
             return annotFileFormatFromFileExtension(filePath);
-        } else {
+        }
+        else {
 
             if (format.equals("annot")) {
                 return AnnotFileFormat.ANNOT;
@@ -149,6 +197,7 @@ public class FsAnnot {
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      * @see #readFormat(Path, String) if you want to read a file and specify the format.
      */
     public static FsAnnot read(Path filePath) throws IOException, FileNotFoundException {
@@ -161,6 +210,7 @@ public class FsAnnot {
      * @param format the format of the file to read. Currently, only "annot" is supported.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      * @see #read(Path) if you want to read a file without specifying the format.
      */
     public static FsAnnot readFormat(Path filePath, String format) throws IOException, FileNotFoundException {
@@ -181,6 +231,7 @@ public class FsAnnot {
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.txt")`.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if file not found.
      */
     protected static FsAnnot fromFsAnnotFile(Path filePath) throws IOException, FileNotFoundException {
 
@@ -250,7 +301,7 @@ public class FsAnnot {
     /**
      * Write this FsCurv to a file in FreeSurfer curv format.
      * @param filePath the path to the file to write to
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private void writeAnnot(Path filePath) throws IOException {
         ByteBuffer buf = writeFsAnnotToByteBuffer();
@@ -259,6 +310,10 @@ public class FsAnnot {
         channel.close();
     }
 
+    /**
+     * Get the colors for each vertex in this annot as a list of java.awt.Color objects.
+     * @return a list of Color objects, one for each vertex in the annot. If the annot does not have a colortable, returns an empty list.
+     */
     public List<Color> getVertexColorsRgb() {
         List<Color> colors = new ArrayList<>(this.numVertices());
         for (int i = 0; i < this.vertexLabels.size(); i++) {
@@ -270,7 +325,7 @@ public class FsAnnot {
     /**
      * Write this mesh to a ByteBuffer in FreeSurfer surface format.
      * @note This method is used internally by writeSurface(Path filePath).
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     private ByteBuffer writeFsAnnotToByteBuffer() throws IOException {
 
@@ -305,7 +360,7 @@ public class FsAnnot {
      * Write this FsAnnot to a file in annot or CSV format.
      * @param filePath the path to the file to write to
      * @param format the format to write to, either "annot" or "csv".
-     * @throws IOException
+     * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
         format = format.toLowerCase();

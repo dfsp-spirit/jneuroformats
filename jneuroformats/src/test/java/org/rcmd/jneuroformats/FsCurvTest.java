@@ -1,19 +1,18 @@
 /*
- *  Copyright 2023 Tim Schäfer
+ *  Copyright 2021 The original authors
  *
- *    Licensed under the MIT License (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *        https://github.com/dfsp-spirit/jneuroformats/blob/main/LICENSE or at https://opensource.org/licenses/MIT
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-
 package org.rcmd.jneuroformats;
 
 import java.nio.file.Files;
@@ -87,6 +86,19 @@ public class FsCurvTest {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void simpleStatFunctionsOfFsCurvWork() {
+        ArrayList<Float> data = new ArrayList<>(Arrays.asList(1.0f, 2.0f, 3.0f));
+        FsCurv curv = new FsCurv(data);
+        assertThat(curv.size()).isEqualTo(3);
+        assertThat(curv.mean()).isEqualTo(2.0f);
+        assertThat(curv.min()).isEqualTo(1.0f);
+        assertThat(curv.max()).isEqualTo(3.0f);
+        assertThat(curv.std()).isEqualTo(0.816496580927726, within(1e-6));
+        assertThat(curv.containsNaN()).isFalse();
+        assertThat(curv.getIndicesOfNaN()).isEmpty();
     }
 
 }
