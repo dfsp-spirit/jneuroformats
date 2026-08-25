@@ -74,6 +74,8 @@ Make sure you are in the `<repo>/jneuroformats/` directory, not just in the root
 mvn javadoc:javadoc
 ```
 
+Note: You only need this to check locally that the docs build without warnings about undocumented code. Publishing the docs to GitHub pages is done automatically by the GitHub Action [javadocs.yml](../.github/workflows/javadocs.yml), which deploys the built docs to the `gh-pages` branch on every push to `main` and on tags `v*`.
+
 ### Running the demo App
 
 The demo app loads various FreeSurfer data for a subjects from the FreeSurfer output directory, known as the subjects_dir in FreeSurfer speech. Some demo data in a directory that is organized like a FreeSurfer subjects_dir comes with this software in the repo, so you do **not** need to acquire and process an MRI scan to run the demo app.
@@ -128,7 +130,7 @@ Then run `mvn clean deploy`.
 * Add a description of the changes since last release to the file [CHANGES](../CHANGES) (always do this after every change, on the go).
 * Run the tests with `mvn test` and ensure everything is green
 * Build the docs locally, and ensure there are no warnings about undocumented code, via `mvn javadoc:javadoc`.
-* Update the published version of the API documentation on GitHub pages, by copying the locally build docs to the `gh-pages` branch, see script [deploy-javadocs.sh](./deploy-javadocs.sh).
+* Publish the API documentation to GitHub pages: this is automatic now. The GitHub Action [javadocs.yml](../.github/workflows/javadocs.yml) builds and deploys the docs to the `gh-pages` branch on every push to `main` and whenever a `v*` tag is pushed. Just push the release tag (see below); no manual deployment needed. You can also trigger it manually from the "Actions" tab.
 * Bump the version in [pom.xml](./pom.xml)
 * Publish the package to GitHub pages as described above in the section `Publishing to GitHub packages`
 * Tag the commit hash of the version you published with the version, e.g., `git log --oneline` to see last commits, then `git tag v1.2.0 asfjhjs`, where asfjhjs is your commit hash from the git log command. Then upload the tag via `git push --tags`.
