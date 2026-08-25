@@ -2,8 +2,8 @@ jneuroformats Changes
 =====================
 
 
-Unreleased
-----------
+Version 1.2.0 -- Support for new file formats including NIFTI
+--------------------------------------------------------------
 * Meshes:
     - Add write support for MZ3 surface files: `Mesh.write(..., "mz3")` and `Mz3.write(Path)`. MZ3 reading now also supports non-gzipped files, in addition to gzipped ones.
     - Add read support for Wavefront OBJ mesh files: `Mesh.fromObjFile(Path)`. Also fix OBJ export to use the 1-based face indices required by the OBJ format.
