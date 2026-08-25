@@ -15,6 +15,8 @@
  */
 package org.rcmd.jneuroformats;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,42 @@ public class MeshTest {
 
         assertThat(fNormals).isNotNull();
         assertThat(fNormals.size()).isEqualTo(cube.getNumberOfFaces());
+    }
+
+    @Test
+    public void oneCanWriteAndRereadObj() {
+
+        Mesh cube = Mesh.generateCube();
+        try {
+            Path temp = Files.createTempFile("", ".obj");
+            cube.write(temp, "obj");
+            Mesh cube2 = Mesh.read(temp);
+            assertThat(cube2.getNumberOfVertices()).isEqualTo(8);
+            assertThat(cube2.getNumberOfFaces()).isEqualTo(12);
+            assertThat(cube2.vertices.toArray()).isEqualTo(cube.vertices.toArray());
+            assertThat(cube2.faces.toArray()).isEqualTo(cube.faces.toArray());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void oneCanWriteAndRereadMeshAsMz3() {
+
+        Mesh cube = Mesh.generateCube();
+        try {
+            Path temp = Files.createTempFile("", ".mz3");
+            cube.write(temp, "mz3");
+            Mesh cube2 = Mesh.read(temp);
+            assertThat(cube2.getNumberOfVertices()).isEqualTo(8);
+            assertThat(cube2.getNumberOfFaces()).isEqualTo(12);
+            assertThat(cube2.vertices.toArray()).isEqualTo(cube.vertices.toArray());
+            assertThat(cube2.faces.toArray()).isEqualTo(cube.faces.toArray());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

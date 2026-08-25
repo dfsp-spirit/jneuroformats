@@ -1,7 +1,9 @@
 # jneuroformats
 A library for reading and writing structural neuroimaging file formats with Java.
 
-[![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+[![unittests](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+[![docs](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/javadocs.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+
 
 
 ## About
@@ -19,21 +21,22 @@ The files that can be read with this library are usually derived from Magnetic R
 
 * Meshes:
   - Read brain meshes in FreeSurfer binary mesh format (like recon_all output file `<SUBJECTS_DIR>/<subject>/surf/lh.white`): use function `FsSurface.fromFsSurfaceFile()`
-  - Read meshes from MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
+  - Read and write meshes in MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
   - Write in PLY, OBJ, and FreeSurfer binary mesh formats: `FsSurface.writeToFile()`
   - Read meshes from PLY format files (ASCII type)
+  - Read meshes from OBJ format files
 * Labels (FreeSurfer volume and surface labels, like `<subject>/label/lh.cortex.label`):
   - Read from FreeSurfer label format:  `FsLabel.fromFsLabelFile()`
   - Write in FreeSurfer label format and to CSV format: `FsLabel.writeToFile()`
 * Annots or mesh parcellations (like Desikan atlas parcellation in recon_all output file `<SUBJECTS_DIR>/<subject>/label/lh.aparc.annot`):
   - Read from FreeSurfer annot format: `FsAnnot.fromFsAnnotFile()`
-  - Write to FreeSurfer annot format and to CSV (including the color table):  `FsAnnot.writeToFile()`
+  - Write to FreeSurfer annot format and to CSV (including the color table), and read from annot CSV files: `FsAnnot.writeToFile()`
 * Brain volumes (3D or 4D MRI scans, like `<subject>/mri/brain.mgz`):
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
 * Per-Vertex data and per-voxel data, like cortical thickness or statistical results:
   - Read from MGH/MGZ files (they can store 4D arrays, which is useful for the raw images and per-vertex/per-voxel data)
-  - Read from MZ3 files: `Mz3.fromMz3File()`. Can also read per-vertex colors from MZ3 files.
+  - Read from and write to MZ3 files: `Mz3.fromMz3File()`, `Mz3.write()`. Can also read per-vertex colors from MZ3 files.
   - Read from FreeSurfer curv files (like `<subject>/surf/lh.thickness`): `FsCurv.fromFsCurvFile()`
   - Write to FreeSurfer curv files: `FsCurv.writeToFile()`
 

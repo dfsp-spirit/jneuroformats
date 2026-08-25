@@ -157,7 +157,7 @@ public class FsAnnot {
         if (fileNameLower.endsWith(".annot")) {
             return AnnotFileFormat.ANNOT;
         }
-        else if (fileNameLower.endsWith(".mgz")) {
+        else if (fileNameLower.endsWith(".csv")) {
             return AnnotFileFormat.CSV;
         }
         else {
@@ -207,7 +207,7 @@ public class FsAnnot {
     /**
      * Read a file in annot format and return an FsAnnot object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.annot")`.
-     * @param format the format of the file to read. Currently, only "annot" is supported.
+     * @param format the format of the file to read, either "annot" or "csv". When reading CSV, the color table is not part of the file, so the resulting FsAnnot object will not have a color table.
      * @return an FsAnnot object.
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if file not found.
@@ -218,12 +218,44 @@ public class FsAnnot {
         AnnotFileFormat annotFormat = getAnnotFileFormat(filePath, format);
 
         if (annotFormat == AnnotFileFormat.CSV) {
-            throw new IOException(
-                    MessageFormat.format("Reading FsAnnot from CSV files not supported yet: '{0}'.\n", filePath.toString()));
+            return FsAnnot.fromCsvFile(filePath, Boolean.TRUE);
         }
         else {
             return FsAnnot.fromFsAnnotFile(filePath);
         }
+    }
+
+    /**
+     * Read a file in CSV format and return an FsAnnot object.
+     * The CSV file is expected to have two columns per row: the vertex index and the vertex label.
+     * An optional header row is skipped if parameter `has_header` is set to true.
+     * @param filePath the name of the file to read, as a Path object.
+     * @param has_header whether the file has a header row at the top.
+     * @return an FsAnnot object.
+     * @throws IOException if IO error occurs.
+     */
+    protected static FsAnnot fromCsvFile(Path filePath, Boolean has_header) throws IOException {
+
+        FsAnnot annot = new FsAnnot();
+        List<String> lines = Files.readAllLines(filePath);
+        if (has_header && lines.size() > 0) {
+            lines.remove(0);
+        }
+
+        for (String line : lines) {
+            String trimmedLine = line.trim();
+            if (trimmedLine.isEmpty()) {
+                continue;
+            }
+            String[] parts = trimmedLine.split(",");
+            if (parts.length != 2) {
+                throw new IOException(MessageFormat.format("Invalid CSV file format: expected 2 columns per row but got {0} in line '{1}'.", parts.length, line));
+            }
+            annot.vertexIndices.add(Integer.parseInt(parts[0].trim()));
+            annot.vertexLabels.add(Integer.parseInt(parts[1].trim()));
+        }
+
+        return annot;
     }
 
     /**

@@ -89,7 +89,7 @@ public class FsSurface implements IMesh {
     /**
      * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mgz")`. The file format will be determined from the file extension if parameter `format` is set to `auto`.
-     * @param format the file format to read, either "mz3", "ply", "surf", or "auto" to auto-detect from the file name.
+     * @param format the file format to read, either "mz3", "ply", "obj", "surf", or "auto" to auto-detect from the file name.
      * @return an FsSurface object.
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if the file does not exist.
@@ -103,6 +103,9 @@ public class FsSurface implements IMesh {
         }
         else if (meshFormat.equals(Mesh.MeshFileFormat.PLY)) {
             return new FsSurface(Mesh.fromPlyFile(filePath));
+        }
+        else if (meshFormat.equals(Mesh.MeshFileFormat.OBJ)) {
+            return new FsSurface(Mesh.fromObjFile(filePath));
         }
         else if (meshFormat.equals(Mesh.MeshFileFormat.SURF)) {
             return FsSurface.fromFsSurfaceFile(filePath);

@@ -2,6 +2,15 @@ jneuroformats Changes
 =====================
 
 
+Unreleased
+----------
+* Meshes:
+    - Add write support for MZ3 surface files: `Mesh.write(..., "mz3")` and `Mz3.write(Path)`. MZ3 reading now also supports non-gzipped files, in addition to gzipped ones.
+    - Add read support for Wavefront OBJ mesh files: `Mesh.fromObjFile(Path)`. Also fix OBJ export to use the 1-based face indices required by the OBJ format.
+* Annots:
+    - Add read support for annot CSV files (2 columns: vertex index, vertex label). Note that CSV files do not contain a color table. Also fix auto-detection of annot CSV files by file extension (the `.csv` extension was previously not recognized).
+
+
 Version 1.1.0 -- Better docs, some quality of life features
 -----------------------------------------------------------
 * add convenience functions `FsLabel.applyToCurvData` and `FsLabel.applyToCurv` to filter curv data and return only that subset included in a label.

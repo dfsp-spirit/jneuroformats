@@ -276,6 +276,9 @@ public class Mesh implements IMesh {
         else if (fileNameLower.endsWith(".obj")) {
             return MeshFileFormat.OBJ;
         }
+        else if (fileNameLower.endsWith(".mz3")) {
+            return MeshFileFormat.MZ3;
+        }
         else { // FreeSurfer surf files typically have no file extension.
             return MeshFileFormat.SURF;
         }
@@ -304,6 +307,9 @@ public class Mesh implements IMesh {
             else if (format.equals("surf")) {
                 return MeshFileFormat.SURF;
             }
+            else if (format.equals("mz3")) {
+                return MeshFileFormat.MZ3;
+            }
             else {
                 throw new IOException(MessageFormat.format("Unknown mesh format {0}.", format));
             }
@@ -311,9 +317,9 @@ public class Mesh implements IMesh {
     }
 
     /**
-     * Write this mesh to a file in PLY, OBJ or FreeSurfer surf format.
+     * Write this mesh to a file in PLY, OBJ, MZ3 or FreeSurfer surf format.
      * @param filePath the path to the file to write to
-     * @param format the format to write to, either "ply", "obj", or "surf". Alternatively, "auto" to derive the format from the filePath.
+     * @param format the format to write to, either "ply", "obj", "mz3", or "surf". Alternatively, "auto" to derive the format from the filePath.
      * @throws IOException if IO error occurs.
      */
     public void write(Path filePath, String format) throws IOException {
@@ -325,6 +331,10 @@ public class Mesh implements IMesh {
         }
         else if (meshFileType.equals(MeshFileFormat.OBJ)) {
             Files.write(filePath, toObjFormat().getBytes());
+        }
+        else if (meshFileType.equals(MeshFileFormat.MZ3)) {
+            Mz3 mz3 = new Mz3(this, new ArrayList<Float>(), new ArrayList<Color>());
+            mz3.write(filePath);
         }
         else if (meshFileType.equals(MeshFileFormat.SURF)) {
             FsSurface surface = new FsSurface(this);
@@ -350,7 +360,7 @@ public class Mesh implements IMesh {
     /**
      * Read a file in MZ3, PLY, or FreeSurfer mesh format and return an FsSurface object.
      * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.mgz")`. The file format will be determined from the file extension if parameter `format` is set to `auto`.
-     * @param format the file format to read, either "mz3", "ply", "surf", or "auto" to auto-detect from the file name.
+     * @param format the file format to read, either "mz3", "ply", "obj", "surf", or "auto" to auto-detect from the file name.
      * @return an FsSurface object.
      * @throws IOException if IO error occurs.
      * @throws FileNotFoundException if the file does not exist.
@@ -364,6 +374,9 @@ public class Mesh implements IMesh {
         }
         else if (meshFormat.equals(MeshFileFormat.PLY)) {
             return fromPlyFile(filePath);
+        }
+        else if (meshFormat.equals(MeshFileFormat.OBJ)) {
+            return fromObjFile(filePath);
         }
         else if (meshFormat.equals(MeshFileFormat.SURF)) {
             FsSurface surface = FsSurface.fromFsSurfaceFile(filePath);
@@ -425,6 +438,68 @@ public class Mesh implements IMesh {
             face[1] = Integer.parseInt(faceLineParts[2]);
             face[2] = Integer.parseInt(faceLineParts[3]);
             mesh.addFace(face);
+        }
+
+        return mesh;
+    }
+
+    /**
+     * Read a file in Wavefront Object (OBJ) format and return a Mesh object.
+     * Handles the common subset of OBJ: vertex lines ("v x y z") and face lines
+     * ("f a b c"), including faces with texture/normal indices ("f v/vt/vn ...")
+     * and negative (relative) indices. Polygonal faces with more than 3 vertices
+     * are triangulated by fanning out from the first vertex.
+     * @param filePath the name of the file to read, as a Path object. Get on from a string by something like `java.nio.file.Paths.Path.get("myfile.obj")`.
+     * @return a Mesh object.
+     * @throws IOException if IO error occurs.
+     */
+    public static Mesh fromObjFile(Path filePath) throws IOException {
+
+        Mesh mesh = new Mesh();
+
+        List<String> lines = Files.readAllLines(filePath);
+
+        for (String line : lines) {
+            String trimmedLine = line.trim();
+            if (trimmedLine.isEmpty() || trimmedLine.startsWith("#")) {
+                continue;
+            }
+
+            String[] parts = trimmedLine.split("\\s+");
+
+            if (parts[0].equals("v") && parts.length >= 4) {
+                float[] vertex = new float[3];
+                vertex[0] = Float.parseFloat(parts[1]);
+                vertex[1] = Float.parseFloat(parts[2]);
+                vertex[2] = Float.parseFloat(parts[3]);
+                mesh.addVertex(vertex);
+            }
+            else if (parts[0].equals("f") && parts.length >= 4) {
+                int[] vertexIndices = new int[parts.length - 1];
+                for (int i = 1; i < parts.length; i++) {
+                    String indexPart = parts[i];
+                    int slashIndex = indexPart.indexOf('/');
+                    if (slashIndex != -1) {
+                        indexPart = indexPart.substring(0, slashIndex);
+                    }
+                    int index = Integer.parseInt(indexPart);
+                    if (index < 0) {
+                        index = mesh.getNumberOfVertices() + index + 1;
+                    }
+                    vertexIndices[i - 1] = index - 1; // OBJ indices are 1-based, convert to 0-based.
+                }
+                if (vertexIndices.length == 3) {
+                    mesh.addFace(vertexIndices);
+                }
+                else {
+                    // Triangulate polygonal faces by fanning out from the first vertex.
+                    for (int i = 1; i < vertexIndices.length - 1; i++) {
+                        int[] face = new int[]{ vertexIndices[0], vertexIndices[i], vertexIndices[i + 1] };
+                        mesh.addFace(face);
+                    }
+                }
+            }
+            // All other OBJ elements (vn, vt, o, g, s, usemtl, mtllib, ...) are ignored.
         }
 
         return mesh;
@@ -567,7 +642,8 @@ public class Mesh implements IMesh {
             builder.append("v " + vertex[0] + " " + vertex[1] + " " + vertex[2] + "\n");
         }
         for (int[] face : this.faces) {
-            builder.append("f " + face[0] + " " + face[1] + " " + face[2] + "\n");
+            // OBJ face indices are 1-based.
+            builder.append("f " + (face[0] + 1) + " " + (face[1] + 1) + " " + (face[2] + 1) + "\n");
         }
         return builder.toString();
     }
