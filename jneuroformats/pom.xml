@@ -108,7 +108,7 @@
         <plugin>
           <groupId>com.mycila</groupId>
           <artifactId>license-maven-plugin</artifactId>
-          <version>4.1</version>
+          <version>4.6</version>
           <configuration>
             <excludes>**/test/resources/subjects_dir/subject1/surf/*.*,**/test/resources/subjects_dir/subject1/mri/*.*,**/test/resources/subjects_dir/subject1/label/*.*,**/resources/.dontdelete</excludes>
           </configuration>
