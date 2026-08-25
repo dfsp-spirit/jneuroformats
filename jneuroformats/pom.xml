@@ -24,6 +24,9 @@
   <version>1.2.0</version>
   <packaging>jar</packaging>
 
+  <!-- Kept for the optional GitHub Packages deploy (run 'mvn deploy' without the
+       'central' profile). Publishing to Maven Central is done via the 'central'
+       profile:  mvn -Pcentral clean deploy  -->
   <distributionManagement>
     <repository>
       <id>github</id>
@@ -32,19 +35,10 @@
     </repository>
   </distributionManagement>
 
-  <repositories>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/dfsp-spirit/jneuroformats</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/dfsp-spirit/jneuroformats</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <!-- Note: no <repositories>/<pluginRepositories> here on purpose. They used to
+       point to GitHub Packages, which requires credentials for every consumer and
+       would leak into the pom published to Maven Central. All dependencies and
+       plugins used by this project are available from Maven Central. -->
 
   <properties>
     <java.version>11</java.version>
@@ -66,6 +60,22 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <!-- Required by Maven Central. Update the developer name/email to your preference. -->
+  <developers>
+    <developer>
+      <id>dfsp-spirit</id>
+      <name>Tim Schäfer</name>
+      <url>https://github.com/dfsp-spirit</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:https://github.com/dfsp-spirit/jneuroformats.git</connection>
+    <developerConnection>scm:git:git@github.com:dfsp-spirit/jneuroformats.git</developerConnection>
+    <url>https://github.com/dfsp-spirit/jneuroformats</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <dependencyManagement>
     <dependencies>
@@ -132,6 +142,11 @@
           </configuration>
         </plugin>
         <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.11.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.15.0</version>
@@ -156,6 +171,11 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.2.8</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
           <version>3.0.0-M1</version>
         </plugin>
@@ -173,6 +193,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.9.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -306,6 +331,71 @@
       <properties>
         <skipTests>true</skipTests>
       </properties>
+    </profile>
+
+    <!--
+      Publishing profile for the Maven Central Repository (Sonatype Central Portal).
+      Activate it with:  mvn -Pcentral clean deploy
+      It attaches the sources and javadoc jars (required by Central), signs all
+      artifacts with GPG, and uploads them to the Central Portal where they are
+      validated and (thanks to autoPublish) released automatically.
+
+      Credentials must be configured in ~/.m2/settings.xml under a server with
+      id 'central' (your Sonatype user token username/password).
+    -->
+    <profile>
+      <id>central</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <waitUntil>published</waitUntil>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

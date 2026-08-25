@@ -1,0 +1,56 @@
+name: Publish to Maven Central
+
+# Builds the project and publishes a release to the Maven Central Repository
+# (via the Sonatype Central Portal) whenever a tag like v1.2.0 is pushed.
+#
+# To publish a new release:
+#   1. Bump <version> in jneuroformats/pom.xml and commit.
+#   2. Create a tag:   git tag v1.2.0
+#   3. Push it:        git push origin v1.2.0
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   CENTRAL_TOKEN_USERNAME  - your Sonatype Central user token username
+#   CENTRAL_TOKEN_PASSWORD  - your Sonatype Central user token password
+#   GPG_PRIVATE_KEY         - ASCII-armored GPG private key (exported with --armor)
+#   GPG_PASSPHRASE          - passphrase of the GPG key (empty if the key has none)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      # Consumed by actions/setup-java to write the 'central' server credentials
+      # into ~/.m2/settings.xml and to configure the GPG passphrase property.
+      CENTRAL_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+      CENTRAL_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK, import GPG key and configure credentials
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          server-id: central
+          server-username: CENTRAL_USERNAME
+          server-password: CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      # Runs the full lifecycle (tests + QA checks included) and, in the deploy
+      # phase, attaches sources/javadoc, signs with GPG, uploads to the Central
+      # Portal, and auto-publishes after validation.
+      - name: Publish to Central Portal
+        working-directory: ./jneuroformats
+        run: mvn --batch-mode -Pcentral clean deploy

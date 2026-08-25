@@ -49,7 +49,23 @@ Many of the classes provide utility methods which are typically needed in struct
 
 The `jneuroformats` package requires a Java version of at least [Java SE 11](https://en.wikipedia.org/wiki/Java_version_history#Java_SE_11_(LTS)), released in 2018. Of course, any later version is fine as well.
 
-Packages are available [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using them in your project.
+The package is published to [Maven Central](https://central.sonatype.com/artifact/org.rcmd.jneuroformats/jneuroformats), so no extra repository configuration is needed. Add it as a dependency in Maven:
+
+```xml
+<dependency>
+  <groupId>org.rcmd.jneuroformats</groupId>
+  <artifactId>jneuroformats</artifactId>
+  <version>1.2.0</version>
+</dependency>
+```
+
+or in Gradle:
+
+```groovy
+implementation 'org.rcmd.jneuroformats:jneuroformats:1.2.0'
+```
+
+> Older versions remain available from [GitHub Packages](https://github.com/dfsp-spirit/jneuroformats/packages/). Using those requires adding the GitHub repository URL and credentials to your build, so Maven Central is the easier option.
 
 ## Documentation and Usage
 

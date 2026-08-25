@@ -92,9 +92,72 @@ Of course, replace `jneuroformats-1.0-SNAPSHOT.jar` with the jar of the version 
 
 The last command above runs the app `org.rcmd.jneuroformats.App` with two arguments: The subjects_dir (`src/test/resources/subjects_dir`) and the subject (`subject1`), and prints some information on the loaded files and the data contained in them.
 
-### Publishing to Maven central
+### Publishing to Maven Central
 
-Sontype OSSRH is now outdated. Therefore, one should now [publish to maven central](https://github.com/chhh/sonatype-ossrh-parent/blob/master/publishing-to-maven-central.md). Their docs aren't great though. We have not done this yet, and currently only use GitHub pages, see below.
+We publish to the [Maven Central Repository](https://central.sonatype.com) via the Sonatype Central Portal. The old OSSRH workflow is deprecated; the setup below uses the current Central Portal and the `central-publishing-maven-plugin`, all configured in `pom.xml` under the `central` profile.
+
+One-time prerequisites:
+
+1. **Namespace.** Register the `org.rcmd` namespace in your Central Portal account and verify it with a DNS TXT record on `rcmd.org`. Verification can take a while, DNS is slow.
+2. **User token.** In the Central Portal, go to your publishing settings and generate a user token (it looks like a username/password pair).
+3. **GPG key.** Maven Central requires every published file to be signed with GPG. Create a key (no expiry is recommended for signing keys) and publish the *public* key to a keyserver:
+
+   ```shell
+   gpg --full-generate-key
+   gpg --keyserver keyserver.ubuntu.com --send-keys <KEY_ID>
+   ```
+
+4. **Credentials in `~/.m2/settings.xml`.** Add a server with id `central` (your user token) and a `gpg` profile that provides the passphrase:
+
+   ```xml
+   <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+     <servers>
+       <server>
+         <id>central</id>
+         <username>YOUR_USER_TOKEN_USERNAME</username>
+         <password>YOUR_USER_TOKEN_PASSWORD</password>
+       </server>
+     </servers>
+     <profiles>
+       <profile>
+         <id>gpg</id>
+         <properties>
+           <gpg.executable>gpg</gpg.executable>
+           <gpg.passphrase>YOUR_GPG_PASSPHRASE</gpg.passphrase>
+         </properties>
+       </profile>
+     </profiles>
+     <activeProfiles>
+       <activeProfile>gpg</activeProfile>
+     </activeProfiles>
+   </settings>
+   ```
+
+Publishing a release (from `<repo>/jneuroformats/`):
+
+```shell
+mvn -Pcentral clean deploy
+```
+
+This runs the full lifecycle (tests + QA checks), attaches the sources and javadoc jars, signs everything with GPG, uploads to the Central Portal, and publishes automatically after validation. You can watch the deployment status on [central.sonatype.com/publishing/deployments](https://central.sonatype.com/publishing/deployments).
+
+#### Publishing from CI (GitHub Actions)
+
+The workflow [publish.yml](../.github/workflows/publish.yml) does the same automatically whenever a tag `v*` is pushed. To use it, add these repository secrets (Settings -> Secrets and variables -> Actions):
+
+| Secret | Value |
+| --- | --- |
+| `CENTRAL_TOKEN_USERNAME` | your Central user token username |
+| `CENTRAL_TOKEN_PASSWORD` | your Central user token password |
+| `GPG_PRIVATE_KEY` | ASCII-armored private key: `gpg --armor --export-secret-keys <KEY_ID>` |
+| `GPG_PASSPHRASE` | passphrase of the GPG key (empty if none) |
+
+Then release by tagging:
+
+```shell
+git tag v1.2.0
+git push origin v1.2.0
+```
 
 ### Publishing to GitHub packages
 
@@ -114,7 +177,7 @@ Make sure the `pom.xml` is setup correctly, including new package version etc. T
 </settings>
 ```
 
-The `id`, here `github`, needs to match the sections `<distributionManagement>`, `<repositories>`, and `<pluginRepositories>` in your `pom.xml` file.
+The `id`, here `github`, must match the `<distributionManagement>` section in your `pom.xml` file. Note that the `github` server is only needed for this optional GitHub Packages deploy; publishing to Maven Central uses the `central` profile and a separate `central` server instead (see above).
 
 The token you will have to create in your GitHub profile, login and click the User picture, then `Settings` -> `Developer Settings` -> `Personal Access Tokens`. Create one that has the permission "Write packages". This will automatically add required other permissions (e.g., read permissions). Generate and save the token in the `settings.xml` file.
 
