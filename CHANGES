@@ -9,6 +9,11 @@ Unreleased
     - Add read support for Wavefront OBJ mesh files: `Mesh.fromObjFile(Path)`. Also fix OBJ export to use the 1-based face indices required by the OBJ format.
 * Annots:
     - Add read support for annot CSV files (2 columns: vertex index, vertex label). Note that CSV files do not contain a color table. Also fix auto-detection of annot CSV files by file extension (the `.csv` extension was previously not recognized).
+* Volumes:
+    - Add read and write support for NIfTI-1 volume files (standard-compliant single-file `.nii` and `.nii.gz`), via the new classes `Nifti1` and `Nifti1Header`.
+    - Convert between NIfTI and MGH/MGZ: `Nifti1.read(Path)` / `Nifti1.toMgh()`, `Nifti1.fromMgh(FsMgh)` / `Nifti1.write(Path)`, plus the convenience methods `FsMgh.writeNifti(Path)` and `FsMgh.fromNiftiFile(Path)`.
+    - The voxel-to-world transform (sform, with qform fallback) is converted to the MGH vox2ras representation and back. Only standard-compliant NIfTI is supported; the FreeSurfer "hack" (surface data in NIfTI) is not.
+    - Fix reading of `MRI_UCHAR` voxel data in MGH files to be unsigned (range 0-255), as documented.
 
 
 Version 1.1.0 -- Better docs, some quality of life features

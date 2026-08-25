@@ -34,6 +34,8 @@ The files that can be read with this library are usually derived from Magnetic R
 * Brain volumes (3D or 4D MRI scans, like `<subject>/mri/brain.mgz`):
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
+  - Read and write NIfTI-1 volume files: `Nifti1.read()`, `Nifti1.write()`
+  - Convert between NIfTI and MGH/MGZ: `FsMgh.writeNifti()`, `FsMgh.fromNiftiFile()`, `Nifti1.toMgh()`
 * Per-Vertex data and per-voxel data, like cortical thickness or statistical results:
   - Read from MGH/MGZ files (they can store 4D arrays, which is useful for the raw images and per-vertex/per-voxel data)
   - Read from and write to MZ3 files: `Mz3.fromMz3File()`, `Mz3.write()`. Can also read per-vertex colors from MZ3 files.

@@ -285,4 +285,26 @@ public class FsMgh {
         }
     }
 
+    /**
+     * Write this volume to a file in NIfTI-1 format. See {@link Nifti1} for details.
+     * @param filePath the path to the file to write to
+     * @throws IOException if IO error occurs.
+     */
+    public void writeNifti(Path filePath) throws IOException {
+        Nifti1 nifti = Nifti1.fromMgh(this);
+        nifti.write(filePath);
+    }
+
+    /**
+     * Read a file in NIfTI-1 format and return an FsMgh object. See {@link Nifti1} for details.
+     * @param filePath the name of the file to read, as a Path object.
+     * @return an FsMgh object with the volume data.
+     * @throws IOException if IO error occurs.
+     * @throws FileNotFoundException if the file does not exist.
+     */
+    public static FsMgh fromNiftiFile(Path filePath) throws IOException, FileNotFoundException {
+        Nifti1 nifti = Nifti1.read(filePath);
+        return nifti.toMgh();
+    }
+
 }

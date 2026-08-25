@@ -151,7 +151,7 @@ public class FsMghData {
                 for (int j = 0; j < header.dim2Size; j++) {
                     for (int k = 0; k < header.dim3Size; k++) {
                         for (int l = 0; l < header.dim4Size; l++) {
-                            data.dataMriUchar[i][j][k][l] = buf.get();
+                            data.dataMriUchar[i][j][k][l] = buf.get() & 0xFF; // MRI_UCHAR is an unsigned char, range 0-255.
                         }
                     }
                 }
