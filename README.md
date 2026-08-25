@@ -90,7 +90,7 @@ System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + pl
 For a full app with this example combined with proper error handling and all imports, see the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java). The file also loads per-vertex data and exports it.
 
 
-The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jneuroformats](https://dfsp-spirit.github.io/jneuroformats).
+The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jneuroformats](https://dfsp-spirit.github.io/jneuroformats), and on demand at [javadoc.io](https://www.javadoc.io/versions/org.rcmd.jneuroformats/jneuroformats).
 
 
 The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.

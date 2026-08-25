@@ -1,8 +1,12 @@
 jneuroformats Changes
 =====================
 
+Version 1.2.1 -- Maven Central Setup only
+------------------------------------------
+* DEV: Configure automatic publication of tagged releases to Maven central
 
-Version 1.2.1 -- Support for new file formats including NIFTI
+
+Version 1.2.0 -- Support for new file formats including NIFTI
 --------------------------------------------------------------
 * This is the first version published to the Maven Central Repository, available as `org.rcmd.jneuroformats:jneuroformats:1.2.1` (no extra repository configuration needed).
 * Meshes:
