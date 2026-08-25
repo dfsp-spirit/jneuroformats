@@ -55,14 +55,14 @@ The package is published to [Maven Central](https://central.sonatype.com/artifac
 <dependency>
   <groupId>org.rcmd.jneuroformats</groupId>
   <artifactId>jneuroformats</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
 </dependency>
 ```
 
 or in Gradle:
 
 ```groovy
-implementation 'org.rcmd.jneuroformats:jneuroformats:1.2.0'
+implementation 'org.rcmd.jneuroformats:jneuroformats:1.2.1'
 ```
 
 > Older versions remain available from [GitHub Packages](https://github.com/dfsp-spirit/jneuroformats/packages/). Using those requires adding the GitHub repository URL and credentials to your build, so Maven Central is the easier option.

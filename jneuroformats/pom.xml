@@ -21,7 +21,7 @@
 
   <groupId>org.rcmd.jneuroformats</groupId>
   <artifactId>jneuroformats</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <packaging>jar</packaging>
 
   <!-- Kept for the optional GitHub Packages deploy (run 'mvn deploy' without the

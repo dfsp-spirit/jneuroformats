@@ -155,8 +155,8 @@ The workflow [publish.yml](../.github/workflows/publish.yml) does the same autom
 Then release by tagging:
 
 ```shell
-git tag v1.2.0
-git push origin v1.2.0
+git tag v1.2.1
+git push origin v1.2.1
 ```
 
 ### Publishing to GitHub packages
@@ -195,8 +195,8 @@ Then run `mvn clean deploy`.
 * Build the docs locally, and ensure there are no warnings about undocumented code, via `mvn javadoc:javadoc`.
 * Publish the API documentation to GitHub pages: this is automatic now. The GitHub Action [javadocs.yml](../.github/workflows/javadocs.yml) builds and deploys the docs to the `gh-pages` branch on every push to `main` and whenever a `v*` tag is pushed. Just push the release tag (see below); no manual deployment needed. You can also trigger it manually from the "Actions" tab.
 * Bump the version in [pom.xml](./pom.xml)
-* Publish the package to GitHub pages as described above in the section `Publishing to GitHub packages`
-* Tag the commit hash of the version you published with the version, e.g., `git log --oneline` to see last commits, then `git tag v1.2.0 asfjhjs`, where asfjhjs is your commit hash from the git log command. Then upload the tag via `git push --tags`.
+* Publish the package to Maven Central as described above in the section `Publishing to Maven Central` (via `mvn -Pcentral clean deploy`, or by pushing a `v*` tag, which triggers the GitHub Action [publish.yml](../.github/workflows/publish.yml))
+* Tag the commit hash of the version you published with the version, e.g., `git log --oneline` to see last commits, then `git tag v1.2.1 asfjhjs`, where asfjhjs is your commit hash from the git log command. Then upload the tag via `git push --tags`.
 
 
 ### Contributions
