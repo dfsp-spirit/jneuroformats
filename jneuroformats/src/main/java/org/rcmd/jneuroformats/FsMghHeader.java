@@ -242,4 +242,113 @@ public class FsMghHeader {
         return FsMghHeader.fromByteBuffer(buffer);
     }
 
+    /**
+     * Compute the 4x4 voxel-to-RAS (vox2ras) matrix from the RAS information in this header, if available.
+     *
+     * The vox2ras matrix maps voxel indices to world (RAS) coordinates: the world coordinate of a
+     * voxel (i, j, k) is `vox2ras * [i, j, k, 1]`. Its linear part (the upper left 3x3 block)
+     * maps a unit step along voxel axis j to a world displacement of `size_j * Mdc_row_j`, i.e.
+     * column j is scaled by the voxel size of axis j. This is the same convention FreeSurfer uses
+     * (vox2ras = Mdc^T * diag(delta), with the rows of the MGH `Mdc` matrix being the unit
+     * direction cosines of the 3 volume axes). The translation is the RAS coordinate of voxel
+     * (0, 0, 0), which is derived from the center voxel `Pxyz_c` stored in the header.
+     *
+     * @return the vox2ras matrix as a 4x4 float array (row-major, `m[row][col]`), or `null` if the
+     *     header does not carry valid RAS information.
+     */
+    public float[][] computeVox2ras() {
+        if (this.rasGoodFlag != 1 || this.Mdc.size() < 9 || this.Pxyz_c.size() < 3) {
+            return null;
+        }
+
+        float[] sizes = { this.sizeX, this.sizeY, this.sizeZ };
+        // The index of the center voxel, with integer division (matching FreeSurfer's mri_info).
+        int[] cCrs = { this.dim1Size / 2, this.dim2Size / 2, this.dim3Size / 2 };
+
+        float[][] m = new float[4][4];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                // Row j of the MGH Mdc matrix is the unit direction cosine of voxel axis j, so
+                // affine[i][j] = size[j] * Mdc[j*3 + i].
+                m[i][j] = sizes[j] * this.Mdc.get(j * 3 + i);
+            }
+        }
+        // RAS of voxel (0,0,0) = RAS of the center voxel (Pxyz_c) - linear part * center index.
+        for (int i = 0; i < 3; i++) {
+            float centerContribution = 0.0f;
+            for (int j = 0; j < 3; j++) {
+                centerContribution += m[i][j] * cCrs[j];
+            }
+            m[i][3] = this.Pxyz_c.get(i) - centerContribution;
+        }
+        m[3][3] = 1.0f;
+        return m;
+    }
+
+    /**
+     * Set the RAS fields (`sizeX`/`sizeY`/`sizeZ`, `Mdc`, `Pxyz_c`) of this header from a
+     * voxel-to-RAS affine matrix, and set `rasGoodFlag` to 1.
+     *
+     * This is the inverse of {@link #computeVox2ras()}: the voxel sizes are taken to be the norms
+     * of the columns of the linear part, the rows of `Mdc` are set to the (normalized) column
+     * directions (i.e. the unit direction cosines of the 3 volume axes), and `Pxyz_c` is set to
+     * the RAS coordinate of the center voxel (the affine applied to the center voxel index, which
+     * uses integer division `dim/2`).
+     *
+     * @param affine the voxel-to-RAS affine as a 4x4 float array (`affine[row][col]`, translation
+     *     in `affine[i][3]`). If `null` or too small, `rasGoodFlag` is set to 0.
+     */
+    public void extractRasFromAffine(float[][] affine) {
+        this.Mdc.clear();
+        this.Pxyz_c.clear();
+        if (affine == null || affine.length < 4 || affine[0].length < 4) {
+            this.rasGoodFlag = 0;
+            return;
+        }
+
+        // Voxel sizes are the norms of the columns of the linear part.
+        float[] sizes = new float[3];
+        float[][] linear = new float[3][3];
+        for (int j = 0; j < 3; j++) {
+            float norm = 0.0f;
+            for (int i = 0; i < 3; i++) {
+                linear[i][j] = affine[i][j];
+                norm += affine[i][j] * affine[i][j];
+            }
+            sizes[j] = (float) Math.sqrt(norm);
+        }
+
+        // Mdc row j = direction of voxel axis j = normalized column j of the affine.
+        for (int j = 0; j < 3; j++) {
+            for (int i = 0; i < 3; i++) {
+                if (sizes[j] > 0.0f) {
+                    this.Mdc.add(linear[i][j] / sizes[j]);
+                }
+                else {
+                    // Degenerate column (zero voxel size): fall back to a unit vector along the world axis.
+                    this.Mdc.add(i == j ? 1.0f : 0.0f);
+                }
+            }
+        }
+        for (int j = 0; j < 3; j++) {
+            if (sizes[j] <= 0.0f) {
+                sizes[j] = 1.0f;
+            }
+        }
+        this.sizeX = sizes[0];
+        this.sizeY = sizes[1];
+        this.sizeZ = sizes[2];
+
+        // Pxyz_c = translation + linear part * center voxel index (integer division).
+        int[] cCrs = { this.dim1Size / 2, this.dim2Size / 2, this.dim3Size / 2 };
+        for (int i = 0; i < 3; i++) {
+            float centerContribution = 0.0f;
+            for (int j = 0; j < 3; j++) {
+                centerContribution += affine[i][j] * cCrs[j];
+            }
+            this.Pxyz_c.add(affine[i][3] + centerContribution);
+        }
+        this.rasGoodFlag = 1;
+    }
+
 }

@@ -1,6 +1,29 @@
 jneuroformats Changes
 =====================
 
+Current WIP
+-----------
+* Volumes:
+    - Fix the voxel-to-RAS (vox2ras) conversion between NIfTI and MGH/MGZ so that NIfTI files
+      written by this library describe the same geometry as FreeSurfer's `mri_convert` output
+      (previously they did not, for volumes carrying RAS information):
+        * The Mdc <-> s-form mapping was transposed (the code used Mdc where Mdc^T is needed).
+          The s-form and q-form are now derived from the actual voxel-to-RAS affine, with the
+          rows of the MGH `Mdc` matrix being the unit direction cosines of the 3 volume axes,
+          which is the FreeSurfer convention.
+        * The NIfTI s-form/q-form translation (and qoffset) is the RAS coordinate of voxel
+          (0,0,0), while the MGH header stores the center voxel (Pxyz_c). Writing now stores the
+          voxel-(0,0,0) RAS in the NIfTI header, and reading re-anchors it into the MGH center
+          voxel convention, so MGH<->NIfTI round trips preserve the geometry exactly.
+    - Add `FsMghHeader.computeVox2ras()` (compute the voxel-to-RAS affine from the MGH header
+      fields) and `FsMghHeader.extractRasFromAffine(float[][])` (set the MGH RAS fields from a
+      voxel-to-RAS affine).
+    - Add tests that validate NIfTI <-> MGH/MGZ conversion against the demo volume that was
+      converted by FreeSurfer's mri_convert (`brain.nii` vs `brain.mgz`/`brain.mgh`), i.e. that
+      reading both files yields the same voxel data and the same vox2ras geometry, and that
+      writing the MGH volume as NIfTI reproduces the reference NIfTI geometry.
+
+
 Version 1.2.1 -- Maven Central Setup only
 ------------------------------------------
 * DEV: Configure automatic publication of tagged releases to Maven central

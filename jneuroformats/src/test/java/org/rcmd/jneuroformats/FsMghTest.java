@@ -183,4 +183,41 @@ public class FsMghTest {
         }
     }
 
+    @Test
+    public void oneCanComputeVox2rasOfDemoVolume() {
+
+        Path mghFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "mri", "brain.mgz");
+        FsMgh brain;
+        try {
+            brain = FsMgh.read(mghFile);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // The vox2ras of the demo volume, as also reported by FreeSurfer's `mri_info --vox2ras`.
+        float[][] expectedVox2ras = {
+                { -1.0f, 0.0f, 0.0f, 127.5f },
+                { 0.0f, 0.0f, 1.0f, -98.6273f },
+                { 0.0f, -1.0f, 0.0f, 79.0953f },
+                { 0.0f, 0.0f, 0.0f, 1.0f }
+        };
+        float[][] vox2ras = brain.header.computeVox2ras();
+        assertThat(vox2ras).isNotNull();
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                assertThat(vox2ras[i][j]).isCloseTo(expectedVox2ras[i][j], within(0.01f));
+            }
+        }
+
+        // A volume without RAS information yields no vox2ras.
+        FsMgh noRas = new FsMgh();
+        noRas.header.dim1Size = 2;
+        noRas.header.dim2Size = 2;
+        noRas.header.dim3Size = 2;
+        noRas.header.dim4Size = 1;
+        noRas.header.rasGoodFlag = 0;
+        assertThat(noRas.header.computeVox2ras()).isNull();
+    }
+
 }

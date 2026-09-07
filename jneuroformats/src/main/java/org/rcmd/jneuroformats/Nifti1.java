@@ -245,49 +245,42 @@ public class Nifti1 {
         h.sclSlope = 1.0f;
         h.sclInter = 0.0f;
 
-        if (mh.rasGoodFlag == 1 && mh.Mdc.size() >= 9 && mh.Pxyz_c.size() >= 3) {
-            float sx = h.pixdim[1];
-            float sy = h.pixdim[2];
-            float sz = h.pixdim[3];
-
-            // sform: the vox2ras affine = Mdc * diag(size), translation = Pxyz_c.
+        // Compute the voxel-to-RAS affine (vox2ras) from the MGH header, if it carries RAS info.
+        float[][] vox2ras = mh.computeVox2ras();
+        if (vox2ras != null) {
+            // s-form: the vox2ras affine itself. Note that the translation (srow*[3]) is the RAS
+            // coordinate of voxel (0,0,0), which is what the NIfTI s-form stores. This is NOT the
+            // MGH center voxel Pxyz_c; converting between the two is handled by computeVox2ras().
+            // This matches what FreeSurfer's mri_convert writes.
             h.sformCode = Nifti1Header.XFORM_SCANNER_ANAT;
-            h.srowX[0] = mh.Mdc.get(0) * sx;
-            h.srowX[1] = mh.Mdc.get(1) * sy;
-            h.srowX[2] = mh.Mdc.get(2) * sz;
-            h.srowX[3] = mh.Pxyz_c.get(0);
-            h.srowY[0] = mh.Mdc.get(3) * sx;
-            h.srowY[1] = mh.Mdc.get(4) * sy;
-            h.srowY[2] = mh.Mdc.get(5) * sz;
-            h.srowY[3] = mh.Pxyz_c.get(1);
-            h.srowZ[0] = mh.Mdc.get(6) * sx;
-            h.srowZ[1] = mh.Mdc.get(7) * sy;
-            h.srowZ[2] = mh.Mdc.get(8) * sz;
-            h.srowZ[3] = mh.Pxyz_c.get(2);
+            h.srowX[0] = vox2ras[0][0];
+            h.srowX[1] = vox2ras[0][1];
+            h.srowX[2] = vox2ras[0][2];
+            h.srowX[3] = vox2ras[0][3];
+            h.srowY[0] = vox2ras[1][0];
+            h.srowY[1] = vox2ras[1][1];
+            h.srowY[2] = vox2ras[1][2];
+            h.srowY[3] = vox2ras[1][3];
+            h.srowZ[0] = vox2ras[2][0];
+            h.srowZ[1] = vox2ras[2][1];
+            h.srowZ[2] = vox2ras[2][2];
+            h.srowZ[3] = vox2ras[2][3];
 
-            // qform: encode the same transform as a quaternion.
-            h.qformCode = Nifti1Header.XFORM_SCANNER_ANAT;
-            float qfac = determinant3x3(mh.Mdc) < 0.0f ? -1.0f : 1.0f;
-            h.pixdim[0] = qfac;
-            float[][] rotation = new float[3][3];
-            for (int row = 0; row < 3; row++) {
-                for (int col = 0; col < 3; col++) {
-                    rotation[row][col] = mh.Mdc.get(row * 3 + col);
-                }
+            // q-form: encode the same affine as a quaternion.
+            float[] qform = vox2rasToQform(vox2ras);
+            if (qform != null) {
+                h.qformCode = Nifti1Header.XFORM_SCANNER_ANAT;
+                h.pixdim[0] = qform[0];
+                h.quaternB = qform[1];
+                h.quaternC = qform[2];
+                h.quaternD = qform[3];
+                h.qoffsetX = qform[4];
+                h.qoffsetY = qform[5];
+                h.qoffsetZ = qform[6];
             }
-            if (qfac < 0.0f) {
-                // Make the rotation proper (det = +1) by flipping the z column; qfac encodes the flip.
-                for (int row = 0; row < 3; row++) {
-                    rotation[row][2] = -rotation[row][2];
-                }
+            else {
+                h.qformCode = Nifti1Header.XFORM_UNKNOWN;
             }
-            float[] quat = rotationMatrixToQuaternion(rotation);
-            h.quaternB = quat[1];
-            h.quaternC = quat[2];
-            h.quaternD = quat[3];
-            h.qoffsetX = mh.Pxyz_c.get(0);
-            h.qoffsetY = mh.Pxyz_c.get(1);
-            h.qoffsetZ = mh.Pxyz_c.get(2);
         }
         else {
             h.sformCode = Nifti1Header.XFORM_UNKNOWN;
@@ -376,75 +369,131 @@ public class Nifti1 {
 
     /**
      * Extract the voxel-to-world (RAS) transform from a NIfTI-1 header into an MGH header.
-     * Prefers the sform (per the NIfTI-1 standard); falls back to the qform.
+     *
+     * The transform is decoded from the s-form (preferred, per the NIfTI-1 standard) or the q-form
+     * (fallback) into a voxel-to-RAS affine, and then decomposed into the MGH RAS fields
+     * (`sizeX`/`sizeY`/`sizeZ`, `Mdc`, `Pxyz_c`) via {@link FsMghHeader#extractRasFromAffine}.
+     * This sets `rasGoodFlag` to 1 if a transform is present, and to 0 otherwise.
+     *
      * @param h the NIfTI-1 header.
      * @param mghHeader the MGH header to fill.
      */
     protected static void extractRas(Nifti1Header h, FsMghHeader mghHeader) {
+        float[][] affine = affineFromNiftiHeader(h);
+        if (affine != null) {
+            mghHeader.extractRasFromAffine(affine);
+        }
+        else {
+            mghHeader.rasGoodFlag = 0;
+            mghHeader.sizeX = h.pixdim[1];
+            mghHeader.sizeY = h.pixdim[2];
+            mghHeader.sizeZ = h.pixdim[3];
+        }
+    }
 
-        float sx = h.pixdim[1];
-        float sy = h.pixdim[2];
-        float sz = h.pixdim[3];
-
-        mghHeader.sizeX = sx;
-        mghHeader.sizeY = sy;
-        mghHeader.sizeZ = sz;
-        mghHeader.Mdc.clear();
-        mghHeader.Pxyz_c.clear();
-
+    /**
+     * Decode the voxel-to-RAS affine from a NIfTI-1 header, if it carries a transform.
+     *
+     * The s-form is preferred (per the NIfTI-1 standard); if it is not present, the q-form is
+     * used as a fallback. The translation of the returned affine is the RAS coordinate of voxel
+     * (0,0,0), as stored in the NIfTI header.
+     *
+     * @param h the NIfTI-1 header.
+     * @return the 4x4 voxel-to-RAS affine (`affine[row][col]`, translation in `affine[i][3]`), or
+     *     `null` if the header has neither an s-form nor a q-form.
+     */
+    protected static float[][] affineFromNiftiHeader(Nifti1Header h) {
         if (h.sformCode > 0) {
-            // The sform maps voxel indices to world coordinates: column j = world vector of one step in voxel dimension j.
-            // MGH stores Mdc as the pure rotation (direction cosines), i.e., the sform columns normalized by the voxel sizes.
-            mghHeader.rasGoodFlag = 1;
-            mghHeader.Mdc.add(divideOrOne(h.srowX[0], sx));
-            mghHeader.Mdc.add(divideOrOne(h.srowX[1], sy));
-            mghHeader.Mdc.add(divideOrOne(h.srowX[2], sz));
-            mghHeader.Mdc.add(divideOrOne(h.srowY[0], sx));
-            mghHeader.Mdc.add(divideOrOne(h.srowY[1], sy));
-            mghHeader.Mdc.add(divideOrOne(h.srowY[2], sz));
-            mghHeader.Mdc.add(divideOrOne(h.srowZ[0], sx));
-            mghHeader.Mdc.add(divideOrOne(h.srowZ[1], sy));
-            mghHeader.Mdc.add(divideOrOne(h.srowZ[2], sz));
-            mghHeader.Pxyz_c.add(h.srowX[3]);
-            mghHeader.Pxyz_c.add(h.srowY[3]);
-            mghHeader.Pxyz_c.add(h.srowZ[3]);
+            float[][] affine = new float[4][4];
+            System.arraycopy(h.srowX, 0, affine[0], 0, 4);
+            System.arraycopy(h.srowY, 0, affine[1], 0, 4);
+            System.arraycopy(h.srowZ, 0, affine[2], 0, 4);
+            affine[3][3] = 1.0f;
+            return affine;
         }
         else if (h.qformCode > 0) {
-            // Compute the rotation matrix from the quaternion.
+            // Build the rotation matrix from the quaternion.
             float b = h.quaternB;
             float c = h.quaternC;
             float d = h.quaternD;
             float a = (float) Math.sqrt(Math.max(0.0f, 1.0f - (b * b + c * c + d * d)));
             float qfac = (h.pixdim[0] < 0.0f) ? -1.0f : 1.0f;
 
-            float R11 = a * a + b * b - c * c - d * d;
-            float R12 = 2.0f * (b * c - a * d);
-            float R13 = 2.0f * (b * d + a * c);
-            float R21 = 2.0f * (b * c + a * d);
-            float R22 = a * a + c * c - b * b - d * d;
-            float R23 = 2.0f * (c * d - a * b);
-            float R31 = 2.0f * (b * d - a * c);
-            float R32 = 2.0f * (c * d + a * b);
-            float R33 = a * a + d * d - b * b - c * c;
+            float[][] rot = new float[3][3];
+            rot[0][0] = a * a + b * b - c * c - d * d;
+            rot[0][1] = 2.0f * (b * c - a * d);
+            rot[0][2] = 2.0f * (b * d + a * c);
+            rot[1][0] = 2.0f * (b * c + a * d);
+            rot[1][1] = a * a + c * c - b * b - d * d;
+            rot[1][2] = 2.0f * (c * d - a * b);
+            rot[2][0] = 2.0f * (b * d - a * c);
+            rot[2][1] = 2.0f * (c * d + a * b);
+            rot[2][2] = a * a + d * d - b * b - c * c;
 
-            mghHeader.rasGoodFlag = 1;
-            // Mdc = R, with the third column scaled by qfac to encode the possible reflection.
-            mghHeader.Mdc.add(R11);
-            mghHeader.Mdc.add(R12);
-            mghHeader.Mdc.add(R13 * qfac);
-            mghHeader.Mdc.add(R21);
-            mghHeader.Mdc.add(R22);
-            mghHeader.Mdc.add(R23 * qfac);
-            mghHeader.Mdc.add(R31);
-            mghHeader.Mdc.add(R32);
-            mghHeader.Mdc.add(R33 * qfac);
-            mghHeader.Pxyz_c.add(h.qoffsetX);
-            mghHeader.Pxyz_c.add(h.qoffsetY);
-            mghHeader.Pxyz_c.add(h.qoffsetZ);
+            // Apply qfac (a possible reflection) to the 3rd column.
+            for (int i = 0; i < 3; i++) {
+                rot[i][2] *= qfac;
+            }
+
+            // Scale the columns by the voxel sizes; the translation is the qoffset.
+            float[][] affine = new float[4][4];
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    affine[i][j] = rot[i][j] * h.pixdim[j + 1];
+                }
+                affine[i][3] = (i == 0) ? h.qoffsetX : (i == 1) ? h.qoffsetY : h.qoffsetZ;
+            }
+            affine[3][3] = 1.0f;
+            return affine;
         }
         else {
-            mghHeader.rasGoodFlag = 0;
+            return null;
         }
+    }
+
+    /**
+     * Convert a voxel-to-RAS affine to NIfTI q-form parameters.
+     *
+     * The rotation part is obtained by normalizing the columns of the linear part of the affine.
+     * The `qfac` factor encodes the handedness of the coordinate system (the sign of the
+     * determinant of the rotation part) and is stored in `pixdim[0]`. The q-form translation
+     * (`qoffset`) is the RAS coordinate of voxel (0,0,0), i.e. the translation of the affine.
+     *
+     * @param affine the voxel-to-RAS affine as a 4x4 float array.
+     * @return an array `{qfac, quaternB, quaternC, quaternD, qoffsetX, qoffsetY, qoffsetZ}`, or
+     *     `null` if the affine cannot be represented as a q-form (e.g. it has a zero voxel size).
+     */
+    protected static float[] vox2rasToQform(float[][] affine) {
+        // Extract the rotation part and the voxel sizes (norms of the columns of the linear part).
+        float[] sizes = new float[3];
+        float[][] rot = new float[3][3];
+        for (int j = 0; j < 3; j++) {
+            float norm = 0.0f;
+            for (int i = 0; i < 3; i++) {
+                norm += affine[i][j] * affine[i][j];
+            }
+            sizes[j] = (float) Math.sqrt(norm);
+            if (!Float.isFinite(sizes[j]) || sizes[j] == 0.0f) {
+                return null;
+            }
+            for (int i = 0; i < 3; i++) {
+                rot[i][j] = affine[i][j] / sizes[j];
+            }
+        }
+
+        // qfac encodes the sign of the determinant of the rotation part.
+        float det = determinant3x3(rot);
+        float qfac = (det < 0.0f) ? -1.0f : 1.0f;
+
+        // Make the rotation proper (det = +1) by flipping the 3rd column; qfac encodes the flip.
+        if (qfac < 0.0f) {
+            for (int i = 0; i < 3; i++) {
+                rot[i][2] = -rot[i][2];
+            }
+        }
+
+        float[] quat = rotationMatrixToQuaternion(rot);
+        return new float[] { qfac, quat[1], quat[2], quat[3], affine[0][3], affine[1][3], affine[2][3] };
     }
 
     /**
@@ -578,19 +627,6 @@ public class Nifti1 {
     }
 
     /**
-     * Divide, guarding against a zero divisor (returns the numerator unchanged in that case).
-     * @param numerator the numerator.
-     * @param divisor the divisor.
-     * @return numerator / divisor, or numerator if divisor is 0.
-     */
-    private static float divideOrOne(float numerator, float divisor) {
-        if (divisor == 0.0f) {
-            return numerator;
-        }
-        return numerator / divisor;
-    }
-
-    /**
      * Compute the determinant of a 3x3 matrix given in row-major order.
      * @param m the 9 matrix entries, in row-major order.
      * @return the determinant.
@@ -599,6 +635,17 @@ public class Nifti1 {
         return m.get(0) * (m.get(4) * m.get(8) - m.get(5) * m.get(7)) -
                 m.get(1) * (m.get(3) * m.get(8) - m.get(5) * m.get(6)) +
                 m.get(2) * (m.get(3) * m.get(7) - m.get(4) * m.get(6));
+    }
+
+    /**
+     * Compute the determinant of a 3x3 matrix given as a 2D float array (`m[row][col]`).
+     * @param m the matrix as a 3x3 float array.
+     * @return the determinant.
+     */
+    protected static float determinant3x3(float[][] m) {
+        return m[0][0] * (m[1][1] * m[2][2] - m[2][1] * m[1][2]) -
+                m[1][0] * (m[0][1] * m[2][2] - m[2][1] * m[0][2]) +
+                m[2][0] * (m[0][1] * m[1][2] - m[1][1] * m[0][2]);
     }
 
     /**
