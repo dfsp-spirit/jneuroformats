@@ -15,8 +15,12 @@
  */
 package org.rcmd.jneuroformats;
 
+import java.awt.Color;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +51,51 @@ public class Mz3Test {
         assertThat(mz3.mesh.getNumberOfVertices()).isEqualTo(8);
         assertThat(mz3.perVertexData.size()).isEqualTo(0);
         assertThat(mz3.vertexColors.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void oneCanWriteAndRereadMz3() {
+
+        Path mz3SurfFile = Paths.get("src", "test", "resources", "mesh", "cube.mz3");
+        Mz3 mz3;
+        try {
+            mz3 = Mz3.fromMz3File(mz3SurfFile);
+            Path temp = Files.createTempFile("", ".mz3");
+            mz3.write(temp);
+            Mz3 mz3_2 = Mz3.fromMz3File(temp);
+            assertThat(mz3_2.mesh.getNumberOfVertices()).isEqualTo(8);
+            assertThat(mz3_2.mesh.getNumberOfFaces()).isEqualTo(12);
+            assertThat(mz3_2.mesh.vertices.toArray()).isEqualTo(mz3.mesh.vertices.toArray());
+            assertThat(mz3_2.mesh.faces.toArray()).isEqualTo(mz3.mesh.faces.toArray());
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void oneCanWriteAndRereadMz3WithColorsAndScalarData() {
+
+        Mesh cube = Mesh.generateCube();
+        List<Float> perVertexData = new ArrayList<>();
+        List<Color> vertexColors = new ArrayList<>();
+        for (int i = 0; i < cube.getNumberOfVertices(); i++) {
+            perVertexData.add((float) i);
+            vertexColors.add(new Color(i * 10, i * 20, i * 30, 255));
+        }
+        Mz3 mz3 = new Mz3(cube, perVertexData, vertexColors);
+        try {
+            Path temp = Files.createTempFile("", ".mz3");
+            mz3.write(temp);
+            Mz3 mz3_2 = Mz3.fromMz3File(temp);
+            assertThat(mz3_2.mesh.getNumberOfVertices()).isEqualTo(8);
+            assertThat(mz3_2.mesh.getNumberOfFaces()).isEqualTo(12);
+            assertThat(mz3_2.perVertexData).isEqualTo(perVertexData);
+            assertThat(mz3_2.vertexColors.size()).isEqualTo(8);
+            assertThat(mz3_2.vertexColors.get(3)).isEqualTo(new Color(30, 60, 90, 255));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

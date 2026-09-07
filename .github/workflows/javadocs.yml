@@ -1,0 +1,50 @@
+name: Deploy Javadocs
+
+# Builds the Javadocs and publishes them to the gh-pages branch, from which
+# GitHub Pages serves the API documentation.
+#
+# Runs automatically:
+#   - on every push to the main branch (docs stay in sync with the code)
+#   - when a release tag (v*) is pushed
+#   - manually via the "Actions" tab (workflow_dispatch)
+#
+# This replaces the old manual deploy-javadocs.sh script (now retired).
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+# The workflow needs write access to push the built docs to the gh-pages branch.
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Build Javadocs
+        working-directory: ./jneuroformats
+        run: mvn --batch-mode javadoc:javadoc
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./jneuroformats/target/site/apidocs
+          publish_branch: gh-pages
+          commit_message: "Deploy Javadocs for ${{ github.ref_name }}"

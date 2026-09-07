@@ -103,4 +103,23 @@ public class FsAnnotTest {
         List<Color> colors = desikan.getVertexColorsRgb();
         assertThat(colors.size()).isEqualTo(desikan.numVertices());
     }
+
+    @Test
+    public void oneCanWriteAndRereadFsAnnotAsCsv() {
+
+        Path annotFile = Paths.get("src", "test", "resources", "subjects_dir", "subject1", "label", "lh.aparc.annot");
+        FsAnnot desikan;
+        try {
+            desikan = FsAnnot.fromFsAnnotFile(annotFile);
+            Path temp = Files.createTempFile("", ".csv");
+            desikan.write(temp, "csv");
+            FsAnnot desikan2 = FsAnnot.read(temp);
+            assertThat(desikan2.numVertices()).isEqualTo(desikan.numVertices());
+            assertThat(desikan2.vertexIndices).isEqualTo(desikan.vertexIndices);
+            assertThat(desikan2.vertexLabels).isEqualTo(desikan.vertexLabels);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

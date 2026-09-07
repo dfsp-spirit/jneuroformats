@@ -148,6 +148,114 @@ public class Mz3 {
     }
 
     /**
+     * Write this Mz3 object to a file in MZ3 surface format (not gzipped).
+     * @param filePath the path to the file to write to
+     * @throws IOException if IO error occurs.
+     */
+    public void write(Path filePath) throws IOException {
+        IO.writeFile(filePath, toMz3ByteBuffer());
+    }
+
+    /**
+     * Write this Mz3 object to a ByteBuffer in MZ3 surface format.
+     * @return a ByteBuffer containing the MZ3 data.
+     * @throws IOException if IO error occurs.
+     */
+    protected ByteBuffer toMz3ByteBuffer() throws IOException {
+
+        int numFaces = this.mesh.getNumberOfFaces();
+        int numVertices = this.mesh.getNumberOfVertices();
+
+        Boolean is_face = numFaces > 0;
+        Boolean is_vert = numVertices > 0;
+        Boolean is_rgba = this.vertexColors != null && this.vertexColors.size() > 0;
+        Boolean is_scalar = this.perVertexData != null && this.perVertexData.size() > 0;
+
+        if (is_rgba && this.vertexColors.size() != numVertices) {
+            throw new IOException(MessageFormat.format(
+                    "Number of vertex colors ({0}) does not match the number of vertices ({1}).",
+                    this.vertexColors.size(), numVertices));
+        }
+        if (is_scalar && this.perVertexData.size() != numVertices) {
+            throw new IOException(MessageFormat.format(
+                    "Number of per-vertex data values ({0}) does not match the number of vertices ({1}).",
+                    this.perVertexData.size(), numVertices));
+        }
+
+        int attr = 0;
+        if (is_face) {
+            attr |= 1;
+        }
+        if (is_vert) {
+            attr |= 2;
+        }
+        if (is_rgba) {
+            attr |= 4;
+        }
+        if (is_scalar) {
+            attr |= 8;
+        }
+
+        int bufferSize = 2 + 2 + 4 + 4 + 4; // magic, attr, numFaces, numVertices, numSkip
+        if (is_face) {
+            bufferSize += numFaces * 3 * 4;
+        }
+        if (is_vert) {
+            bufferSize += numVertices * 3 * 4;
+        }
+        if (is_rgba) {
+            bufferSize += numVertices * 4 * 4;
+        }
+        if (is_scalar) {
+            bufferSize += numVertices * 4;
+        }
+
+        ByteBuffer buf = ByteBuffer.allocate(bufferSize);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+
+        // Write the header.
+        buf.putShort((short) 23117); // magic number
+        buf.putShort((short) attr);
+        buf.putInt(numFaces);
+        buf.putInt(numVertices);
+        buf.putInt(0); // numSkip
+
+        if (is_face) {
+            for (int[] face : this.mesh.faces) {
+                buf.putInt(face[0]);
+                buf.putInt(face[1]);
+                buf.putInt(face[2]);
+            }
+        }
+
+        if (is_vert) {
+            for (float[] vertex : this.mesh.vertices) {
+                buf.putFloat(vertex[0]);
+                buf.putFloat(vertex[1]);
+                buf.putFloat(vertex[2]);
+            }
+        }
+
+        if (is_rgba) {
+            for (Color vertexColor : this.vertexColors) {
+                buf.putInt(vertexColor.getRed());
+                buf.putInt(vertexColor.getGreen());
+                buf.putInt(vertexColor.getBlue());
+                buf.putInt(vertexColor.getAlpha());
+            }
+        }
+
+        if (is_scalar) {
+            for (float value : this.perVertexData) {
+                buf.putFloat(value);
+            }
+        }
+
+        buf.flip();
+        return buf;
+    }
+
+    /**
      * Check whether a MZ3 file is gzipped.
      * @param filePath the path to the file
      * @return true if the file is gzipped, false otherwise
@@ -156,9 +264,10 @@ public class Mz3 {
      * @throws BufferUnderflowException if buffer underflow occurs, i.e., the file is too short to read the first header part required to determine the file format.
      */
     protected static Boolean mz3FileIsGzipped(Path filePath) throws IOException, FileNotFoundException, BufferUnderflowException {
-        ByteBuffer buffer = IO.peakIntoFile(filePath, Boolean.TRUE, ByteOrder.LITTLE_ENDIAN, 16);
+        // Peek at the raw bytes (without decompressing): a gzipped MZ3 file starts with the gzip magic bytes 0x1F 0x8B.
+        ByteBuffer buffer = IO.peakIntoFile(filePath, Boolean.FALSE, ByteOrder.LITTLE_ENDIAN, 16);
         Short magicNumber = buffer.getShort();
-        return magicNumber.equals((short) 23117);
+        return magicNumber.equals((short) 35615); // 0x8B1F in little endian, i.e., the gzip magic bytes 0x1F 0x8B.
     }
 
 }

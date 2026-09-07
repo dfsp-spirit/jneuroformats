@@ -1,7 +1,9 @@
 # jneuroformats
 A library for reading and writing structural neuroimaging file formats with Java.
 
-[![main](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+[![unittests](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+[![docs](https://github.com/dfsp-spirit/jneuroFormats/actions/workflows/javadocs.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/jneuroFormats/actions)
+
 
 
 ## About
@@ -19,21 +21,24 @@ The files that can be read with this library are usually derived from Magnetic R
 
 * Meshes:
   - Read brain meshes in FreeSurfer binary mesh format (like recon_all output file `<SUBJECTS_DIR>/<subject>/surf/lh.white`): use function `FsSurface.fromFsSurfaceFile()`
-  - Read meshes from MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
+  - Read and write meshes in MZ3 format, as used by [Surf-Ice](https://github.com/neurolabusc/surf-ice)
   - Write in PLY, OBJ, and FreeSurfer binary mesh formats: `FsSurface.writeToFile()`
   - Read meshes from PLY format files (ASCII type)
+  - Read meshes from OBJ format files
 * Labels (FreeSurfer volume and surface labels, like `<subject>/label/lh.cortex.label`):
   - Read from FreeSurfer label format:  `FsLabel.fromFsLabelFile()`
   - Write in FreeSurfer label format and to CSV format: `FsLabel.writeToFile()`
 * Annots or mesh parcellations (like Desikan atlas parcellation in recon_all output file `<SUBJECTS_DIR>/<subject>/label/lh.aparc.annot`):
   - Read from FreeSurfer annot format: `FsAnnot.fromFsAnnotFile()`
-  - Write to FreeSurfer annot format and to CSV (including the color table):  `FsAnnot.writeToFile()`
+  - Write to FreeSurfer annot format and to CSV (including the color table), and read from annot CSV files: `FsAnnot.writeToFile()`
 * Brain volumes (3D or 4D MRI scans, like `<subject>/mri/brain.mgz`):
   - Read from files in FreeSurfer MGH format: `FsMgh.fromFsMghFile()`
   - Read from files in FreeSurfer MGZ format: `FsMgh.fromFsMgzFile()`
+  - Read and write NIfTI-1 volume files: `Nifti1.read()`, `Nifti1.write()`
+  - Convert between NIfTI and MGH/MGZ: `FsMgh.writeNifti()`, `FsMgh.fromNiftiFile()`, `Nifti1.toMgh()`
 * Per-Vertex data and per-voxel data, like cortical thickness or statistical results:
   - Read from MGH/MGZ files (they can store 4D arrays, which is useful for the raw images and per-vertex/per-voxel data)
-  - Read from MZ3 files: `Mz3.fromMz3File()`. Can also read per-vertex colors from MZ3 files.
+  - Read from and write to MZ3 files: `Mz3.fromMz3File()`, `Mz3.write()`. Can also read per-vertex colors from MZ3 files.
   - Read from FreeSurfer curv files (like `<subject>/surf/lh.thickness`): `FsCurv.fromFsCurvFile()`
   - Write to FreeSurfer curv files: `FsCurv.writeToFile()`
 
@@ -44,7 +49,23 @@ Many of the classes provide utility methods which are typically needed in struct
 
 The `jneuroformats` package requires a Java version of at least [Java SE 11](https://en.wikipedia.org/wiki/Java_version_history#Java_SE_11_(LTS)), released in 2018. Of course, any later version is fine as well.
 
-Packages are available [here on GitHub packages](https://github.com/dfsp-spirit/jneuroformats/packages/), along with instructions on using them in your project.
+The package is published to [Maven Central](https://central.sonatype.com/artifact/org.rcmd.jneuroformats/jneuroformats), so no extra repository configuration is needed. Add it as a dependency in Maven:
+
+```xml
+<dependency>
+  <groupId>org.rcmd.jneuroformats</groupId>
+  <artifactId>jneuroformats</artifactId>
+  <version>1.2.1</version>
+</dependency>
+```
+
+or in Gradle:
+
+```groovy
+implementation 'org.rcmd.jneuroformats:jneuroformats:1.2.1'
+```
+
+> Older versions remain available from [GitHub Packages](https://github.com/dfsp-spirit/jneuroformats/packages/). Using those requires adding the GitHub repository URL and credentials to your build, so Maven Central is the easier option.
 
 ## Documentation and Usage
 
@@ -69,7 +90,7 @@ System.out.println("Wrote mesh vertex-colored by Desikan regions to file: " + pl
 For a full app with this example combined with proper error handling and all imports, see the file [App.java](./jneuroformats/src/main/java/org/rcmd/jneuroformats/App.java). The file also loads per-vertex data and exports it.
 
 
-The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jneuroformats](https://dfsp-spirit.github.io/jneuroformats).
+The API documentation is published on GitHub pages at [dfsp-spirit.github.io/jneuroformats](https://dfsp-spirit.github.io/jneuroformats), and on demand at [javadoc.io](https://www.javadoc.io/versions/org.rcmd.jneuroformats/jneuroformats).
 
 
 The [unit tests](./jneuroformats/src/test/java/org/rcmd/jneuroformats/) also include various usage examples.
